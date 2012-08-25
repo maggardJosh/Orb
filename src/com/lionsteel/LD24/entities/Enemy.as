@@ -4,26 +4,25 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
-	import flash.media.SoundCodec;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Spritemap;
-	import net.flashpunk.graphics.TiledSpritemap;
 	import net.flashpunk.utils.Input;
-	import net.flashpunk.utils.Key;	
 	
 	/**
 	 * ...
 	 * @author Josh Maggard
 	 */
-	public class Player extends Entity 
+	public class Enemy extends Entity 
 	{
 		public static const IDLE:int = 0;
 		public static const WALKING:int = 1;
 		public static const JUMPING:int = 2;
 		public static const FALLING:int = 3;
 		
-		private var state:int = Player.IDLE;
+		private var stateCounter:int = 0;		//Number of Milliseconds in current state
+		
+		private var state:int = Enemy.IDLE;
 		
 		//Facing direction
 		private var facingLeft:Boolean = false;
@@ -67,7 +66,7 @@ package com.lionsteel.LD24.entities
 		private var _camPos:Point = new Point();
 		
 		
-		public function Player() 
+		public function Enemy() 
 		{
 			setBody(BodyType.BASE);
 			
@@ -78,7 +77,7 @@ package com.lionsteel.LD24.entities
 		override public function update():void 
 		{
 			super.update();
-			handleControls();
+			handleAI();
 			updateMovement()
 			updateCamera();
 			checkAnims();
@@ -89,11 +88,6 @@ package com.lionsteel.LD24.entities
 		private function checkState():void
 		{
 			
-			if (grounded && Math.abs(velX ) > 1)
-				state = WALKING;
-				else
-				if (Math.abs(velX) <  1)
-					state = IDLE;
 		}
 		
 		private function setBody(type:int):void
@@ -339,29 +333,24 @@ package com.lionsteel.LD24.entities
 			velX *= friction;
 		}
 		
-		private function handleControls():void
+		private function handleAI():void
 		{
-			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
-			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.BASE); else setHorn(HornType.NONE);
-			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BASE); else setWing(WingType.NONE);
-			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.BASE); else setTail(TailType.NONE);
-			if (Input.pressed(Key.DIGIT_5)) if (arms == ArmType.NONE) setArm(ArmType.BASE); else setArm(ArmType.NONE);
-			
-			if (Input.pressed("UP") && jumpsLeft > 0)
+			switch(state)
 			{
-				velY = jumpForce;
-				jumpsLeft--;
-				grounded = false;
-			}
-			if (Input.check("RIGHT"))
-			{
-				velX += C.START_PLAYER_SPEED * speedVar;
-				facingLeft = false;
-			}
-			if (Input.check("LEFT"))
-			{
-				velX -= C.START_PLAYER_SPEED * speedVar;
-				facingLeft = true;
+				
+				case Enemy.WALKING:
+					if (facingLeft)
+						velX -= C.START_PLAYER_SPEED * speedVar;
+						else
+						velX += C.START_ENEMY_SPEED * speedVar;
+					
+					
+					break;
+				case Enemy.IDLE:
+					if (FP.random < .1)
+						state = Enemy.WALKING;
+					break;
+				
 			}
 		}
 		
@@ -397,6 +386,7 @@ package com.lionsteel.LD24.entities
 				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
 			if (legs != LegType.NONE)
 				frontLegAnim.render(FP.buffer, pos.add(legOffset), FP.camera);
+			
 			
 		}
 	}

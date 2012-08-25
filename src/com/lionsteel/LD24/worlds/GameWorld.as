@@ -1,5 +1,6 @@
 package com.lionsteel.LD24.worlds 
 {
+	import com.lionsteel.LD24.entities.Enemy;
 	import com.lionsteel.LD24.entities.Level;
 	import com.lionsteel.LD24.entities.Player;
 	import com.lionsteel.LD24.GFX;
@@ -36,8 +37,13 @@ package com.lionsteel.LD24.worlds
 			player.x = currentLevel.playerStart.x;
 			player.y = currentLevel.playerStart.y;
 			
-			addGraphic(backgroundTwo);
+			var enemy:Enemy = new Enemy();
+			enemy.x = player.x + 10;
+			enemy.y = player.y;
 			
+			
+			addGraphic(backgroundTwo);
+			add(enemy);
 			add(player);
 			add(currentLevel);
 			

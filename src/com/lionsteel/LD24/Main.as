@@ -20,7 +20,7 @@ package com.lionsteel.LD24
 			
 			super(640, 480, 60, true);
 			FP.world = new GameWorld();
-			FP.screen.color = 0x000088;
+			FP.screen.color = 0x0000AA;
 			
 			//Define controls for arrow keys and wasd
 			Input.define("UP", Key.UP, Key.W, Key.SPACE);
