@@ -2,6 +2,7 @@ package com.lionsteel.LD24.entities
 {
 	import com.lionsteel.LD24.BodyTypes.*;
 	import com.lionsteel.LD24.C;
+	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
 	import flash.media.SoundCodec;
@@ -11,6 +12,7 @@ package com.lionsteel.LD24.entities
 	import net.flashpunk.graphics.TiledSpritemap;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;	
+	import org.flashdevelop.utils.TraceLevel;
 	
 	/**
 	 * ...
@@ -24,6 +26,7 @@ package com.lionsteel.LD24.entities
 		public static const FALLING:int = 3;
 		
 		private var state:int = Player.IDLE;
+		private var currentLevel:Level;
 		
 		//Facing direction
 		private var facingLeft:Boolean = false;
@@ -66,6 +69,7 @@ package com.lionsteel.LD24.entities
 		private var pos:Point = new Point();
 		private var _camPos:Point = new Point();
 		
+		private var collisionEntity:Entity;
 		
 		public function Player() 
 		{
@@ -79,11 +83,34 @@ package com.lionsteel.LD24.entities
 		{
 			super.update();
 			handleControls();
-			updateMovement()
+			updateMovement();
+			handleCollision();
 			updateCamera();
 			checkAnims();
 			checkState();
 			
+		}
+		
+		private function handleCollision():void 
+		{
+			collisionEntity = collide("Enemy", x, y);
+			if (collisionEntity != null)
+			{
+				if (this.velY > 0 && x + width * 2 / 3 > collisionEntity.x && x + width * 1 / 3 < collisionEntity.x + collisionEntity.width)
+				{
+					var enemy:Enemy = Enemy(collisionEntity);
+					
+					{
+						enemy.kill();
+						this.velY = jumpForce;
+					}
+				}
+			}
+			collisionEntity = collide("PowerUp", x, y);
+			if (collisionEntity != null)
+			{
+				(collisionEntity as PowerUp).pickup(this);
+			}
 		}
 		
 		private function checkState():void
@@ -94,6 +121,34 @@ package com.lionsteel.LD24.entities
 				else
 				if (Math.abs(velX) <  1)
 					state = IDLE;
+		}
+		public function addLeg(type:int):void
+		{
+			if (legs == LegType.NONE)
+				setLeg(type);
+		}
+		public function addWing(type:int):void
+		{
+			if (wings == WingType.NONE)
+				setWing(type);
+		}
+		
+		public function addArm(type:int):void
+		{
+			if (arms == ArmType.NONE)
+				setArm(type);
+		}
+		
+		public function addTail(type:int):void
+		{
+			if (tail == TailType.NONE)
+				setTail(type);
+		}
+		
+		public function addHorn(type:int):void
+		{
+			if (horn == HornType.NONE)
+				setHorn(type);
 		}
 		
 		private function setBody(type:int):void
@@ -210,23 +265,24 @@ package com.lionsteel.LD24.entities
 						height = WingType.wingHeight(wings);
 				break;
 				case LegType.BASE:
-					frontLegAnim = new Spritemap(GFX.LEG_BASE_FRONT_ANIM, 112, 72);
-					backLegAnim = new Spritemap(GFX.LEG_BASE_BACK_ANIM, 112,72);
-					frontLegAnim.add("idle", [0], .1, true);
-					frontLegAnim.add("walk", [1], .1, true);
-					backLegAnim.add("idle", [0], .1, true);
-					backLegAnim.add("walk", [1], .1, true);
+					frontLegAnim = new Spritemap(GFX.LEG_BASE_FRONT_ANIM, 100, 80);
+					backLegAnim = new Spritemap(GFX.LEG_BASE_BACK_ANIM, 100, 80);
+					frontLegAnim.add("idle", [0,1,2,3], .1, true);
+					frontLegAnim.add("walk", [4,5,6,7], .1, true);
+					backLegAnim.add("idle", [0,1,2,3], .1, true);
+					backLegAnim.add("walk", [4,5,6,7], .1, true);
 					height = LegType.legHeight(LegType.BASE);
 					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE/2);
 					y -= 22;
 				break;
 			case LegType.SPIDER:
-					frontLegAnim = new Spritemap(GFX.LEG_BASE_FRONT_ANIM, 112, 72);
-					backLegAnim = new Spritemap(GFX.LEG_BASE_BACK_ANIM, 112,72);
-					frontLegAnim.add("idle", [0], .1, true);
-					frontLegAnim.add("walk", [1], .1, true);
-					backLegAnim.add("idle", [0], .1, true);
-					backLegAnim.add("walk", [1], .1, true);
+					frontLegAnim = new Spritemap(GFX.LEG_SPIDER_FRONT_ANIM, 100, 80);
+					backLegAnim = new Spritemap(GFX.LEG_SPIDER_BACK_ANIM, 100,80);
+					frontLegAnim.add("idle", [0,1,2,3], 1, true);
+					frontLegAnim.add("walk", [4,5,6,7], 1, true);
+					backLegAnim.add("idle", [0,1,2,3], 1, true);
+					backLegAnim.add("walk", [4, 5, 6, 7], 1, true);
+					frontLegAnim.play("idle");
 					height = LegType.legHeight(LegType.BASE);
 					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
 					speedVar = 1.5;
@@ -250,7 +306,7 @@ package com.lionsteel.LD24.entities
 			if (legs != LegType.NONE)
 			{
 				frontLegAnim.play(bodyAnim.currentAnim);
-				backLegAnim.frame = frontLegAnim.frame;
+				//backLegAnim.frame = frontLegAnim.frame;
 				frontLegAnim.flipped = facingLeft;
 				backLegAnim.flipped = facingLeft;
 				
@@ -339,6 +395,11 @@ package com.lionsteel.LD24.entities
 			velX *= friction;
 		}
 		
+		public function setLevel(level:Level):void
+		{
+			this.currentLevel = level;
+		}
+		
 		private function handleControls():void
 		{
 			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
@@ -353,6 +414,9 @@ package com.lionsteel.LD24.entities
 				jumpsLeft--;
 				grounded = false;
 			}
+			if (Input.released("UP") && velY < 0)
+				velY *= .3;
+			
 			if (Input.check("RIGHT"))
 			{
 				velX += C.START_PLAYER_SPEED * speedVar;
@@ -369,9 +433,15 @@ package com.lionsteel.LD24.entities
 		{
 			
 			var camXTarg:Number = x + width/2 - FP.halfWidth;
-			var camYTarg:Number = y + height/2 - FP.halfHeight*1.2;
+			var camYTarg:Number = y + height / 2 - FP.halfHeight * 1.2;
 			
 			FP.setCamera(FP.lerp(camXTarg, FP.camera.x, .8), FP.lerp(camYTarg, FP.camera.y, .8));
+			if (FP.camera.x < 0)
+				FP.camera.x = 0;
+			if (FP.camera.x + FP.screen.width > currentLevel.mapWidth)
+				FP.camera.x = currentLevel.mapWidth - FP.screen.width;
+			if (FP.camera.y + FP.screen.height > currentLevel.mapHeight)
+				FP.camera.y = currentLevel.mapHeight - FP.screen.height;
 		}
 		
 		override public function render():void 

@@ -25,19 +25,22 @@ package com.lionsteel.LD24.worlds
 		public function GameWorld() 
 		{
 			backgroundOne = new Backdrop(GFX.BACKGROUND_ONE, true, false);
+			backgroundOne.y = -150;
 			backgroundOne.scrollX = .8;
-			backgroundOne.scrollY = .2;
+			backgroundOne.scrollY = .5;
 			backgroundTwo = new Backdrop(GFX.BACKGROUND_TWO, true, false);
+			backgroundTwo.y = -150;
 			backgroundTwo.scrollX = .4;
-			backgroundTwo.scrollY = .1;
+			backgroundTwo.scrollY = .4;
 			
 			currentLevel = new Level(levelXML);
 			player = new Player();
 			
 			player.x = currentLevel.playerStart.x;
 			player.y = currentLevel.playerStart.y;
+			player.setLevel(currentLevel);
 			
-			var enemy:Enemy = new Enemy();
+			var enemy:Enemy = new Enemy(1);
 			enemy.x = player.x + 10;
 			enemy.y = player.y;
 			
@@ -50,6 +53,20 @@ package com.lionsteel.LD24.worlds
 			addGraphic(backgroundOne);
 			
 			
+		}
+		
+		override public function update():void 
+		{
+			super.update();
+			if (Input.pressed(Key.E))
+			{
+				var enemy:Enemy = new Enemy(1);
+				enemy.x = player.x;
+				enemy.y = player.y;
+				add(enemy);
+			}
+			backgroundOne.x -= .1;
+			backgroundTwo.x -= .05;
 		}
 		
 		

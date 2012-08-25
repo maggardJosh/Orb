@@ -1,5 +1,6 @@
 package com.lionsteel.LD24.entities 
 {
+	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
@@ -17,12 +18,14 @@ package com.lionsteel.LD24.entities
 		private var tileMap:Tilemap;
 		private var grid:Grid;
 		
+		public var mapWidth:int;
+		public var mapHeight:int;
+		
 		public var playerStart:Point;
 		
 		public function Level(xml:Class) 
 		{
-			tileMap = new Tilemap(GFX.TILE_SET, 2000, 640, 32, 32);
-			grid = new Grid(2000, 640, 32, 32);
+			
 			loadLevel(xml);
 			
 			type = "level";
@@ -40,6 +43,12 @@ package com.lionsteel.LD24.entities
 			
 			var dataList:XMLList;
 			var dataElement:XML;
+			
+			mapWidth = int(xmlData.@width);
+			mapHeight = int(xmlData.@height);
+			
+			tileMap = new Tilemap(GFX.TILE_SET, mapWidth, mapHeight, C.TILE_SIZE, C.TILE_SIZE);
+			grid = new Grid(mapWidth, mapHeight, C.TILE_SIZE, C.TILE_SIZE);
 			
 			dataList = xmlData.tilemap.tile;
 			for each(dataElement in dataList)
