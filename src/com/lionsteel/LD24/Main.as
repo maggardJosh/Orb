@@ -2,24 +2,20 @@ package com.lionsteel.LD24
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import net.flashpunk.Engine;
+	import net.flashpunk.FP;
 	
 	/**
 	 * ...
 	 * @author Josh Maggard
 	 */
-	public class Main extends Sprite 
+	[SWF(width="640", height="480", frameRate="60",backgroundColor="#FFFFFF")]
+	public class Main extends Engine 
 	{
-		
-		public function Main():void 
+		public function Main()
 		{
-			if (stage) init();
-			else addEventListener(Event.ADDED_TO_STAGE, init);
-		}
-		
-		private function init(e:Event = null):void 
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, init);
-			// entry point
+			
+			super(640, 480, 60, true);
 		}
 		
 	}
