@@ -16,7 +16,7 @@ package com.lionsteel.LD24.worlds
 	 */
 	public class GameWorld extends World 
 	{
-		[Embed (source = "../assets/levelOne.oel", mimeType="application/octet-stream")] private const levelXML:Class;
+		[Embed (source = "../assets/Levels/levelOne.oel", mimeType="application/octet-stream")] private const levelXML:Class;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
 		private var player:Player;
