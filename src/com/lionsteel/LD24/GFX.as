@@ -10,6 +10,7 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/player.png")] public static const PLAYER_ANIM:Class;
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
 		[Embed(source = "assets/backgroundTwo.png")] public static const BACKGROUND_TWO:Class;
+		[Embed(source = "assets/tileSet.png")] public static const TILE_SET:Class;
 	}
 
 }

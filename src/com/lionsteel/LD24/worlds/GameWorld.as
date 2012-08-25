@@ -1,5 +1,6 @@
 package com.lionsteel.LD24.worlds 
 {
+	import com.lionsteel.LD24.entities.Level;
 	import com.lionsteel.LD24.entities.Player;
 	import com.lionsteel.LD24.GFX;
 	import net.flashpunk.FP;
@@ -7,6 +8,7 @@ package com.lionsteel.LD24.worlds
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	import net.flashpunk.World;
+	import org.flashdevelop.utils.TraceLevel;
 	
 	/**
 	 * World that is our game
@@ -28,6 +30,7 @@ package com.lionsteel.LD24.worlds
 			
 			addGraphic(backgroundTwo);
 			add(new Player());
+			add(new Level());
 			addGraphic(backgroundOne);
 			
 			
