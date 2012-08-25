@@ -23,7 +23,7 @@ package com.lionsteel.LD24
 			FP.screen.color = 0x000088;
 			
 			//Define controls for arrow keys and wasd
-			Input.define("UP", Key.UP, Key.W);
+			Input.define("UP", Key.UP, Key.W, Key.SPACE);
 			Input.define("DOWN", Key.DOWN, Key.S);
 			Input.define("LEFT", Key.LEFT, Key.A);
 			Input.define("RIGHT", Key.RIGHT, Key.D);
