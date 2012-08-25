@@ -28,8 +28,8 @@ package com.lionsteel.LD24.entities.PowerUps
 			type = "PowerUp";
 			switch(typeOfWing)
 			{
-				case WingType.BASE:
-					anim = new Spritemap(GFX.BASE_WING_PICKUP, 20, 20);
+				case WingType.BAT:
+					anim = new Spritemap(GFX.BAT_WING_PICKUP, 20, 20);
 					anim.add("idle", [0], .1, true);
 					break;
 			}

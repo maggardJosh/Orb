@@ -104,7 +104,7 @@ package com.lionsteel.LD24.entities
 						setTail(TailType.BASE);
 						break;
 					case EvolutionTypes.WING_EVOLUTION:
-						setWing(WingType.BASE);
+						setWing(WingType.BAT);
 						break;
 				}
 			}
@@ -180,13 +180,15 @@ package com.lionsteel.LD24.entities
 					if (legs == LegType.NONE)
 						height = 32;
 					break;
-				case WingType.BASE:
-					frontWingAnim = new Spritemap(GFX.WING_BASE_FRONT_ANIM, 112, 64);
-					backWingAnim = new Spritemap(GFX.WING_BASE_BACK_ANIM, 112, 64);
-					frontWingAnim.add("idle", [0], .1, true);
-					frontWingAnim.add("walk", [1], .1, true);
-					backWingAnim.add("idle", [0], .1, true);
-					backWingAnim.add("walk", [1], .1, true);
+				case WingType.BAT:
+					frontWingAnim = new Spritemap(GFX.WING_BAT_FRONT_ANIM, 100, 80);
+					backWingAnim = new Spritemap(GFX.WING_BAT_BACK_ANIM, 100, 80);
+					frontWingAnim.add("idle", [0,1,2,3], .1, true);
+					frontWingAnim.add("walk", [4, 5, 6, 7], .1, true);
+					frontWingAnim.add("jump", [8,9,10,11], .1, true);
+					backWingAnim.add("idle", [0,1,2,3], .1, true);
+					backWingAnim.add("walk", [4, 5, 6, 7], .1, true);
+					backWingAnim.add("jump", [8,9,10,11], .1, true);
 					wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
 					floatVar = .7;
 					totalJumps = 3;

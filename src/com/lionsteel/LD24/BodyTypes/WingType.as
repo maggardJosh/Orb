@@ -8,7 +8,7 @@ package com.lionsteel.LD24.BodyTypes
 	public class WingType
 	{
 		public static const NONE:int = -1;
-		public static const BASE:int = 0;
+		public static const BAT:int = 0;
 		
 		//Return the height the player should be off the ground
 		// with the passed type of wing
@@ -16,7 +16,7 @@ package com.lionsteel.LD24.BodyTypes
 		{
 			switch(typeOfWing)
 			{
-				case WingType.BASE:
+				case WingType.BAT:
 					return 40;
 				default:
 					trace("Wing type " + typeOfWing + " not found");

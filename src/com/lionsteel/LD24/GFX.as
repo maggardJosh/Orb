@@ -16,8 +16,8 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/Player/legs/leg_spider_front.png")] public static const LEG_SPIDER_FRONT_ANIM:Class;
 		[Embed(source = "assets/Player/legs/leg_spider_back.png")] public static const LEG_SPIDER_BACK_ANIM:Class;
 		
-		[Embed(source = "assets/Player/wings/wing_base_front.png")] public static const WING_BASE_FRONT_ANIM:Class;
-		[Embed(source = "assets/Player/wings/wing_base_back.png")] public static const WING_BASE_BACK_ANIM:Class;
+		[Embed(source = "assets/Player/wings/wing_bat_front.png")] public static const WING_BAT_FRONT_ANIM:Class;
+		[Embed(source = "assets/Player/wings/wing_bat_back.png")] public static const WING_BAT_BACK_ANIM:Class;
 		
 		[Embed(source = "assets/Player/arms/arm_base_front.png")] public static const ARM_BASE_FRONT_ANIM:Class;
 		[Embed(source = "assets/Player/arms/arm_base_back.png")] public static const ARM_BASE_BACK_ANIM:Class;
@@ -27,7 +27,7 @@ package com.lionsteel.LD24
 		//Pickups
 		[Embed(source = "assets/PowerUps/leg_spider_pickup.png")] public static const SPIDER_LEG_PICKUP:Class;
 		[Embed(source = "assets/PowerUps/leg_base_pickup.png")] public static const BASE_LEG_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/wing_base_pickup.png")] public static const BASE_WING_PICKUP:Class;
+		[Embed(source = "assets/PowerUps/wing_base_pickup.png")] public static const BAT_WING_PICKUP:Class;
 		[Embed(source = "assets/PowerUps/arm_base_pickup.png")] public static const BASE_ARM_PICKUP:Class;
 		[Embed(source = "assets/PowerUps/tail_base_pickup.png")] public static const BASE_TAIL_PICKUP:Class;
 		[Embed(source = "assets/PowerUps/horn_base_pickup.png")] public static const BASE_HORN_PICKUP:Class;

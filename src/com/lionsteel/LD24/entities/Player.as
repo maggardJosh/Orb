@@ -62,7 +62,7 @@ package com.lionsteel.LD24.entities
 		private var horn:int = HornType.NONE;
 		
 		private var velX:Number=0, velY:Number=0;
-		private var friction:Number = .88;
+		private var friction:Number = .8;
 		private var jumpForce:Number = -15;
 		private var grounded:Boolean  = false;
 		
@@ -115,12 +115,26 @@ package com.lionsteel.LD24.entities
 		
 		private function checkState():void
 		{
-			
-			if (grounded && Math.abs(velX ) > 1)
-				state = WALKING;
-				else
-				if (Math.abs(velX) <  1)
-					state = IDLE;
+			switch(state)
+			{
+				case IDLE:
+					if (Math.abs(velX) >= 1)
+						state = WALKING;
+					break;
+				case WALKING:
+					if (Math.abs(velX) < 1)
+						state = IDLE;
+					break;
+				case JUMPING:
+					if (velY > 0)
+						state = FALLING;
+					break;
+				case FALLING:
+					if (grounded)
+						state = IDLE;
+					break;
+				
+			}
 		}
 		public function addLeg(type:int):void
 		{
@@ -160,6 +174,8 @@ package com.lionsteel.LD24.entities
 					bodyAnim = new Spritemap(GFX.BASE_BODY_ANIM,32, 32);
 					bodyAnim.add("idle", [ 0], .1, true);
 					bodyAnim.add("walk", [1], .1, true);
+					bodyAnim.add("jump", [1], .1, true);
+					bodyAnim.add("fall", [1], .1, true);
 					bodyAnim.play("idle");
 					
 					width = 32;
@@ -195,13 +211,17 @@ package com.lionsteel.LD24.entities
 					if (legs == LegType.NONE)
 						height = 32;
 					break;
-				case WingType.BASE:
-					frontWingAnim = new Spritemap(GFX.WING_BASE_FRONT_ANIM, 112, 64);
-					backWingAnim = new Spritemap(GFX.WING_BASE_BACK_ANIM, 112, 64);
-					frontWingAnim.add("idle", [0], .1, true);
-					frontWingAnim.add("walk", [1], .1, true);
-					backWingAnim.add("idle", [0], .1, true);
-					backWingAnim.add("walk", [1], .1, true);
+				case WingType.BAT:
+					frontWingAnim = new Spritemap(GFX.WING_BAT_FRONT_ANIM, 100, 80);
+					backWingAnim = new Spritemap(GFX.WING_BAT_BACK_ANIM, 100, 80);
+					frontWingAnim.add("idle", [0,1,2,3], .1, true);
+					frontWingAnim.add("walk", [4, 5, 6, 7], .01, true);
+					frontWingAnim.add("jump", [8, 9, 10,11], .01, false);
+					frontWingAnim.add("fall", [12,13,14,15], .01, false);
+					backWingAnim.add("idle", [0,1,2,3], .1, true);
+					backWingAnim.add("walk", [4, 5, 6, 7], .1, true);
+					backWingAnim.add("jump", [8, 9, 10, 11], .1, true);
+					backWingAnim.add("fall", [12,13,14,15], .1, false);
 					wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
 					floatVar = .7;
 					totalJumps = 3;
@@ -264,28 +284,17 @@ package com.lionsteel.LD24.entities
 					else
 						height = WingType.wingHeight(wings);
 				break;
-				case LegType.BASE:
-					frontLegAnim = new Spritemap(GFX.LEG_BASE_FRONT_ANIM, 100, 80);
-					backLegAnim = new Spritemap(GFX.LEG_BASE_BACK_ANIM, 100, 80);
-					frontLegAnim.add("idle", [0,1,2,3], .1, true);
-					frontLegAnim.add("walk", [4,5,6,7], .1, true);
-					backLegAnim.add("idle", [0,1,2,3], .1, true);
-					backLegAnim.add("walk", [4,5,6,7], .1, true);
-					height = LegType.legHeight(LegType.BASE);
-					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE/2);
-					y -= 22;
-				break;
 			case LegType.SPIDER:
 					frontLegAnim = new Spritemap(GFX.LEG_SPIDER_FRONT_ANIM, 100, 80);
 					backLegAnim = new Spritemap(GFX.LEG_SPIDER_BACK_ANIM, 100,80);
-					frontLegAnim.add("idle", [0,1,2,3], 1, true);
-					frontLegAnim.add("walk", [4,5,6,7], 1, true);
-					backLegAnim.add("idle", [0,1,2,3], 1, true);
-					backLegAnim.add("walk", [4, 5, 6, 7], 1, true);
+					frontLegAnim.add("idle", [0,1,2,3], .3, true);
+					frontLegAnim.add("walk", [4, 5, 6, 7], .3, true);
+					frontLegAnim.add("jump", [8, 9, 10, 11], .3, true);
+					frontLegAnim.add("fall", [8], .3,true);
 					frontLegAnim.play("idle");
 					height = LegType.legHeight(LegType.BASE);
 					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
-					speedVar = 1.5;
+					speedVar = 1.2;
 					y -= 22;
 				break;
 			default:
@@ -297,16 +306,30 @@ package com.lionsteel.LD24.entities
 		//Checks body type and animation placement
 		private function checkAnims():void
 		{
-			if (state == WALKING)
-				bodyAnim.play("walk");
-			else
-				bodyAnim.play("idle");
+			switch(state)
+			{
+				case JUMPING:
+					bodyAnim.play("jump");
+					break;
+				case FALLING:
+					bodyAnim.play("fall");
+					break;
+				case WALKING:
+					bodyAnim.play("walk");
+					break;
+				case IDLE:
+					bodyAnim.play("idle");
+					break;
+			}
+				
+			bodyAnim.update();
 				
 			bodyAnim.flipped = facingLeft;
 			if (legs != LegType.NONE)
 			{
 				frontLegAnim.play(bodyAnim.currentAnim);
-				//backLegAnim.frame = frontLegAnim.frame;
+				frontLegAnim.update();
+				backLegAnim.frame = frontLegAnim.frame;
 				frontLegAnim.flipped = facingLeft;
 				backLegAnim.flipped = facingLeft;
 				
@@ -314,11 +337,13 @@ package com.lionsteel.LD24.entities
 			if (horn != HornType.NONE)
 			{
 				hornAnim.play(bodyAnim.currentAnim);
+				hornAnim.update();
 				hornAnim.flipped = facingLeft;
 			}
 			if (wings != WingType.NONE)
 			{
 				frontWingAnim.play(bodyAnim.currentAnim);
+				frontWingAnim.update();
 				backWingAnim.frame = frontWingAnim.frame;
 				frontWingAnim.flipped = facingLeft;
 				backWingAnim.flipped = facingLeft;
@@ -326,11 +351,13 @@ package com.lionsteel.LD24.entities
 			if (tail != TailType.NONE)
 			{
 				tailAnim.play(bodyAnim.currentAnim);
+				tailAnim.update();
 				tailAnim.flipped = facingLeft;
 			}
 			if (arms != ArmType.NONE)
 			{
 				frontArmAnim.play(bodyAnim.currentAnim);
+				frontArmAnim.update();
 				backArmAnim.frame = frontArmAnim.frame;
 				frontArmAnim.flipped = facingLeft;
 				backArmAnim.flipped = facingLeft;
@@ -341,9 +368,10 @@ package com.lionsteel.LD24.entities
 		private function updateMovement():void
 		{
 			velY += C.GRAVITY * floatVar;		//Gravity
-			if (!Input.check("DOWN") && velY > maxYVel)		//If pressing down let fall faster
-				velY = maxYVel;												//Else limit y vel
 			
+			if (Input.check("UP") && velY > maxYVel)		//If pressing up 
+				velY = maxYVel;												//Float
+				
 			x += velX;
 			var collideXRoom:Entity = collide("level", Math.ceil(x), y);
 			if (collideXRoom!=null)
@@ -404,7 +432,7 @@ package com.lionsteel.LD24.entities
 		{
 			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
 			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.BASE); else setHorn(HornType.NONE);
-			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BASE); else setWing(WingType.NONE);
+			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BAT); else setWing(WingType.NONE);
 			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.BASE); else setTail(TailType.NONE);
 			if (Input.pressed(Key.DIGIT_5)) if (arms == ArmType.NONE) setArm(ArmType.BASE); else setArm(ArmType.NONE);
 			
@@ -413,6 +441,8 @@ package com.lionsteel.LD24.entities
 				velY = jumpForce;
 				jumpsLeft--;
 				grounded = false;
+				state = JUMPING;
+				bodyAnim.play("jump", true);
 			}
 			if (Input.released("UP") && velY < 0)
 				velY *= .3;
@@ -461,12 +491,14 @@ package com.lionsteel.LD24.entities
 				hornAnim.render(FP.buffer, pos.add(hornOffset), FP.camera);
 			if (tail != TailType.NONE)
 				tailAnim.render(FP.buffer, pos.add(tailOffset), FP.camera);
-			if (wings != WingType.NONE)
-				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
-			if (arms != ArmType.NONE)
-				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
 			if (legs != LegType.NONE)
 				frontLegAnim.render(FP.buffer, pos.add(legOffset), FP.camera);
+			if (arms != ArmType.NONE)
+				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
+			if (wings != WingType.NONE)
+				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
+			
+			
 			
 		}
 	}
