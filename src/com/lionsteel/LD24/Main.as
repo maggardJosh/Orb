@@ -5,6 +5,8 @@ package com.lionsteel.LD24
 	import flash.events.Event;
 	import net.flashpunk.Engine;
 	import net.flashpunk.FP;
+	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
 	
 	/**
 	 * ...
@@ -18,6 +20,13 @@ package com.lionsteel.LD24
 			
 			super(640, 480, 60, true);
 			FP.world = new GameWorld();
+			FP.screen.color = 0x000088;
+			
+			//Define controls for arrow keys and wasd
+			Input.define("UP", Key.UP, Key.W);
+			Input.define("DOWN", Key.DOWN, Key.S);
+			Input.define("LEFT", Key.LEFT, Key.A);
+			Input.define("RIGHT", Key.RIGHT, Key.D);
 		}
 		
 	}
