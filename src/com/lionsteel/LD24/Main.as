@@ -1,5 +1,6 @@
 package com.lionsteel.LD24
 {
+	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import net.flashpunk.Engine;
@@ -16,6 +17,7 @@ package com.lionsteel.LD24
 		{
 			
 			super(640, 480, 60, true);
+			FP.world = new GameWorld();
 		}
 		
 	}
