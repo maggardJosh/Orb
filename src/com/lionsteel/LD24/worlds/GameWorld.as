@@ -16,8 +16,11 @@ package com.lionsteel.LD24.worlds
 	 */
 	public class GameWorld extends World 
 	{
+		[Embed (source = "../assets/levelOne.oel", mimeType="application/octet-stream")] private const levelXML:Class;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
+		private var player:Player;
+		private var currentLevel:Level;
 		public function GameWorld() 
 		{
 			backgroundOne = new Backdrop(GFX.BACKGROUND_ONE, true, false);
@@ -27,10 +30,17 @@ package com.lionsteel.LD24.worlds
 			backgroundTwo.scrollX = .4;
 			backgroundTwo.scrollY = .1;
 			
+			currentLevel = new Level(levelXML);
+			player = new Player();
+			
+			player.x = currentLevel.playerStart.x;
+			player.y = currentLevel.playerStart.y;
 			
 			addGraphic(backgroundTwo);
-			add(new Player());
-			add(new Level());
+			
+			add(player);
+			add(currentLevel);
+			
 			addGraphic(backgroundOne);
 			
 			
