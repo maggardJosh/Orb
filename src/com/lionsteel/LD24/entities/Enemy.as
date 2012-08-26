@@ -24,19 +24,21 @@ package com.lionsteel.LD24.entities
 		private var collideRoom:Entity;
 		private var stateCounter:int;
 		
-		private var damage:Number;
-		
 		private var enemyAI:int;
 		
 		public function Enemy(numEvolutions:int, level:Level) 
 		{
+			
 			killBox = new Entity();
 			pushBox = new Entity();
+			killBox.type = "EnemyKillBox";
+			pushBox.type = "EnemyPushBox";
 			if (FP.random < .5)
 				tintColor = 0xFF8888;
 			else
 				tintColor = 0x888888;
 			super(level);
+			health = numEvolutions +1;
 			type = "Enemy";
 			damage = .3;
 			
@@ -72,10 +74,32 @@ package com.lionsteel.LD24.entities
 		{
 			handleAI();
 			updateMovement();
+			checkPlayerBoxes();
 			super.update();
 			
 		}
 		
+		private function checkPlayerBoxes():void
+		{
+			collisionEntity = collide("playerPushBox", x, y);
+			if (collisionEntity != null)
+			{
+				bounce(collisionEntity);
+				takeDamage(currentLevel.player.damage);
+			}
+			collisionEntity = collide("playerKillBox", x, y);
+			if (collisionEntity != null)
+				takeDamage(currentLevel.player.damage * 2);
+		}
+		
+		private function takeDamage(damageAmount:Number):void
+		{
+			for (var ind:int = 0; ind < 20; ind ++)
+				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
+			health -= damageAmount;
+			if (health <= 0)
+				kill();
+		}
 		
 		//Apply velocity and check collisions
 		private function updateMovement():void

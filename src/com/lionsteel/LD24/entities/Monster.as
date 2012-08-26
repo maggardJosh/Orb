@@ -51,7 +51,8 @@ package com.lionsteel.LD24.entities
 		private var legSpeedVar:Number = 1.0;		//Speed multplied by this	
 		private var wingSpeedVar:Number = 1.0;		//Speed multplied by this	
 		
-		private var armMeleeDistance:Rectangle;
+		public var damage:Number = 1.0;
+		public var health:Number;
 		
 		private var bodyAnim:Spritemap;
 		private var frontArmAnim:Spritemap;
@@ -109,29 +110,17 @@ package com.lionsteel.LD24.entities
 		
 		override public function update():void 
 		{
-			if (killBox.world != null)
-				killBox.world.remove(killBox);
 			super.update();
 			checkAnims();
 			checkState();
 			checkCounters();
-			checkBoxes();
 		}
 		
-		private function checkBoxes():void
-		{
-			collisionEntity = collide("pushBox", x, y);
-			if (collisionEntity != null && collisionEntity != pushBox)
-				bounce(collisionEntity);
-			collisionEntity = collide("killBox", x, y);
-			if (collisionEntity != null && collisionEntity != killBox)
-				kill();
-		}
 		
 		public function kill():void
 		{
-			for (var ind:int = 0; ind < 20; ind++)	
-			currentLevel.particleEmitter.emit("death", x, y);
+			for (var ind:int = 0; ind < 40; ind++)	
+			currentLevel.particleEmitter.emit("death", x+FP.random*20-10, y+FP.random*20-10);
 			
 			if (this.legs != LegType.NONE)
 				this.world.add(new LegEvolution(this.legs, new Point(this.x+halfWidth, this.y+halfHeight)));
@@ -160,7 +149,7 @@ package com.lionsteel.LD24.entities
 			{
 				facingLeft = false;
 				velX = -20;
-				velY = jumpForce;
+				velY = jumpForce*.8;
 			}
 			damageCount = C.INVULNERABLE_COUNT;
 		}
@@ -380,7 +369,6 @@ package com.lionsteel.LD24.entities
 					frontArmAnim.add("range", [20], .1, true);
 					frontArmAnim.add("crouch", [24], .1, true);
 					frontArmAnim.add("birth", [28], .1, true);
-					armMeleeDistance = new Rectangle(0, 0, 40, 40);
 					armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
 					break;
 			}
@@ -405,10 +393,14 @@ package com.lionsteel.LD24.entities
 			case LegType.SPIDER:
 					frontLegAnim = new Spritemap(GFX.LEG_SPIDER_FRONT_ANIM, 100, 80);
 					backLegAnim = new Spritemap(GFX.LEG_SPIDER_BACK_ANIM, 100,80);
-					frontLegAnim.add("idle", [0,1,2,3], .3, true);
+					frontLegAnim.add("idle", [0], .3, true);
 					frontLegAnim.add("walk", [4, 5, 6, 7], .25, true);
-					frontLegAnim.add("jump", [8, 9, 10, 11], .3, true);
-					frontLegAnim.add("fall", [8], .3,true);
+					frontLegAnim.add("jump", [8], .3, true);
+					frontLegAnim.add("fall", [12], .3, true);
+					frontLegAnim.add("attack", [16], .3, true);
+					frontLegAnim.add("range", [16], .3, true);
+					frontLegAnim.add("crouch", [16], .3, true);
+					frontLegAnim.add("birth", [16], .3, true);
 					frontLegAnim.play("idle");
 					height = LegType.legHeight(LegType.BASE);
 					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
@@ -459,6 +451,9 @@ package com.lionsteel.LD24.entities
 		//Checks body type and animation placement
 		private function checkAnims():void
 		{
+			
+			if (killBox.world != null)
+				killBox.world.remove(killBox);
 			switch(state)
 			{
 				case ATTACK:
@@ -522,13 +517,24 @@ package com.lionsteel.LD24.entities
 				if (tailAnim.currentAnim == "melee")
 				{
 					velX *= 1.5
-					
+					this.world.add(pushBox);
+					pushBox.y = y;
+					if (facingLeft)
+						pushBox.x = x - width;
+					else
+						pushBox.x = x + width;
 					if (tailAnim.complete)
 					{
+						this.world.remove(pushBox);
+						this.world.add(killBox);
+						velX = 0;
+						if (facingLeft)
+							killBox.x = x - width;
+						else
+							killBox.x = x + width;
+						killBox.y = y;
 						hasControl = true;
-						velX *= .1;
 						tailAnim.play("idle");
-						//checkArmAttack();
 					}
 				}
 				else

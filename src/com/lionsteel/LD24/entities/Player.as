@@ -24,7 +24,6 @@ package com.lionsteel.LD24.entities
 	 */
 	public class Player extends Monster 
 	{
-		private var health:Number;
 		private var maxHealth:int;
 		private var defense:int;
 		
@@ -38,17 +37,19 @@ package com.lionsteel.LD24.entities
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
 			tintColor = 0xFFFFFF;
-			health = 2.7;
-			maxHealth = 3;
 			pushBox = new Entity();
 			killBox = new Entity();
 			pushBox.width = C.TILE_SIZE;
 			pushBox.height = C.TILE_SIZE;
-			pushBox.type = "pushBox";
-			killBox.width = C.TILE_SIZE;
-			killBox.height = C.TILE_SIZE;
-			killBox.type = "killBox";
+			pushBox.type = "playerPushBox";
+			killBox.width = C.TILE_SIZE*1.5;
+			killBox.height = C.TILE_SIZE*1.5;
+			killBox.type = "playerKillBox";
 			super(currentLevel);
+			
+			health = 3.0;
+			maxHealth = 3;
+			damage = 1.0;
 		}
 		
 		override public function update():void 
@@ -74,7 +75,7 @@ package com.lionsteel.LD24.entities
 						if (damageCount <= 0)
 						{
 							bounce(enemy);
-							this.health -= enemy.getDamage();
+							takeDamage(enemy.getDamage());
 						}
 					}
 				}
@@ -91,11 +92,30 @@ package com.lionsteel.LD24.entities
 			{
 				handleEnemyCollision(Enemy(collisionEntity));
 			}
-			collisionEntity = collide("PowerUp", x, y);
+			collisionEntity = collide("enemyPushBox", x, y);
 			if (collisionEntity != null)
 			{
-				(collisionEntity as PowerUp).pickup(this);
+				bounce(collisionEntity);
+				takeDamage(.4);
 			}
+			if (Input.check("ATTACK"))
+			{
+				collisionEntity = collide("PowerUp", x, y);
+				if (collisionEntity != null)
+				{
+					(collisionEntity as PowerUp).pickup(this);
+				}
+			}
+		}
+		
+		
+		private function takeDamage(damageAmount:Number):void
+		{
+			for (var ind:int = 0; ind < 20; ind ++)
+				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
+			health -= damageAmount;
+			if (health <= 0)
+				kill();
 		}
 		
 		public function setLevel(level:Level):void

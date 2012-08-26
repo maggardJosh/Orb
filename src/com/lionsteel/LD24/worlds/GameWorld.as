@@ -47,6 +47,7 @@ package com.lionsteel.LD24.worlds
 			
 			player.x = currentLevel.playerStart.x;
 			player.y = currentLevel.playerStart.y;
+			currentLevel.player = player;
 			
 			var enemy:Enemy = new Enemy(1,currentLevel);
 			enemy.x = player.x + 10;

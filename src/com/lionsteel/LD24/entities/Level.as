@@ -26,6 +26,8 @@ package com.lionsteel.LD24.entities
 		public var playerStart:Point;
 		public var particleEmitter:Emitter;
 		
+		public var player:Player;
+		
 		public function Level(xml:Class, emitter:Emitter) 
 		{
 			this.particleEmitter = emitter;
