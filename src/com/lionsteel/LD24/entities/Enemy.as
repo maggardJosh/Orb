@@ -44,7 +44,6 @@ package com.lionsteel.LD24.entities
 			
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{
-				
 				var upgrade:int = FP.rand(EvolutionTypes.NUM_EVOLUTIONS);
 				switch(upgrade)
 				{
@@ -159,7 +158,10 @@ package com.lionsteel.LD24.entities
 					
 					
 			}
-			velX *= friction;
+			if (damageCount > 0 && !grounded)
+				velX *= .99;
+			else
+				velX *= friction;
 		}
 		
 		private function handleAI():void

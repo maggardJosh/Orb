@@ -16,12 +16,14 @@ package com.lionsteel.LD24.BodyTypes
 		public static var KILL_IMAGES:Array = new Array();
 		public static var KILL_COLOR_IMAGES:Array = new Array();
 		
+		public static var IMAGE:Array = new Array();
 		public static function init():void
 		{
 			KILL_IMAGES[BAT] = new Image(GFX.WING_BAT_COUNT);
 			KILL_IMAGES[BAT].alpha = .2;
 			KILL_COUNT[BAT] = 3;
 			KILL_COLOR_IMAGES[BAT] = GFX.WING_BAT_COUNT_COLOR;
+			IMAGE[BAT] = new Image(GFX.WING_BAT_COUNT_COLOR);
 		}
 		
 		//Return the height the player should be off the ground

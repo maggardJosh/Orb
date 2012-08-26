@@ -15,12 +15,14 @@ package com.lionsteel.LD24.BodyTypes
 		public static var KILL_IMAGES:Array = new Array();
 		public static var KILL_COLOR_IMAGES:Array = new Array();
 		
+		public static var IMAGE:Array = new Array();
 		public static function init():void
 		{
 			KILL_IMAGES[BASE] = new Image(GFX.ARM_BASE_COUNT);
 			KILL_IMAGES[BASE].alpha = .4;
 			KILL_COUNT[BASE] = 8;
 			KILL_COLOR_IMAGES[BASE] = GFX.ARM_BASE_COUNT_COLOR;
+			IMAGE[BASE] = new Image(GFX.ARM_BASE_COUNT_COLOR);
 		}
 	}
 

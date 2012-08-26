@@ -16,12 +16,15 @@ package com.lionsteel.LD24.BodyTypes
 		public static var KILL_IMAGES:Array = new Array();
 		public static var KILL_COLOR_IMAGES:Array = new Array();
 		
+		public static var IMAGE:Array = new Array();
 		public static function init():void
 		{
 			KILL_IMAGES[SPIKE] = new Image(GFX.HORN_SPIKE_COUNT);
 			KILL_IMAGES[SPIKE].alpha = .2;
 			KILL_COUNT[SPIKE] = 3;
 			KILL_COLOR_IMAGES[SPIKE] = GFX.HORN_SPIKE_COUNT_COLOR;
+			
+			IMAGE[SPIKE] = new Image(GFX.HORN_SPIKE_COUNT_COLOR);
 		}
 	}
 }

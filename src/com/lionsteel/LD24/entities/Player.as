@@ -2,8 +2,15 @@ package com.lionsteel.LD24.entities
 {
 	import com.lionsteel.LD24.BodyTypes.*;
 	import com.lionsteel.LD24.C;
+	import com.lionsteel.LD24.dropIndicator;
+	import com.lionsteel.LD24.entities.PowerUps.ArmEvolution;
+	import com.lionsteel.LD24.entities.PowerUps.HornEvolution;
+	import com.lionsteel.LD24.entities.PowerUps.LegEvolution;
 	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
+	import com.lionsteel.LD24.entities.PowerUps.TailEvolution;
+	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
+	import com.lionsteel.LD24.killIndicator;
 	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -50,16 +57,35 @@ package com.lionsteel.LD24.entities
 		private var wingKillColorImage:Image;
 		private var tailKillColorImage:Image;
 		
+		private var traitHolderImage:Image;
+		private var traitLockImage:Image;
+		
 		private var emptyKillCount:Image;
+		
+		private var tempPowerUp:PowerUp;
+		private var locked:Array = new Array;
+		
+		
 		
 		public function Player(level:Level) 
 		{
+			locked[EvolutionTypes.ARM_EVOLUTION] = true;
+			locked[EvolutionTypes.HORN_EVOLUTION] = false;
+			locked[EvolutionTypes.LEG_EVOLUTION] = false;
+			locked[EvolutionTypes.TAIL_EVOLUTION] = true;
+			locked[EvolutionTypes.WING_EVOLUTION] = false;
+			
+			
 			this.currentLevel = level;
 			
 			emptyKillCount = new Image(GFX.TRAIT_BOX);
-			
+			traitLockImage = new Image(GFX.TRAIT_LOCKED);
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
+			traitHolderImage = new Image(GFX.TRAIT_HOLDER);
+			
+			traitHolderImage.alpha = .7;
+			
 			tintColor = 0xFFFFFF;
 			pushBox = new Entity();
 			killBox = new Entity();
@@ -83,6 +109,44 @@ package com.lionsteel.LD24.entities
 			updateMovement();
 			handleCollision();
 			updateCamera();
+			
+			if (world == null)
+				return;
+			checkKillCounts();
+		}
+		
+		private function checkKillCounts():void
+		{
+			if (legKillCount > 0 && legKillCount >= LegType.KILL_COUNT[legKillType])
+			{
+				world.add(new dropIndicator(LegType.KILL_COLOR_IMAGES[legKillType], new Point(C.KILL_COUNT_START_X ).add(FP.camera), new Point(x, y)))
+				legKillCount = 0;
+				world.add(new LegEvolution(legKillType, new Point(x, y)));
+			}
+			if (armKillCount > 0 && armKillCount >= ArmType.KILL_COUNT[armKillType])
+			{
+				world.add(new dropIndicator(ArmType.KILL_COLOR_IMAGES[armKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING).add(FP.camera), new Point(x, y)))
+				armKillCount = 0;
+				world.add(new ArmEvolution(armKillType, new Point(x, y)));
+			}
+			if (hornKillCount > 0 && hornKillCount >= HornType.KILL_COUNT[armKillType])
+			{
+				world.add(new dropIndicator(HornType.KILL_COLOR_IMAGES[hornKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 2).add(FP.camera), new Point(x, y)))
+				hornKillCount = 0;
+				world.add(new HornEvolution(hornKillType, new Point(x, y)));
+			}
+			if (tailKillCount > 0 && tailKillCount >= TailType.KILL_COUNT[tailKillType])
+			{
+				world.add(new dropIndicator(TailType.KILL_COLOR_IMAGES[tailKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 3).add(FP.camera), new Point(x, y)))
+				tailKillCount = 0;
+				world.add(new TailEvolution(tailKillType, new Point(x, y)));
+			}
+			if (wingKillCount > 0 && wingKillCount >= WingType.KILL_COUNT[wingKillType])
+			{
+				world.add(new dropIndicator(WingType.KILL_COLOR_IMAGES[wingKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 4).add(FP.camera), new Point(x, y)))
+				wingKillCount = 0;
+				world.add(new WingEvolution(wingKillType, new Point(x, y)));
+			}
 		}
 		
 		private function handleEnemyCollision(enemy:Enemy):void
@@ -183,7 +247,7 @@ package com.lionsteel.LD24.entities
 			else
 				resetHornKillCount(hornType);
 				
-				refreshHornKillColor();
+			refreshHornKillColor();
 		}
 		
 		public function refreshHornKillColor():void
@@ -264,17 +328,25 @@ package com.lionsteel.LD24.entities
 				bounce(collisionEntity);
 				takeDamage(.4);
 			}
-			if (Input.check("PICKUP"))
+			if (Input.pressed("PICKUP"))
 			{
 				collisionEntity = collide("PowerUp", x, y);
+				
 				if (collisionEntity != null)
 				{
+					if (tempPowerUp != null)
+					{
+						tempPowerUp.drop(this);
+					}
 					(collisionEntity as PowerUp).pickup(this);
 				}
 			}
 		}
 		
-		
+		public function setTempPowerUp(powerUp:PowerUp):void
+		{
+				tempPowerUp = powerUp;
+		}
 		private function takeDamage(damageAmount:Number):void
 		{
 			for (var ind:int = 0; ind < 20; ind ++)
@@ -436,6 +508,41 @@ package com.lionsteel.LD24.entities
 			{
 				super.render();
 			}
+			traitHolderImage.render(FP.buffer, C.TRAIT_HOLDER_POS, new Point);
+			
+			
+			if (legs != LegType.NONE)
+			{
+				LegType.IMAGE[legs].render(FP.buffer, C.LEG_POWERUP_POS, new Point());
+			}
+			if (arms != ArmType.NONE)
+			{
+				ArmType.IMAGE[arms].render(FP.buffer, C.ARM_POWERUP_POS, new Point());
+			}
+			if (horn != HornType.NONE)
+			{
+				HornType.IMAGE[horn].render(FP.buffer, C.HORN_POWERUP_POS, new Point());
+			}
+			if (tail != TailType.NONE)
+			{
+				TailType.IMAGE[tail].render(FP.buffer, C.TAIL_POWERUP_POS, new Point());
+			}
+			if(wings != WingType.NONE)
+			{
+				WingType.IMAGE[wings].render(FP.buffer, C.WING_POWERUP_POS, new Point());
+			}
+			
+			if (locked[EvolutionTypes.LEG_EVOLUTION])
+				traitLockImage.render(FP.buffer, C.LEG_POWERUP_POS, new Point());
+				if (locked[EvolutionTypes.ARM_EVOLUTION])
+				traitLockImage.render(FP.buffer, C.ARM_POWERUP_POS, new Point());
+				if (locked[EvolutionTypes.TAIL_EVOLUTION])
+				traitLockImage.render(FP.buffer, C.TAIL_POWERUP_POS, new Point());
+				if (locked[EvolutionTypes.WING_EVOLUTION])
+				traitLockImage.render(FP.buffer, C.WING_POWERUP_POS, new Point());
+				if (locked[EvolutionTypes.HORN_EVOLUTION])
+				traitLockImage.render(FP.buffer, C.HORN_POWERUP_POS, new Point());
+			
 			for (var healthInd:Number = 0; healthInd < maxHealth; healthInd++)
 			{
 				if (health >= healthInd + 1)

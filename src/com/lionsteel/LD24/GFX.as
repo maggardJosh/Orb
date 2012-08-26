@@ -28,11 +28,10 @@ package com.lionsteel.LD24
 		
 		//Pickups
 		[Embed(source = "assets/PowerUps/leg_spider_pickup.png")] public static const SPIDER_LEG_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/leg_base_pickup.png")] public static const BASE_LEG_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/wing_base_pickup.png")] public static const BAT_WING_PICKUP:Class;
+		[Embed(source = "assets/PowerUps/wing_bat_pickup.png")] public static const BAT_WING_PICKUP:Class;
 		[Embed(source = "assets/PowerUps/arm_base_pickup.png")] public static const BASE_ARM_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/tail_base_pickup.png")] public static const BASE_TAIL_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/horn_base_pickup.png")] public static const BASE_HORN_PICKUP:Class;
+		[Embed(source = "assets/PowerUps/tail_scorpion_pickup.png")] public static const SCORPION_TAIL_PICKUP:Class;
+		[Embed(source = "assets/PowerUps/horn_spike_pickup.png")] public static const SPIKE_HORN_PICKUP:Class;
 		
 		//Background and tileset
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
@@ -42,6 +41,8 @@ package com.lionsteel.LD24
 		//GUI
 		[Embed(source = "assets/health.png")] public static const HEALTH_CONTAINER:Class;
 		[Embed(source = "assets/healthFull.png")] public static const HEALTH_FILLER:Class;
+		[Embed(source = "assets/Trait_Holder.png")] public static const TRAIT_HOLDER:Class;
+		[Embed(source = "assets/Trait_Holder_Locked.png")] public static const TRAIT_LOCKED:Class;
 		
 		[Embed(source = "assets/KillCount/trait_box.png")] public static const TRAIT_BOX:Class;
 		

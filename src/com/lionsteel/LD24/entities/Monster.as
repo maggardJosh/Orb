@@ -9,6 +9,7 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.TailEvolution;
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
+	import com.lionsteel.LD24.killIndicator;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.SoundCodec;
@@ -128,15 +129,30 @@ package com.lionsteel.LD24.entities
 			
 			
 			if (this.legs != LegType.NONE)
+			{
 				currentLevel.player.addLegKill(legs);
+				world.add(new killIndicator(LegType.KILL_COLOR_IMAGES[legs], new Point(x, y), new Point(C.KILL_COUNT_START_X, 0)));
+			}
 			if (this.wings != WingType.NONE)
+			{
 				currentLevel.player.addWingKill(wings);
+				world.add(new killIndicator(WingType.KILL_COLOR_IMAGES[wings], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*4, 0)));
+			}
 			if (this.arms != ArmType.NONE)
+			{
 				currentLevel.player.addArmKill(arms); 
+				world.add(new killIndicator(ArmType.KILL_COLOR_IMAGES[arms], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING, 0)));
+			}
 			if (this.tail != TailType.NONE)
+			{
 				currentLevel.player.addTailKill(tail);
+				world.add(new killIndicator(TailType.KILL_COLOR_IMAGES[tail], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*3, 0)));
+			}
 			if (this.horn != HornType.NONE)
+			{
 				currentLevel.player.addHornKill(horn);
+				world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[horn], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*2, 0)));
+			}
 			this.world.remove(this);
 		}
 		
@@ -145,14 +161,14 @@ package com.lionsteel.LD24.entities
 		{
 			if (entity.x < x)
 			{
-				facingLeft = true;
+			//	facingLeft = true;
 				velX = 30;
 				velY = jumpForce;
 				
 			} 
 			else
 			{
-				facingLeft = false;
+			//	facingLeft = false;
 				velX = -30;
 				velY = jumpForce*.8;
 			}
@@ -274,7 +290,7 @@ package com.lionsteel.LD24.entities
 			bodyAnim.color = tintColor;
 		}
 		
-		protected function setHorn(type:int):void 
+		public function setHorn(type:int):void 
 		{
 			horn = type;
 			switch(type)
@@ -293,7 +309,7 @@ package com.lionsteel.LD24.entities
 			hornAnim.color = tintColor;
 		}
 		
-		protected function setWing(type:int):void
+		public function setWing(type:int):void
 		{
 			wings = type;
 			switch(type)
@@ -329,7 +345,7 @@ package com.lionsteel.LD24.entities
 			backWingAnim.color = tintColor;
 		}
 		
-		protected function setTail(type:int):void
+		public function setTail(type:int):void
 		{
 			tail = type;
 			switch(type)
@@ -354,7 +370,7 @@ package com.lionsteel.LD24.entities
 			tailAnim.color = tintColor;
 		}
 		
-		protected function setArm(type:int):void
+		public function setArm(type:int):void
 		{
 			arms = type;
 			switch(type)
@@ -382,7 +398,7 @@ package com.lionsteel.LD24.entities
 		}
 
 		
-		protected function setLeg(type:int):void
+		public function setLeg(type:int):void
 		{
 			legs = type;
 			switch(type)

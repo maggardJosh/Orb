@@ -1,7 +1,10 @@
 package com.lionsteel.LD24.entities.PowerUps 
 {
+	import com.lionsteel.LD24.C;
+	import com.lionsteel.LD24.dropIndicator;
 	import com.lionsteel.LD24.entities.Player;
 	import com.lionsteel.LD24.GFX;
+	import com.lionsteel.LD24.killIndicator;
 	import flash.geom.Point;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Spritemap;
@@ -27,23 +30,32 @@ package com.lionsteel.LD24.entities.PowerUps
 			type = "PowerUp";
 			switch(typeOfLeg)
 			{
-				case LegType.BASE:
-					anim = new Spritemap(GFX.BASE_LEG_PICKUP, 20, 20);
-					anim.add("idle", [0], .1, true);
-					break;
 				case LegType.SPIDER:
-					anim = new Spritemap(GFX.SPIDER_LEG_PICKUP, 20, 20);
-					anim.add("idle", [0], .1, true);
+					anim = new Spritemap(GFX.SPIDER_LEG_PICKUP, 32, 32);
+					anim.add("idle", [0,1], .1, true);
+					anim.play("idle");
 					break;
 			}
 			this.graphic = anim;
 		}
 		
+		override public function drop(player:Player):void 
+		{
+			player.setLeg(LegType.NONE);
+			player.world.add(new dropIndicator(LegType.KILL_COLOR_IMAGES[typeOfLeg], C.LEG_POWERUP_POS, new Point(player.x, player.y)));
+			this.x = player.x;
+			this.y = player.y;
+			player.world.add(this);
+		}
+		
 		override public function pickup(player:Player):void 
 		{
 			player.addLeg(typeOfLeg);
+			player.world.add(new killIndicator(LegType.KILL_COLOR_IMAGES[typeOfLeg], new Point(player.x, player.y), C.LEG_POWERUP_POS));
+			player.setTempPowerUp(this);
 			this.world.remove(this);
 		}
+		
 		
 	}
 

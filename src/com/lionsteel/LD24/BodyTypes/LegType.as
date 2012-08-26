@@ -18,12 +18,15 @@ package com.lionsteel.LD24.BodyTypes
 		public static var KILL_IMAGES:Array = new Array();
 		public static var KILL_COLOR_IMAGES:Array = new Array();
 		
+		public static var IMAGE:Array = new Array();
+		
 		public static function init():void
 		{
 			KILL_IMAGES[SPIDER] = new Image(GFX.LEG_SPIDER_COUNT);
 			KILL_IMAGES[SPIDER].alpha = .2;
 			KILL_COUNT[SPIDER] = 3;
 			KILL_COLOR_IMAGES[SPIDER] = GFX.LEG_SPIDER_COUNT_COLOR;
+			IMAGE[SPIDER] = new Image(GFX.LEG_SPIDER_COUNT_COLOR);
 		}
 		
 		//Returns the height the player should be off the ground
