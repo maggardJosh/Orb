@@ -81,18 +81,21 @@ package com.lionsteel.LD24.entities
 		
 		private function checkPlayerBoxes():void
 		{
-			collisionEntity = collide("playerPushBox", x, y);
-			if (collisionEntity != null)
+			if (damageCount <= 0)
 			{
-				bounce(collisionEntity);
-				takeDamage(currentLevel.player.damage);
-			}
-			collisionEntity = collide("playerKillBox", x, y);
-			if (collisionEntity != null)
-				takeDamage(currentLevel.player.damage * 2);
+				collisionEntity = collide("playerPushBox", x, y);
+				if (collisionEntity != null)
+				{
+					bounce(collisionEntity);
+					takeDamage(currentLevel.player.damage);
+				}
+				collisionEntity = collide("playerKillBox", x, y);
+				if (collisionEntity != null)
+					takeDamage(currentLevel.player.damage * 2);
+			} else { damageCount -= 16; }
 		}
 		
-		private function takeDamage(damageAmount:Number):void
+		public function takeDamage(damageAmount:Number):void
 		{
 			for (var ind:int = 0; ind < 20; ind ++)
 				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);

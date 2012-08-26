@@ -49,7 +49,7 @@ package com.lionsteel.LD24.entities
 			
 			health = 3.0;
 			maxHealth = 3;
-			damage = 1.0;
+			damage = 1.0
 		}
 		
 		override public function update():void 
@@ -63,11 +63,15 @@ package com.lionsteel.LD24.entities
 		
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
+			if (enemy.damageCount > 0 )
+				return;
+			//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
 					if (enemy.horn == HornType.NONE)
 					{
-						enemy.kill();
+						enemy.takeDamage(damage * 1.5);
+						enemy.bounce(this);
 						this.velY = jumpForce * .9;
 					}
 					else
@@ -78,6 +82,26 @@ package com.lionsteel.LD24.entities
 							takeDamage(enemy.getDamage());
 						}
 					}
+				}
+				else
+				if (this.y > enemy.y && enemy.velY > 0 && enemy.x + enemy.width * 2 / 3 > x && enemy.x + enemy.width * 1 / 3 < x + width)
+				{
+					if (horn == HornType.NONE && damageCount <= 0)
+					{
+						takeDamage(enemy.getDamage());
+						bounce(enemy);
+					}
+					else
+					{
+						enemy.takeDamage(damage * 1.5);
+						enemy.bounce(this);
+					}
+				}
+				else
+				if ( damageCount <= 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)		//If
+				{
+					takeDamage(enemy.getDamage());
+					bounce(enemy);
 				}
 		}
 		
@@ -227,8 +251,7 @@ package com.lionsteel.LD24.entities
 		
 		override public function render():void 
 		{
-			if (damageCount <= 0 ||
-				damageCount%20 < 10)		//Flash if damaged
+			
 				super.render();
 			for (var healthInd:Number = 0; healthInd < maxHealth; healthInd++)
 			{

@@ -88,13 +88,18 @@ package com.lionsteel.LD24.entities
 			{
 				playerStart = new Point( int(dataElement.@x), int(dataElement.@y));
 			}
-			
-			
 		}
 		
 		override public function update():void 
 		{
 			particleEmitter.update();
+			if (FP.random < .01)
+				{
+					var enemy:Enemy = new Enemy(1, this);
+					enemy.x = playerStart.x;
+					enemy.y = playerStart.y;
+					this.world.add(enemy);
+				}
 			super.update();
 		}
 		override public function render():void 

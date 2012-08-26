@@ -33,7 +33,7 @@ package com.lionsteel.LD24.entities
 		public static const ATTACK:int = 4;
 		
 		protected var state:int = IDLE;
-		protected var damageCount:int = 0;
+		public var damageCount:int = 0;
 		
 		protected var tintColor:uint;
 		
@@ -83,7 +83,7 @@ package com.lionsteel.LD24.entities
 		public var wings:int = WingType.NONE;
 		public var horn:int = HornType.NONE;
 		
-		protected var velX:Number=0, velY:Number=0;
+		public var velX:Number=0, velY:Number=0;
 		protected var friction:Number = .8;
 		protected var jumpForce:Number = -15;
 		protected var grounded:Boolean  = false;
@@ -110,6 +110,8 @@ package com.lionsteel.LD24.entities
 		
 		override public function update():void 
 		{
+			velX = FP.clamp(velX, -C.MAX_VEL_X, C.MAX_VEL_X);
+			velY = FP.clamp(velY, -C.MAX_VEL_Y, C.MAX_VEL_Y);
 			super.update();
 			checkAnims();
 			checkState();
@@ -119,6 +121,8 @@ package com.lionsteel.LD24.entities
 		
 		public function kill():void
 		{
+			if (this.world == null)
+				return;
 			for (var ind:int = 0; ind < 40; ind++)	
 			currentLevel.particleEmitter.emit("death", x+FP.random*20-10, y+FP.random*20-10);
 			
@@ -136,19 +140,19 @@ package com.lionsteel.LD24.entities
 		}
 		
 		
-		protected function bounce(entity:Entity):void
+		public function bounce(entity:Entity):void
 		{
 			if (entity.x < x)
 			{
 				facingLeft = true;
-				velX = 20;
+				velX = 30;
 				velY = jumpForce;
 				
 			} 
 			else
 			{
 				facingLeft = false;
-				velX = -20;
+				velX = -30;
 				velY = jumpForce*.8;
 			}
 			damageCount = C.INVULNERABLE_COUNT;
@@ -517,6 +521,7 @@ package com.lionsteel.LD24.entities
 				if (tailAnim.currentAnim == "melee")
 				{
 					velX *= 1.5
+					//velY = 0;
 					this.world.add(pushBox);
 					pushBox.y = y;
 					if (facingLeft)
@@ -560,6 +565,7 @@ package com.lionsteel.LD24.entities
 				if (frontArmAnim.currentAnim == "melee")
 				{
 					velX *= 1.5
+					velY = -C.GRAVITY;
 					this.world.add(pushBox);
 					pushBox.y = y;
 					if (facingLeft)
@@ -593,10 +599,13 @@ package com.lionsteel.LD24.entities
 		
 		override public function render():void 
 		{
+			
 			super.render();
 			pos.x = x;
 			pos.y = y;
-			
+			if (damageCount <= 0 ||
+				damageCount % 20 < 10)		//Flash if damaged
+				{
 			if (wings != WingType.NONE)
 				backWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
 			if (arms != ArmType.NONE)
@@ -614,7 +623,7 @@ package com.lionsteel.LD24.entities
 				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
 			if (wings != WingType.NONE)
 				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
-			
+				}
 			
 			
 		}
