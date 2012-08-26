@@ -42,6 +42,19 @@ package com.lionsteel.LD24
 		//GUI
 		[Embed(source = "assets/health.png")] public static const HEALTH_CONTAINER:Class;
 		[Embed(source = "assets/healthFull.png")] public static const HEALTH_FILLER:Class;
+		
+		[Embed(source = "assets/KillCount/trait_box.png")] public static const TRAIT_BOX:Class;
+		
+		[Embed(source = "assets/KillCount/arms_base_bw.png")] public static const ARM_BASE_COUNT:Class
+		[Embed(source = "assets/KillCount/arms_base_color.png")] public static const ARM_BASE_COUNT_COLOR:Class
+		[Embed(source = "assets/KillCount/horn_spike_bw.png")] public static const HORN_SPIKE_COUNT:Class
+		[Embed(source = "assets/KillCount/horn_spike_color.png")] public static const HORN_SPIKE_COUNT_COLOR:Class
+		[Embed(source = "assets/KillCount/legs_spider_bw.png")] public static const LEG_SPIDER_COUNT:Class
+		[Embed(source = "assets/KillCount/legs_spider_color.png")] public static const LEG_SPIDER_COUNT_COLOR:Class
+		[Embed(source = "assets/KillCount/tail_scorpion_bw.png")] public static const TAIL_SCORPION_COUNT:Class
+		[Embed(source = "assets/KillCount/tail_scorpion_color.png")] public static const TAIL_SCORPION_COUNT_COLOR:Class
+		[Embed(source = "assets/KillCount/wings_bat_bw.png")] public static const WING_BAT_COUNT:Class
+		[Embed(source = "assets/KillCount/wings_bat_color.png")] public static const WING_BAT_COUNT_COLOR:Class
 	}
 
 }

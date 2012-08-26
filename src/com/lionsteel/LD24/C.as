@@ -21,6 +21,9 @@ package com.lionsteel.LD24
 		
 		public static const ATTACK_COUNT:int = 100;
 		
+		public static const KILL_COUNT_START_X:int = 30 * 6;
+		public static const KILL_X_SPACING:int = 60;
+		
 	}
 
 }

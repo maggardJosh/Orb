@@ -70,13 +70,7 @@ package com.lionsteel.LD24.worlds
 		override public function update():void 
 		{
 			super.update();
-			if (Input.pressed(Key.E))
-			{
-				var enemy:Enemy = new Enemy(1,currentLevel);
-				enemy.x = player.x;
-				enemy.y = player.y;
-				add(enemy);
-			}
+			
 			backgroundOne.x -= .1;
 			backgroundTwo.x -= .05;
 		}

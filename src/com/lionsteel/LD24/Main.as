@@ -1,5 +1,10 @@
 package com.lionsteel.LD24
 {
+	import com.lionsteel.LD24.BodyTypes.ArmType;
+	import com.lionsteel.LD24.BodyTypes.HornType;
+	import com.lionsteel.LD24.BodyTypes.LegType;
+	import com.lionsteel.LD24.BodyTypes.TailType;
+	import com.lionsteel.LD24.BodyTypes.WingType;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -17,6 +22,11 @@ package com.lionsteel.LD24
 	{
 		public function Main()
 		{
+			ArmType.init();
+			TailType.init();
+			LegType.init();
+			HornType.init();
+			WingType.init();
 			
 			super(640, 480, 60, true);
 			FP.world = new GameWorld();
@@ -28,6 +38,7 @@ package com.lionsteel.LD24
 			Input.define("LEFT", Key.LEFT, Key.A);
 			Input.define("RIGHT", Key.RIGHT, Key.D);
 			Input.define("ATTACK", Key.ENTER);
+			Input.define("PICKUP", Key.E);
 		}
 		
 	}

@@ -44,6 +44,7 @@ package com.lionsteel.LD24.entities
 			
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{
+				
 				var upgrade:int = FP.rand(EvolutionTypes.NUM_EVOLUTIONS);
 				switch(upgrade)
 				{
@@ -51,7 +52,7 @@ package com.lionsteel.LD24.entities
 						addArm(ArmType.BASE);
 						break;
 					case EvolutionTypes.HORN_EVOLUTION:
-						addHorn(HornType.BASE);
+						addHorn(HornType.SPIKE);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
 						addLeg(LegType.SPIDER);
@@ -102,6 +103,7 @@ package com.lionsteel.LD24.entities
 			health -= damageAmount;
 			if (health <= 0)
 				kill();
+				
 		}
 		
 		//Apply velocity and check collisions
@@ -167,6 +169,8 @@ package com.lionsteel.LD24.entities
 			{
 				
 				case AI_STATE.WALKING:
+					if (damageCount > 0)
+						return;
 					if (facingLeft)
 						moveLeft(C.START_ENEMY_SPEED);
 					else

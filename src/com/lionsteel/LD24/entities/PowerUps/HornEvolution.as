@@ -29,7 +29,7 @@ package com.lionsteel.LD24.entities.PowerUps
 			type = "PowerUp";
 			switch(typeOfHorn)
 			{
-				case HornType.BASE:
+				case HornType.SPIKE:
 					anim = new Spritemap(GFX.BASE_HORN_PICKUP, 20, 20);
 					anim.add("idle", [0], .1, true);
 					break;

@@ -30,9 +30,33 @@ package com.lionsteel.LD24.entities
 		private var healthContainer:Image;
 		private var healthFiller:Image;
 		
+		private var armKillCount:int = 0;
+		private var legKillCount:int = 0;
+		private var hornKillCount:int = 0;
+		private var wingKillCount:int = 0;
+		private var tailKillCount:int = 0;
+		
+		//Keep track of types of kills
+		private var armKillType:int = -1;
+		private var legKillType: int = -1;
+		private var hornKillType:int = -1;
+		private var wingKillType:int = -1;
+		private var tailKillType:int = -1;
+		
+		//Graphics for the kill counts		
+		private var armKillColorImage:Image;
+		private var legKillColorImage:Image;
+		private var hornKillColorImage:Image;
+		private var wingKillColorImage:Image;
+		private var tailKillColorImage:Image;
+		
+		private var emptyKillCount:Image;
+		
 		public function Player(level:Level) 
 		{
 			this.currentLevel = level;
+			
+			emptyKillCount = new Image(GFX.TRAIT_BOX);
 			
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
@@ -63,8 +87,8 @@ package com.lionsteel.LD24.entities
 		
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
-			if (enemy.damageCount > 0 )
-				return;
+			//if (enemy.damageCount > 0 )
+			//	return;
 			//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
@@ -105,6 +129,124 @@ package com.lionsteel.LD24.entities
 				}
 		}
 		
+		public function addArmKill(armType:int):void
+		{
+			if (armKillType == armType)
+				armKillCount++;
+			else
+				resetArmKillCount(armType);
+				
+				refreshArmKillColor();
+		}
+		
+		public function refreshArmKillColor():void
+		{
+			var ratio:Number = Number(armKillCount)/ Number(ArmType.KILL_COUNT[armKillType]);
+			armKillColorImage = new Image(ArmType.KILL_COLOR_IMAGES[armKillType], new Rectangle(0,ArmType.KILL_IMAGES[armKillType].height*(1-ratio) , ArmType.KILL_IMAGES[armKillType].width, ArmType.KILL_IMAGES[armKillType].height*ratio));
+		}
+		
+		private function resetArmKillCount(armType:int):void
+		{
+			armKillCount = 1;
+			armKillType = armType;
+
+		}
+		
+		
+		public function addWingKill(wingType:int):void
+		{
+			if (wingKillType == wingType)
+				wingKillCount++;
+			else
+				resetWingKillCount(wingType);
+				
+				refreshWingKillColor();
+		}
+		
+		public function refreshWingKillColor():void
+		{
+			var ratio:Number = Number(wingKillCount)/ Number(WingType.KILL_COUNT[wingKillType]);
+			wingKillColorImage = new Image(WingType.KILL_COLOR_IMAGES[wingKillType], new Rectangle(0,WingType.KILL_IMAGES[wingKillType].height*(1-ratio) , WingType.KILL_IMAGES[wingKillType].width, WingType.KILL_IMAGES[wingKillType].height*ratio));
+		}
+		
+		private function resetWingKillCount(wingType:int):void
+		{
+			wingKillCount = 1;
+			wingKillType = wingType;
+
+		}
+		
+		public function addHornKill(hornType:int):void
+		{
+			if (hornKillType == hornType)
+				hornKillCount++;
+			else
+				resetHornKillCount(hornType);
+				
+				refreshHornKillColor();
+		}
+		
+		public function refreshHornKillColor():void
+		{
+			var ratio:Number = Number(hornKillCount)/ Number(HornType.KILL_COUNT[hornKillType]);
+			hornKillColorImage = new Image(HornType.KILL_COLOR_IMAGES[hornKillType], new Rectangle(0,HornType.KILL_IMAGES[hornKillType].height*(1-ratio) , HornType.KILL_IMAGES[hornKillType].width, HornType.KILL_IMAGES[hornKillType].height*ratio));
+		}
+		
+		private function resetHornKillCount(hornType:int):void
+		{
+			hornKillCount = 1;
+			hornKillType = hornType;
+
+		}
+		
+		public function addLegKill(legType:int):void
+		{
+			if (legKillType == legType)
+				legKillCount++;
+			else
+				resetLegKillCount(legType);
+				
+				refreshLegKillColor();
+		}
+		
+		public function refreshLegKillColor():void
+		{
+			var ratio:Number = Number(legKillCount)/ Number(LegType.KILL_COUNT[legKillType]);
+
+			legKillColorImage = new Image(LegType.KILL_COLOR_IMAGES[legKillType], new Rectangle(0,LegType.KILL_IMAGES[legKillType].height*(1-ratio) , LegType.KILL_IMAGES[legKillType].width, LegType.KILL_IMAGES[legKillType].height*ratio));
+		}
+		
+		private function resetLegKillCount(legType:int):void
+		{
+			legKillCount = 1;
+			legKillType = legType;
+
+		}
+		
+		
+		public function addTailKill(tailType:int):void
+		{
+			if (tailKillType == tailType)
+				tailKillCount++;
+			else
+				resetTailKillCount(tailType);
+				
+				refreshTailKillColor();
+		}
+		
+		public function refreshTailKillColor():void
+		{
+			var ratio:Number = Number(tailKillCount)/ Number(TailType.KILL_COUNT[tailKillType]);
+			tailKillColorImage = new Image(TailType.KILL_COLOR_IMAGES[tailKillType], new Rectangle(0,TailType.KILL_IMAGES[tailKillType].height*(1-ratio) , TailType.KILL_IMAGES[tailKillType].width, TailType.KILL_IMAGES[tailKillType].height*ratio));
+		}
+		
+		private function resetTailKillCount(armType:int):void
+		{
+			tailKillCount = 1;
+			tailKillType = armType;
+
+		}
+		
 		private function handleCollision():void 
 		{
 			
@@ -122,7 +264,7 @@ package com.lionsteel.LD24.entities
 				bounce(collisionEntity);
 				takeDamage(.4);
 			}
-			if (Input.check("ATTACK"))
+			if (Input.check("PICKUP"))
 			{
 				collisionEntity = collide("PowerUp", x, y);
 				if (collisionEntity != null)
@@ -150,7 +292,7 @@ package com.lionsteel.LD24.entities
 		private function handleControls():void
 		{
 			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
-			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.BASE); else setHorn(HornType.NONE);
+			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.SPIKE); else setHorn(HornType.NONE);
 			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BAT); else setWing(WingType.NONE);
 			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.SCORPION); else setTail(TailType.NONE);
 			if (Input.pressed(Key.DIGIT_5)) if (arms == ArmType.NONE) setArm(ArmType.BASE); else setArm(ArmType.NONE);
@@ -249,10 +391,51 @@ package com.lionsteel.LD24.entities
 				FP.camera.y = currentLevel.mapHeight - FP.screen.height;
 		}
 		
+		private function drawKillCounts():void
+		{
+			var ratio:Number;
+			for (var ind:int = 0; ind < 5; ind++)
+				emptyKillCount.render(FP.buffer, new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * ind, 0), new Point());
+			if (legKillCount != 0)
+			{
+				ratio = (legKillCount)/ (LegType.KILL_COUNT[legKillType]);
+ 				LegType.KILL_IMAGES[legKillType].render(FP.buffer, new Point(C.KILL_COUNT_START_X, 0), new Point());
+				legKillColorImage.render(FP.buffer, new Point(C.KILL_COUNT_START_X, LegType.KILL_IMAGES[legKillType].height*(1-ratio)), new Point());
+			}
+			if (armKillCount != 0)
+			{
+				ratio = (armKillCount)/ (ArmType.KILL_COUNT[armKillType]);
+				ArmType.KILL_IMAGES[armKillType].render(FP.buffer, new Point(C.KILL_COUNT_START_X+ C.KILL_X_SPACING, 0), new Point());
+				armKillColorImage.render(FP.buffer, new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING, ArmType.KILL_IMAGES[armKillType].height*(1-ratio)), new Point());
+			}
+			if (hornKillCount != 0)
+			{
+				ratio= (hornKillCount)/ (HornType.KILL_COUNT[hornKillType]);
+				HornType.KILL_IMAGES[hornKillType].render(FP.buffer, new Point(C.KILL_COUNT_START_X+ C.KILL_X_SPACING*2, 0), new Point());
+				hornKillColorImage.render(FP.buffer, new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 2, HornType.KILL_IMAGES[hornKillType].height * (1 - ratio)), new Point());
+			}
+			if (tailKillCount != 0)
+			{
+				ratio = (tailKillCount)/ (TailType.KILL_COUNT[tailKillType]);
+				TailType.KILL_IMAGES[tailKillType].render(FP.buffer, new Point(C.KILL_COUNT_START_X+ C.KILL_X_SPACING*3, 0), new Point());
+				tailKillColorImage.render(FP.buffer, new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 3, TailType.KILL_IMAGES[tailKillType].height * (1 - ratio)), new Point());
+			}
+			if (wingKillCount != 0)
+			{
+				 ratio= (wingKillCount)/ (WingType.KILL_COUNT[wingKillType]);
+				WingType.KILL_IMAGES[wingKillType].render(FP.buffer, new Point(C.KILL_COUNT_START_X+ C.KILL_X_SPACING*4, 0), new Point());
+				wingKillColorImage.render(FP.buffer, new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 4, WingType.KILL_IMAGES[wingKillType].height * (1 - ratio)), new Point());
+			}
+			
+		}
+		
 		override public function render():void 
 		{
-			
+			if (damageCount <= 0 ||
+				damageCount % 20 < 10)		//Flash if damaged
+			{
 				super.render();
+			}
 			for (var healthInd:Number = 0; healthInd < maxHealth; healthInd++)
 			{
 				if (health >= healthInd + 1)
@@ -269,6 +452,7 @@ package com.lionsteel.LD24.entities
 				}
 				healthContainer.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
 			}
+			drawKillCounts();
 		}
 		
 	}

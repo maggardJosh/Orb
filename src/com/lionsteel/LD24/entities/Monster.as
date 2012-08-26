@@ -126,16 +126,17 @@ package com.lionsteel.LD24.entities
 			for (var ind:int = 0; ind < 40; ind++)	
 			currentLevel.particleEmitter.emit("death", x+FP.random*20-10, y+FP.random*20-10);
 			
+			
 			if (this.legs != LegType.NONE)
-				this.world.add(new LegEvolution(this.legs, new Point(this.x+halfWidth, this.y+halfHeight)));
+				currentLevel.player.addLegKill(legs);
 			if (this.wings != WingType.NONE)
-				this.world.add(new WingEvolution(this.wings, new Point(this.x+halfWidth, this.y+halfHeight)));
+				currentLevel.player.addWingKill(wings);
 			if (this.arms != ArmType.NONE)
-				this.world.add(new ArmEvolution(this.arms, new Point(this.x + halfWidth, this.y + halfHeight)));
+				currentLevel.player.addArmKill(arms); 
 			if (this.tail != TailType.NONE)
-				this.world.add(new TailEvolution(this.tail, new Point(this.x + halfWidth, this.y + halfHeight)));
+				currentLevel.player.addTailKill(tail);
 			if (this.horn != HornType.NONE)
-				this.world.add(new HornEvolution(this.horn, new Point(this.x + halfWidth, this.y + halfHeight)));
+				currentLevel.player.addHornKill(horn);
 			this.world.remove(this);
 		}
 		
@@ -280,7 +281,7 @@ package com.lionsteel.LD24.entities
 			{
 				case HornType.NONE:
 					break;
-				case HornType.BASE:
+				case HornType.SPIKE:
 					hornAnim = new Spritemap(GFX.HORN_SPIKE_ANIM, 64, 64);
 					hornAnim.add("idle", [0], .1, true);
 					hornAnim.add("walk", [1], .1, true);
@@ -603,9 +604,7 @@ package com.lionsteel.LD24.entities
 			super.render();
 			pos.x = x;
 			pos.y = y;
-			if (damageCount <= 0 ||
-				damageCount % 20 < 10)		//Flash if damaged
-				{
+			
 			if (wings != WingType.NONE)
 				backWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
 			if (arms != ArmType.NONE)
@@ -623,7 +622,7 @@ package com.lionsteel.LD24.entities
 				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
 			if (wings != WingType.NONE)
 				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
-				}
+
 			
 			
 		}
