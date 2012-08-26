@@ -27,6 +27,7 @@ package com.lionsteel.LD24
 			Input.define("DOWN", Key.DOWN, Key.S);
 			Input.define("LEFT", Key.LEFT, Key.A);
 			Input.define("RIGHT", Key.RIGHT, Key.D);
+			Input.define("ATTACK", Key.ENTER);
 		}
 		
 	}

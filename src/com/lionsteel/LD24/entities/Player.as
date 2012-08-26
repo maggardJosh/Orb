@@ -4,10 +4,14 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
 	import com.lionsteel.LD24.GFX;
+	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.media.SoundCodec;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.Graphic;
+	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.graphics.TiledSpritemap;
 	import net.flashpunk.utils.Input;
@@ -20,10 +24,23 @@ package com.lionsteel.LD24.entities
 	 */
 	public class Player extends Monster 
 	{
+		private var health:Number;
+		private var maxHealth:int;
+		private var defense:int;
 		private var currentLevel:Level;
+		
+		private var damageCount:int = 0;		//Used for invulnerability
+		
+		private var healthContainer:Image;
+		private var healthFiller:Image;
+		
 		public function Player() 
 		{
+			healthContainer = new Image(GFX.HEALTH_CONTAINER);
+			healthFiller = new Image(GFX.HEALTH_FILLER);
 			tintColor = 0xFFFFFF;
+			health = 2.7;
+			maxHealth = 3;
 			super();
 		}
 		
@@ -36,20 +53,53 @@ package com.lionsteel.LD24.entities
 			updateCamera();
 		}
 		
+		private function handleEnemyCollision(enemy:Enemy):void
+		{
+			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
+				{
+					if (enemy.horn == HornType.NONE)
+					{
+						enemy.kill();
+						this.velY = jumpForce * .9;
+					}
+					else
+					{
+						if (damageCount <= 0)
+						{
+							bounce(enemy);
+							this.health -= enemy.getDamage();
+						}
+					}
+				}
+		}
+		
+		private function bounce(entity:Entity):void
+		{
+			if (entity.x < x)
+			{
+				facingLeft = true;
+				velX = 20;
+				velY = jumpForce;
+				
+			} 
+			else
+			{
+				facingLeft = false;
+				velX = -20;
+				velY = jumpForce;
+			}
+			damageCount = C.INVULNERABLE_COUNT;
+		}
 		private function handleCollision():void 
 		{
+			
+			if (damageCount > 0)
+				damageCount -= 16;
+			
 			collisionEntity = collide("Enemy", x, y);
 			if (collisionEntity != null)
 			{
-				if (this.velY > 0 && x + width * 2 / 3 > collisionEntity.x && x + width * 1 / 3 < collisionEntity.x + collisionEntity.width)
-				{
-					var enemy:Enemy = Enemy(collisionEntity);
-					
-					{
-						enemy.kill();
-						this.velY = jumpForce;
-					}
-				}
+				handleEnemyCollision(Enemy(collisionEntity));
 			}
 			collisionEntity = collide("PowerUp", x, y);
 			if (collisionEntity != null)
@@ -73,6 +123,9 @@ package com.lionsteel.LD24.entities
 			
 			if (Input.pressed("UP") )
 				tryJump();
+				
+			if (Input.pressed("ATTACK"))
+				tryAttack();
 				
 			if (Input.released("UP") && velY < 0)
 				velY *= .3;
@@ -147,7 +200,7 @@ package com.lionsteel.LD24.entities
 		{
 			
 			var camXTarg:Number = x + width/2 - FP.halfWidth;
-			var camYTarg:Number = y + height / 2 - FP.halfHeight * 1.2;
+			var camYTarg:Number = y + height / 2 - FP.halfHeight * 1.1;
 			
 			FP.setCamera(FP.lerp(camXTarg, FP.camera.x, .8), FP.lerp(camYTarg, FP.camera.y, .8));
 			if (FP.camera.x < 0)
@@ -156,6 +209,29 @@ package com.lionsteel.LD24.entities
 				FP.camera.x = currentLevel.mapWidth - FP.screen.width;
 			if (FP.camera.y + FP.screen.height > currentLevel.mapHeight)
 				FP.camera.y = currentLevel.mapHeight - FP.screen.height;
+		}
+		
+		override public function render():void 
+		{
+			if (damageCount <= 0 ||
+				damageCount%20 < 10)		//Flash if damaged
+				super.render();
+			for (var healthInd:Number = 0; healthInd < maxHealth; healthInd++)
+			{
+				if (health >= healthInd + 1)
+					healthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
+				else if(health>healthInd)
+				{
+					var healthRatio:Number = healthInd + 1 - health;
+					healthRatio = 1 - healthRatio;
+					if (healthRatio > 0.01)
+					{
+						var partialHealthFiller:Image = new Image(GFX.HEALTH_FILLER, new Rectangle(0, 0, Number(healthFiller.width) * healthRatio, healthFiller.height));
+						partialHealthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
+					}
+				}
+				healthContainer.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
+			}
 		}
 		
 	}

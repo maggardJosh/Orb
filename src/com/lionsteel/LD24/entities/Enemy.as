@@ -24,6 +24,8 @@ package com.lionsteel.LD24.entities
 		private var collideRoom:Entity;
 		private var stateCounter:int;
 		
+		private var damage:Number;
+		
 		private var enemyAI:int;
 		
 		public function Enemy(numEvolutions:int) 
@@ -34,6 +36,7 @@ package com.lionsteel.LD24.entities
 				tintColor = 0x888888;
 			super();
 			type = "Enemy";
+			damage = .3;
 			
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{
@@ -59,6 +62,9 @@ package com.lionsteel.LD24.entities
 			}
 			
 		}
+		
+		public function getDamage():Number
+		{ 	return damage; }
 		
 		override public function update():void 
 		{
@@ -87,7 +93,7 @@ package com.lionsteel.LD24.entities
 		private function updateMovement():void
 		{
 			velY += C.GRAVITY * floatVar;		//Gravity
-			if (!Input.check("DOWN") && velY > maxYVel)		//If pressing down let fall faster
+			if (velY > maxYVel)		//If pressing down let fall faster
 				velY = maxYVel;												//Else limit y vel
 			
 			x += velX;
@@ -153,8 +159,12 @@ package com.lionsteel.LD24.entities
 					
 					if ( stateCounter > 2000 && FP.random < .1)
 					{
-						enemyAI = IDLE;
+						enemyAI = AI_STATE.IDLE;
 						stateCounter = 0;
+					}
+					if ( stateCounter > 1000 && FP.random < .01)
+					{
+						enemyAI = AI_STATE.JUMPING;
 					}
 					break;
 				case AI_STATE.IDLE:
@@ -163,6 +173,20 @@ package com.lionsteel.LD24.entities
 						if (FP.random < .3)
 							facingLeft = !facingLeft;
 						enemyAI = AI_STATE.WALKING;
+						stateCounter = 0;
+					}
+					break;
+				case AI_STATE.JUMPING:
+					if (grounded || velY > 0)
+						tryJump();
+					
+					if (facingLeft)
+						moveLeft(C.START_ENEMY_SPEED);
+					else
+						moveRight(C.START_ENEMY_SPEED);
+					if (jumpsLeft <= 0)
+					{
+						enemyAI = AI_STATE.WALKING
 						stateCounter = 0;
 					}
 					break;

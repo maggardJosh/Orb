@@ -9,7 +9,7 @@ package com.lionsteel.LD24
 		
 		//Player
 		[Embed(source = "assets/Player/body/base.png")] public static const BASE_BODY_ANIM:Class;
-		[Embed(source = "assets/Player/horns/horn1.png")] public static const HORN_ONE_ANIM:Class;
+		[Embed(source = "assets/Player/horns/horn_spike.png")] public static const HORN_SPIKE_ANIM:Class;
 		
 		[Embed(source = "assets/Player/legs/leg_spider_front.png")] public static const LEG_BASE_FRONT_ANIM:Class;
 		[Embed(source = "assets/Player/legs/leg_spider_back.png")] public static const LEG_BASE_BACK_ANIM:Class;
@@ -36,6 +36,10 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
 		[Embed(source = "assets/backgroundTwo.png")] public static const BACKGROUND_TWO:Class;
 		[Embed(source = "assets/tileSet.png")] public static const TILE_SET:Class;
+		
+		//GUI
+		[Embed(source = "assets/health.png")] public static const HEALTH_CONTAINER:Class;
+		[Embed(source = "assets/healthFull.png")] public static const HEALTH_FILLER:Class;
 	}
 
 }

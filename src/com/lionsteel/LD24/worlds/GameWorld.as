@@ -45,6 +45,9 @@ package com.lionsteel.LD24.worlds
 			enemy.y = player.y;
 			
 			
+			player.layer = -1
+			
+			
 			addGraphic(backgroundTwo);
 			add(enemy);
 			add(player);
