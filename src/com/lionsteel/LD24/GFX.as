@@ -6,6 +6,8 @@ package com.lionsteel.LD24
 	 */
 	public class GFX 
 	{
+		//Particles
+		[Embed(source = "assets/particle.png")] public static const PARTICLE_ONE:Class;
 		
 		//Player
 		[Embed(source = "assets/Player/body/base.png")] public static const BASE_BODY_ANIM:Class;
@@ -22,7 +24,7 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/Player/arms/arm_base_front.png")] public static const ARM_BASE_FRONT_ANIM:Class;
 		[Embed(source = "assets/Player/arms/arm_base_back.png")] public static const ARM_BASE_BACK_ANIM:Class;
 		
-		[Embed(source = "assets/Player/tails/tailBase.png")] public static const TAIL_BASE_ANIM:Class;
+		[Embed(source = "assets/Player/tails/tail_scorpion.png")] public static const TAIL_SCORPION_ANIM:Class;
 		
 		//Pickups
 		[Embed(source = "assets/PowerUps/leg_spider_pickup.png")] public static const SPIDER_LEG_PICKUP:Class;

@@ -5,6 +5,8 @@ package com.lionsteel.LD24.entities
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import net.flashpunk.Entity;
+	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Emitter;
 	import net.flashpunk.graphics.Tilemap;
 	import net.flashpunk.masks.Grid;
 	
@@ -22,10 +24,11 @@ package com.lionsteel.LD24.entities
 		public var mapHeight:int;
 		
 		public var playerStart:Point;
+		public var particleEmitter:Emitter;
 		
-		public function Level(xml:Class) 
+		public function Level(xml:Class, emitter:Emitter) 
 		{
-			
+			this.particleEmitter = emitter;
 			loadLevel(xml);
 			
 			type = "level";
@@ -87,6 +90,16 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
+		override public function update():void 
+		{
+			particleEmitter.update();
+			super.update();
+		}
+		override public function render():void 
+		{
+			particleEmitter.render(FP.buffer, new Point, FP.camera);
+			super.render();
+		}
 	}
 
 }

@@ -27,21 +27,28 @@ package com.lionsteel.LD24.entities
 		private var health:Number;
 		private var maxHealth:int;
 		private var defense:int;
-		private var currentLevel:Level;
-		
-		private var damageCount:int = 0;		//Used for invulnerability
 		
 		private var healthContainer:Image;
 		private var healthFiller:Image;
 		
-		public function Player() 
+		public function Player(level:Level) 
 		{
+			this.currentLevel = level;
+			
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
 			tintColor = 0xFFFFFF;
 			health = 2.7;
 			maxHealth = 3;
-			super();
+			pushBox = new Entity();
+			killBox = new Entity();
+			pushBox.width = C.TILE_SIZE;
+			pushBox.height = C.TILE_SIZE;
+			pushBox.type = "pushBox";
+			killBox.width = C.TILE_SIZE;
+			killBox.height = C.TILE_SIZE;
+			killBox.type = "killBox";
+			super(currentLevel);
 		}
 		
 		override public function update():void 
@@ -73,23 +80,6 @@ package com.lionsteel.LD24.entities
 				}
 		}
 		
-		private function bounce(entity:Entity):void
-		{
-			if (entity.x < x)
-			{
-				facingLeft = true;
-				velX = 20;
-				velY = jumpForce;
-				
-			} 
-			else
-			{
-				facingLeft = false;
-				velX = -20;
-				velY = jumpForce;
-			}
-			damageCount = C.INVULNERABLE_COUNT;
-		}
 		private function handleCollision():void 
 		{
 			
@@ -118,14 +108,18 @@ package com.lionsteel.LD24.entities
 			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
 			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.BASE); else setHorn(HornType.NONE);
 			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BAT); else setWing(WingType.NONE);
-			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.BASE); else setTail(TailType.NONE);
+			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.SCORPION); else setTail(TailType.NONE);
 			if (Input.pressed(Key.DIGIT_5)) if (arms == ArmType.NONE) setArm(ArmType.BASE); else setArm(ArmType.NONE);
 			
 			if (Input.pressed("UP") )
 				tryJump();
 				
 			if (Input.pressed("ATTACK"))
+			{
 				tryAttack();
+			}
+			
+			pauseAttack = Input.check("ATTACK");
 				
 			if (Input.released("UP") && velY < 0)
 				velY *= .3;

@@ -9,7 +9,7 @@ package com.lionsteel.LD24.BodyTypes
 	public class TailType
 	{
 		public static const NONE:int = -1;
-		public static const BASE:int = 0;
+		public static const SCORPION:int = 0;
 	}
 	
 

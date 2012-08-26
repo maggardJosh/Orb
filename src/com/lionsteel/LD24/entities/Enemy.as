@@ -28,13 +28,15 @@ package com.lionsteel.LD24.entities
 		
 		private var enemyAI:int;
 		
-		public function Enemy(numEvolutions:int) 
+		public function Enemy(numEvolutions:int, level:Level) 
 		{
+			killBox = new Entity();
+			pushBox = new Entity();
 			if (FP.random < .5)
 				tintColor = 0xFF8888;
 			else
 				tintColor = 0x888888;
-			super();
+			super(level);
 			type = "Enemy";
 			damage = .3;
 			
@@ -53,7 +55,7 @@ package com.lionsteel.LD24.entities
 						addLeg(LegType.SPIDER);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
-						addTail(TailType.BASE);
+						addTail(TailType.SCORPION);
 						break;
 					case EvolutionTypes.WING_EVOLUTION:
 						addWing(WingType.BAT);
@@ -74,20 +76,6 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
-		public function kill():void
-		{
-			if (this.legs != LegType.NONE)
-				this.world.add(new LegEvolution(this.legs, new Point(this.x+halfWidth, this.y+halfHeight)));
-			if (this.wings != WingType.NONE)
-				this.world.add(new WingEvolution(this.wings, new Point(this.x+halfWidth, this.y+halfHeight)));
-			if (this.arms != ArmType.NONE)
-				this.world.add(new ArmEvolution(this.arms, new Point(this.x + halfWidth, this.y + halfHeight)));
-			if (this.tail != TailType.NONE)
-				this.world.add(new TailEvolution(this.tail, new Point(this.x + halfWidth, this.y + halfHeight)));
-			if (this.horn != HornType.NONE)
-				this.world.add(new HornEvolution(this.horn, new Point(this.x + halfWidth, this.y + halfHeight)));
-			this.world.remove(this);
-		}
 		
 		//Apply velocity and check collisions
 		private function updateMovement():void

@@ -29,7 +29,7 @@ package com.lionsteel.LD24.entities.PowerUps
 			type = "PowerUp";
 			switch(typeOfTail)
 			{
-				case TailType.BASE:
+				case TailType.SCORPION:
 					anim = new Spritemap(GFX.BASE_TAIL_PICKUP, 20, 20);
 					anim.add("idle", [0], .1, true);
 					break;
