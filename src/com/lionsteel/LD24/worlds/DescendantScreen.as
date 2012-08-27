@@ -4,6 +4,7 @@ package com.lionsteel.LD24.worlds
 	import com.lionsteel.LD24.entities.Monster;
 	import com.lionsteel.LD24.entities.Player;
 	import com.lionsteel.LD24.GFX;
+	import com.lionsteel.LD24.Main;
 	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
 	import net.flashpunk.FP;
@@ -44,6 +45,9 @@ package com.lionsteel.LD24.worlds
 			descendant.eggImage.alpha = 1;
 			descendant.x = FP.halfWidth - 16;
 			descendant.y = 320;
+			
+			Main.DescendantHistory.push(leftParent);
+			Main.DescendantHistory.push(descendant.copy());
 			
 			screen = new Image(GFX.DESCENDANT_SCREEN);
 			

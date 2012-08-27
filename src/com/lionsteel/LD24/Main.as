@@ -21,6 +21,7 @@ package com.lionsteel.LD24
 	[SWF(width="640", height="480", frameRate="60",backgroundColor="#FFFFFF")]
 	public class Main extends Engine 
 	{
+		public static var DescendantHistory:Array = new Array();
 		public function Main()
 		{
 			ArmType.init();
