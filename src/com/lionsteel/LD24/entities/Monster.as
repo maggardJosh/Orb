@@ -73,7 +73,7 @@ package com.lionsteel.LD24.entities
 		
 		protected var pauseAttack:Boolean = false;
 		
-		private var hasControl:Boolean = true;
+		protected var hasControl:Boolean = true;
 		
 		//Start everything out at nothing
 		//(Set bodytype in constructor)
@@ -89,7 +89,7 @@ package com.lionsteel.LD24.entities
 		protected var jumpForce:Number = -15;
 		protected var grounded:Boolean  = false;
 		
-		private var pos:Point = new Point();
+		protected var pos:Point = new Point();
 		private var _camPos:Point = new Point();
 		
 		private var meleeArmCooldown:int = 0;
@@ -103,10 +103,30 @@ package com.lionsteel.LD24.entities
 		public function Monster(level:Level) 
 		{
 			this.currentLevel = level;
-			setBody(BodyType.BASE);
 			
 			height = 32;
+			setBody(BodyType.BASE);
 			
+			
+		}
+		
+		public function copy():Monster
+		{
+			var newMon:Monster = new Monster(currentLevel);
+			newMon.bodyAnim.color = tintColor;
+			newMon.tintColor = tintColor;
+			newMon.addArm(arms);
+			newMon.addLeg(legs);
+			newMon.addHorn(horn);
+			newMon.addTail(tail);
+			newMon.addWing(wings);
+			newMon.tintColor = tintColor;
+			newMon.x = x;
+			newMon.y = y;
+			newMon.killBox = killBox;
+			newMon.pushBox = pushBox;
+			
+			return newMon;
 		}
 		
 		override public function update():void 
@@ -187,6 +207,7 @@ package com.lionsteel.LD24.entities
 		
 		private function checkState():void
 		{
+			
 			switch(state)
 			{
 				case ATTACK:
@@ -217,33 +238,48 @@ package com.lionsteel.LD24.entities
 				
 			}
 		}
-		public function addLeg(type:int):void
+		public function addLeg(type:int):Boolean
 		{
-			if (legs == LegType.NONE)
+			if (legs == LegType.NONE && type!=LegType.NONE)
 				setLeg(type);
+			else
+				return false;
+			return true;
 		}
-		public function addWing(type:int):void
+		public function addWing(type:int):Boolean
 		{
-			if (wings == WingType.NONE)
+			if (wings == WingType.NONE && type != WingType.NONE)
 				setWing(type);
+			else
+				return false;
+			return true;
 		}
 		
-		public function addArm(type:int):void
+		public function addArm(type:int):Boolean
 		{
-			if (arms == ArmType.NONE)
+			if (arms == ArmType.NONE && type != ArmType.NONE)
 				setArm(type);
+			else
+				return false;
+			return true;
 		}
 		
-		public function addTail(type:int):void
+		public function addTail(type:int):Boolean
 		{
-			if (tail == TailType.NONE)
+			if (tail == TailType.NONE && type!=TailType.NONE)
 				setTail(type);
+			else
+				return false;
+			return true;
 		}
 		
-		public function addHorn(type:int):void
+		public function addHorn(type:int):Boolean
 		{
-			if (horn == HornType.NONE)
+			if (horn == HornType.NONE&&type != HornType.NONE)
 				setHorn(type);
+			else
+				return false;
+			return true;
 		}
 		
 		public function tryAttack():void
@@ -272,7 +308,7 @@ package com.lionsteel.LD24.entities
 			body = type;
 			switch(type)
 			{
-				case 0: 		//Base Body
+				case BodyType.BASE: 		//Base Body
 					bodyAnim = new Spritemap(GFX.BASE_BODY_ANIM,32, 32);
 					bodyAnim.add("idle", [ 0], .1, true);
 					bodyAnim.add("walk", [1], .1, true);
@@ -286,6 +322,14 @@ package com.lionsteel.LD24.entities
 					
 					width = 32;
 				break;
+				case BodyType.MATE: 		//Base Body
+					bodyAnim = new Spritemap(GFX.MATE_BODY_ANIM,32, 32);
+					bodyAnim.add("idle", [ 0], .1, true);
+					
+					bodyAnim.play("idle");
+					
+					width = 32;
+					return;
 			}
 			bodyAnim.color = tintColor;
 		}
@@ -296,7 +340,7 @@ package com.lionsteel.LD24.entities
 			switch(type)
 			{
 				case HornType.NONE:
-					break;
+					return;
 				case HornType.SPIKE:
 					hornAnim = new Spritemap(GFX.HORN_SPIKE_ANIM, 64, 64);
 					hornAnim.add("idle", [0], .1, true);
@@ -322,7 +366,7 @@ package com.lionsteel.LD24.entities
 					maxYVel = C.START_MAX_Y_VEL;
 					if (legs == LegType.NONE)
 						height = 32;
-					break;
+					return;
 				case WingType.BAT:
 					frontWingAnim = new Spritemap(GFX.WING_BAT_FRONT_ANIM, 100, 80);
 					backWingAnim = new Spritemap(GFX.WING_BAT_BACK_ANIM, 100, 80);
@@ -351,8 +395,7 @@ package com.lionsteel.LD24.entities
 			switch(type)
 			{
 				case TailType.NONE:
-					
-					break;
+					return;
 				case TailType.SCORPION:
 					tailAnim = new Spritemap(GFX.TAIL_SCORPION_ANIM, 120, 100);
 					tailAnim.add("idle",[0] ,.1, true);
@@ -376,8 +419,7 @@ package com.lionsteel.LD24.entities
 			switch(type)
 			{
 				case ArmType.NONE:
-					
-					break;
+					return;
 				case ArmType.BASE:
 					frontArmAnim = new Spritemap(GFX.ARM_BASE_FRONT_ANIM, 100, 80);
 					backArmAnim = new Spritemap(GFX.ARM_BASE_BACK_ANIM, 100, 80);
@@ -410,7 +452,7 @@ package com.lionsteel.LD24.entities
 						height = WingType.wingHeight(wings);
 					legJumpVar = 1.0;
 					legSpeedVar = 1.0;
-				break;
+				return;
 			case LegType.SPIDER:
 					frontLegAnim = new Spritemap(GFX.LEG_SPIDER_FRONT_ANIM, 100, 80);
 					backLegAnim = new Spritemap(GFX.LEG_SPIDER_BACK_ANIM, 100,80);

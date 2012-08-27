@@ -11,6 +11,9 @@ package com.lionsteel.LD24
 		
 		//Player
 		[Embed(source = "assets/Player/body/base.png")] public static const BASE_BODY_ANIM:Class;
+		[Embed(source = "assets/Player/body/mate_base.png")] public static const MATE_BODY_ANIM:Class;
+		[Embed(source = "assets/Player/body/mate_hair.png")] public static const PONY_TAIL:Class;
+		
 		[Embed(source = "assets/Player/horns/horn_spike.png")] public static const HORN_SPIKE_ANIM:Class;
 		
 		[Embed(source = "assets/Player/legs/leg_spider_front.png")] public static const LEG_BASE_FRONT_ANIM:Class;
@@ -23,6 +26,7 @@ package com.lionsteel.LD24
 		
 		[Embed(source = "assets/Player/arms/arm_base_front.png")] public static const ARM_BASE_FRONT_ANIM:Class;
 		[Embed(source = "assets/Player/arms/arm_base_back.png")] public static const ARM_BASE_BACK_ANIM:Class;
+		
 		
 		[Embed(source = "assets/Player/tails/tail_scorpion.png")] public static const TAIL_SCORPION_ANIM:Class;
 		
@@ -39,10 +43,11 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/tileSet.png")] public static const TILE_SET:Class;
 		
 		//GUI
-		[Embed(source = "assets/health.png")] public static const HEALTH_CONTAINER:Class;
-		[Embed(source = "assets/healthFull.png")] public static const HEALTH_FILLER:Class;
+		[Embed(source = "assets/heart_empty.png")] public static const HEALTH_CONTAINER:Class;
+		[Embed(source = "assets/heart_full.png")] public static const HEALTH_FILLER:Class;
 		[Embed(source = "assets/Trait_Holder.png")] public static const TRAIT_HOLDER:Class;
 		[Embed(source = "assets/Trait_Holder_Locked.png")] public static const TRAIT_LOCKED:Class;
+		[Embed(source = "assets/e_key.png")] public static const E_KEY:Class;
 		
 		[Embed(source = "assets/KillCount/trait_box.png")] public static const TRAIT_BOX:Class;
 		

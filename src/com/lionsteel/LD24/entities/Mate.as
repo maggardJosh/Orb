@@ -12,6 +12,7 @@ package com.lionsteel.LD24.entities
 	import flash.geom.Point;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.utils.Input;
 	
@@ -19,29 +20,34 @@ package com.lionsteel.LD24.entities
 	 * ...
 	 * @author Josh Maggard
 	 */
-	public class Enemy extends Monster 
+	public class Mate extends Monster 
 	{
 		private var collideRoom:Entity;
 		private var stateCounter:int;
 		
 		private var enemyAI:int;
+		private var ponyTail:Image;
+		private var ponyTailOffset:Point;
+		private var hasEvolved:Boolean = false;
+		private var eKeyImage:Image;
 		
-		public function Enemy(numEvolutions:int, level:Level) 
+		private var collidingWithPlayer:Boolean = false;
+		
+		public function Mate(numEvolutions:int, level:Level) 
 		{
+			eKeyImage = new Image(GFX.E_KEY);
+			ponyTail = new Image(GFX.PONY_TAIL);
+			ponyTailOffset = new Point( -100 / 2 + C.TILE_SIZE / 2, -80 / 2 + C.TILE_SIZE / 2);
 			
 			killBox = new Entity();
 			pushBox = new Entity();
-			killBox.type = "EnemyKillBox";
-			pushBox.type = "EnemyPushBox";
-			if (FP.random < .5)
-				tintColor = 0xFF8888;
-			else
-				tintColor = 0x888888;
+			tintColor = 0xFF6666;
 			super(level);
+			setBody(BodyType.MATE);
 			health = numEvolutions +1;
-			type = "Enemy";
-			damage = .3;
-			var hasEvolved:Boolean = false;
+			type = "Mate";
+			
+			
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{
 				hasEvolved = false;
@@ -70,44 +76,20 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
-		public function getDamage():Number
-		{ 	return damage; }
-		
 		override public function update():void 
 		{
-			handleAI();
+			ponyTail.flipped = facingLeft;
+			checkCollisions();
 			updateMovement();
-			checkPlayerBoxes();
 			super.update();
 			
 		}
 		
-		private function checkPlayerBoxes():void
+		private function checkCollisions():void
 		{
-			if (damageCount <= 0)
-			{
-				collisionEntity = collide("playerPushBox", x, y);
-				if (collisionEntity != null)
-				{
-					bounce(collisionEntity);
-					takeDamage(currentLevel.player.damage);
-				}
-				collisionEntity = collide("playerKillBox", x, y);
-				if (collisionEntity != null)
-					takeDamage(currentLevel.player.damage * 2);
-			} else { damageCount -= 16; }
+			collisionEntity = collide("Player", x, y);
+			collidingWithPlayer = (collisionEntity != null);
 		}
-		
-		public function takeDamage(damageAmount:Number):void
-		{
-			for (var ind:int = 0; ind < 20; ind ++)
-				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
-			health -= damageAmount;
-			if (health <= 0)
-				kill();
-				
-		}
-		
 		//Apply velocity and check collisions
 		private function updateMovement():void
 		{
@@ -158,8 +140,6 @@ package com.lionsteel.LD24.entities
 					y = collideRoom.y + Math.floor((y - collideRoom.y ) / C.TILE_SIZE)  * C.TILE_SIZE + C.TILE_SIZE;		//Place at the bottom of the tile they have collided with
 					velY *= .5;
 				}
-					
-					
 			}
 			if (damageCount > 0 && !grounded)
 				velX *= .99;
@@ -167,55 +147,13 @@ package com.lionsteel.LD24.entities
 				velX *= friction;
 		}
 		
-		private function handleAI():void
+		override public function render():void 
 		{
-			stateCounter += 16;
-			switch(enemyAI)
-			{
-				
-				case AI_STATE.WALKING:
-					if (damageCount > 0)
-						return;
-					if (facingLeft)
-						moveLeft(C.START_ENEMY_SPEED);
-					else
-						moveRight(C.START_ENEMY_SPEED);
-					
-					if ( stateCounter > 2000 && FP.random < .1)
-					{
-						enemyAI = AI_STATE.IDLE;
-						stateCounter = 0;
-					}
-					if ( stateCounter > 1000 && FP.random < .01)
-					{
-						enemyAI = AI_STATE.JUMPING;
-					}
-					break;
-				case AI_STATE.IDLE:
-					if ( stateCounter > 1000 && FP.random < .1)
-					{
-						if (FP.random < .3)
-							facingLeft = !facingLeft;
-						enemyAI = AI_STATE.WALKING;
-						stateCounter = 0;
-					}
-					break;
-				case AI_STATE.JUMPING:
-					if (grounded || velY > 0)
-						tryJump();
-					
-					if (facingLeft)
-						moveLeft(C.START_ENEMY_SPEED);
-					else
-						moveRight(C.START_ENEMY_SPEED);
-					if (jumpsLeft <= 0)
-					{
-						enemyAI = AI_STATE.WALKING
-						stateCounter = 0;
-					}
-					break;
-				
-			}
+			super.render();
+			ponyTail.render(FP.buffer, pos.add(ponyTailOffset), FP.camera);
+			
+			if (collidingWithPlayer)
+				eKeyImage.render(FP.buffer, pos.add(new Point(halfWidth - eKeyImage.width / 2, -eKeyImage.height - 10)), FP.camera);
 		}
 		
 	}

@@ -18,10 +18,13 @@ package com.lionsteel.LD24.worlds
 	 */
 	public class GameWorld extends World 
 	{
-		[Embed (source = "../assets/Levels/levelOne.oel", mimeType="application/octet-stream")] private const levelXML:Class;
+		[Embed (source = "../assets/Levels/levelOne.oel", mimeType = "application/octet-stream")] private const levelOneXML:Class;
+		[Embed (source = "../assets/Levels/levelTwo.oel", mimeType = "application/octet-stream")] private const levelTwoXML:Class;
+		private var levels:Array = new Array( levelOneXML, levelTwoXML );
+		private var levelNum:int = -1;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
-		private var player:Player;
+		public var player:Player;
 		private var currentLevel:Level;
 		
 		private var particleEmitter:Emitter;
@@ -41,29 +44,40 @@ package com.lionsteel.LD24.worlds
 			backgroundTwo.y = -150;
 			backgroundTwo.scrollX = .4;
 			backgroundTwo.scrollY = .4;
+			player = new Player(null);
+			player.layer = -1
 			
-			currentLevel = new Level(levelXML,particleEmitter);
-			player = new Player(currentLevel);
+			
+			
+			
+			
+			addGraphic(backgroundTwo);
+			add(player);
+			
+			addGraphic(backgroundOne);
+			
+			nextLevel();
+			
+			
+		}
+		
+		public function nextLevel():void
+		{
+			if (currentLevel != null)
+			{
+				currentLevel.clearLevel();
+				this.remove(currentLevel);
+			}
+			levelNum++;
+			if (levelNum >= levels.length)
+				levelNum = 0;
+			currentLevel = new Level(levels[levelNum], particleEmitter, this, player);
+			
+			player.setLevel(currentLevel);
 			
 			player.x = currentLevel.playerStart.x;
 			player.y = currentLevel.playerStart.y;
 			currentLevel.player = player;
-			
-			var enemy:Enemy = new Enemy(1,currentLevel);
-			enemy.x = player.x + 10;
-			enemy.y = player.y;
-			
-			
-			player.layer = -1
-			
-			
-			addGraphic(backgroundTwo);
-			add(enemy);
-			add(player);
-			add(currentLevel);
-			
-			addGraphic(backgroundOne);
-			
 			
 		}
 		

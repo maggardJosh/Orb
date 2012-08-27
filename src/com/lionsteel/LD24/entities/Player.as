@@ -11,6 +11,7 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.killIndicator;
+	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -36,6 +37,8 @@ package com.lionsteel.LD24.entities
 		
 		private var healthContainer:Image;
 		private var healthFiller:Image;
+		
+		public var evolution:int = 0;
 		
 		private var armKillCount:int = 0;
 		private var legKillCount:int = 0;
@@ -69,14 +72,11 @@ package com.lionsteel.LD24.entities
 		
 		public function Player(level:Level) 
 		{
-			locked[EvolutionTypes.ARM_EVOLUTION] = true;
+			locked[EvolutionTypes.ARM_EVOLUTION] = false;
 			locked[EvolutionTypes.HORN_EVOLUTION] = false;
 			locked[EvolutionTypes.LEG_EVOLUTION] = false;
-			locked[EvolutionTypes.TAIL_EVOLUTION] = true;
+			locked[EvolutionTypes.TAIL_EVOLUTION] = false;
 			locked[EvolutionTypes.WING_EVOLUTION] = false;
-			
-			
-			this.currentLevel = level;
 			
 			emptyKillCount = new Image(GFX.TRAIT_BOX);
 			traitLockImage = new Image(GFX.TRAIT_LOCKED);
@@ -87,6 +87,7 @@ package com.lionsteel.LD24.entities
 			traitHolderImage.alpha = .7;
 			
 			tintColor = 0xFFFFFF;
+			
 			pushBox = new Entity();
 			killBox = new Entity();
 			pushBox.width = C.TILE_SIZE;
@@ -96,7 +97,7 @@ package com.lionsteel.LD24.entities
 			killBox.height = C.TILE_SIZE*1.5;
 			killBox.type = "playerKillBox";
 			super(currentLevel);
-			
+			type = "Player";
 			health = 3.0;
 			maxHealth = 3;
 			damage = 1.0
@@ -328,7 +329,7 @@ package com.lionsteel.LD24.entities
 				bounce(collisionEntity);
 				takeDamage(.4);
 			}
-			if (Input.pressed("PICKUP"))
+			if (Input.pressed("INTERACT"))
 			{
 				collisionEntity = collide("PowerUp", x, y);
 				
@@ -340,8 +341,137 @@ package com.lionsteel.LD24.entities
 					}
 					(collisionEntity as PowerUp).pickup(this);
 				}
+				
+				collisionEntity = collide("Mate", x, y);
+				if (collisionEntity != null)
+				{
+					mate(Mate(collisionEntity));
+				}
 			}
 		}
+		
+		private function mate(mate:Mate):void
+		{
+			
+			var copyOfSelf:Monster = copy();
+			world.add(copyOfSelf);
+			this.setArm(ArmType.NONE);
+			this.setLeg(LegType.NONE);
+			this.setWing(WingType.NONE);
+			this.setTail(TailType.NONE);
+			this.setHorn(HornType.NONE);
+			
+			
+			for (var step:int = 0; step < EvolutionTypes.NUM_EVOLUTIONS; step++)
+				locked[step] = false;
+				
+			this.evolution++;
+			var gotAttrib:Boolean = false;
+			for (var step:int= 0; step < evolution; step++)
+			{
+				
+				gotAttrib = false;
+				if (FP.random < .5)
+				{
+					//Use yours
+					switch(FP.rand(EvolutionTypes.NUM_EVOLUTIONS))
+					{
+						case EvolutionTypes.ARM_EVOLUTION:
+								if (copyOfSelf.arms != ArmType.NONE)
+								{
+									gotAttrib =addArm(copyOfSelf.arms);
+									if (gotAttrib)
+										locked[EvolutionTypes.ARM_EVOLUTION] = true;
+								}
+							break;
+						case EvolutionTypes.HORN_EVOLUTION:
+							if (copyOfSelf.horn != HornType.NONE)
+							{
+								gotAttrib = addHorn(copyOfSelf.horn);
+								if (gotAttrib)
+									locked[EvolutionTypes.HORN_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.LEG_EVOLUTION:
+							if (copyOfSelf.legs != LegType.NONE)
+							{
+								gotAttrib = addLeg(copyOfSelf.legs);
+								if (gotAttrib)
+									locked[EvolutionTypes.LEG_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.TAIL_EVOLUTION:
+							if (copyOfSelf.tail != TailType.NONE)
+							{
+								gotAttrib = addTail(copyOfSelf.tail);
+								if (gotAttrib)
+									locked[EvolutionTypes.TAIL_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.WING_EVOLUTION:
+							if (copyOfSelf.wings != WingType.NONE)
+							{
+								gotAttrib = addWing(copyOfSelf.wings);
+								if (gotAttrib)
+									locked[EvolutionTypes.WING_EVOLUTION] = true;
+							}
+							break;
+					}
+					
+				}
+				else
+				{
+					//Use your mate's
+					switch(FP.rand(EvolutionTypes.NUM_EVOLUTIONS))
+					{
+						case EvolutionTypes.ARM_EVOLUTION:
+								if (mate.arms != ArmType.NONE)
+								{
+									gotAttrib = addArm(mate.arms);
+									if (gotAttrib)
+										locked[EvolutionTypes.ARM_EVOLUTION] = true;
+								}
+							break;
+						case EvolutionTypes.HORN_EVOLUTION:
+							if (mate.horn != HornType.NONE)
+							{
+								gotAttrib = addHorn(mate.horn);
+								if (gotAttrib)
+									locked[EvolutionTypes.HORN_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.LEG_EVOLUTION:
+							if (mate.legs != LegType.NONE)
+							{
+								gotAttrib = addLeg(mate.legs);
+								if (gotAttrib)
+									locked[EvolutionTypes.LEG_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.TAIL_EVOLUTION:
+							if (mate.tail != TailType.NONE)
+							{
+								gotAttrib = addTail(mate.tail);
+								if (gotAttrib)
+									locked[EvolutionTypes.TAIL_EVOLUTION] = true;
+							}
+							break;
+						case EvolutionTypes.WING_EVOLUTION:
+							if (mate.wings != WingType.NONE)
+							{
+								gotAttrib = addWing(mate.wings);
+								if (gotAttrib)
+									locked[EvolutionTypes.WING_EVOLUTION] = true;
+							}
+							break;
+					}
+				}
+				if (!gotAttrib)
+					step--;
+			}
+			GameWorld(this.world).nextLevel();
+		}
+		
 		
 		public function setTempPowerUp(powerUp:PowerUp):void
 		{
