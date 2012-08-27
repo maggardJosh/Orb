@@ -43,17 +43,20 @@ package com.lionsteel.LD24.entities.PowerUps
 		{
 			player.setLeg(LegType.NONE);
 			player.world.add(new dropIndicator(LegType.KILL_COLOR_IMAGES[typeOfLeg], C.LEG_POWERUP_POS, new Point(player.x, player.y)));
-			this.x = player.x;
-			this.y = player.y;
-			player.world.add(this);
+			super.drop(player);
 		}
 		
-		override public function pickup(player:Player):void 
+		override public function pickup(player:Player):Boolean 
 		{
-			player.addLeg(typeOfLeg);
-			player.world.add(new killIndicator(LegType.KILL_COLOR_IMAGES[typeOfLeg], new Point(player.x, player.y), C.LEG_POWERUP_POS));
-			player.setTempPowerUp(this);
-			this.world.remove(this);
+			if (player.addLeg(typeOfLeg))
+			{
+				player.world.add(new killIndicator(LegType.KILL_COLOR_IMAGES[typeOfLeg], new Point(player.x, player.y), C.LEG_POWERUP_POS));
+				player.setTempPowerUp(this);
+				this.world.remove(this);
+				return true;
+			}
+			else
+				return false;
 		}
 		
 		

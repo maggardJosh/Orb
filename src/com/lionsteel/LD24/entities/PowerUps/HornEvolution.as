@@ -45,18 +45,21 @@ package com.lionsteel.LD24.entities.PowerUps
 		{
 			player.setHorn(HornType.NONE);
 			player.world.add(new dropIndicator(HornType.KILL_COLOR_IMAGES[typeOfHorn], C.HORN_POWERUP_POS, new Point(player.x, player.y)));
-			this.x = player.x;
-			this.y = player.y;
-			player.world.add(this);
+			super.drop(player);
 		}
 		
-		override public function pickup(player:Player):void 
+		override public function pickup(player:Player):Boolean 
 		{
-			player.addHorn(typeOfHorn);
-			player.world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[typeOfHorn], new Point(player.x, player.y), C.HORN_POWERUP_POS));
-			player.setTempPowerUp(this);
-			this.world.remove(this);
+			if (player.addHorn(typeOfHorn))
+			{
+				player.world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[typeOfHorn], new Point(player.x, player.y), C.HORN_POWERUP_POS));
+				player.setTempPowerUp(this);
+				this.world.remove(this);
+				return true;
+			}else
+				return false;
 		}
+		
 		
 		
 	}

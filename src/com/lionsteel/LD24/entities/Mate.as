@@ -47,6 +47,8 @@ package com.lionsteel.LD24.entities
 			health = numEvolutions +1;
 			type = "Mate";
 			
+			if (numEvolutions > EvolutionTypes.NUM_EVOLUTIONS)
+				numEvolutions = EvolutionTypes.NUM_EVOLUTIONS;
 			
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{

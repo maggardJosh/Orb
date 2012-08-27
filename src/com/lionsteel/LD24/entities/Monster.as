@@ -98,11 +98,20 @@ package com.lionsteel.LD24.entities
 		private var attackCount:int  = 0;
 		
 		protected var collisionEntity:Entity;
-		protected var currentLevel:Level;
+		public var currentLevel:Level;
+		
+		public var locked:Array = new Array;
 		
 		public function Monster(level:Level) 
 		{
 			this.currentLevel = level;
+			
+			
+			locked[EvolutionTypes.ARM_EVOLUTION] = false;
+			locked[EvolutionTypes.HORN_EVOLUTION] = false;
+			locked[EvolutionTypes.LEG_EVOLUTION] = false;
+			locked[EvolutionTypes.TAIL_EVOLUTION] = false;
+			locked[EvolutionTypes.WING_EVOLUTION] = false;
 			
 			height = 32;
 			setBody(BodyType.BASE);
@@ -142,6 +151,8 @@ package com.lionsteel.LD24.entities
 		
 		public function kill():void
 		{
+			if (this is Player)
+				return;
 			if (this.world == null)
 				return;
 			for (var ind:int = 0; ind < 40; ind++)	
@@ -240,7 +251,7 @@ package com.lionsteel.LD24.entities
 		}
 		public function addLeg(type:int):Boolean
 		{
-			if (legs == LegType.NONE && type!=LegType.NONE)
+			if (legs == LegType.NONE && type!=LegType.NONE && !locked[EvolutionTypes.LEG_EVOLUTION])
 				setLeg(type);
 			else
 				return false;
@@ -248,7 +259,7 @@ package com.lionsteel.LD24.entities
 		}
 		public function addWing(type:int):Boolean
 		{
-			if (wings == WingType.NONE && type != WingType.NONE)
+			if (wings == WingType.NONE && type != WingType.NONE && !locked[EvolutionTypes.WING_EVOLUTION])
 				setWing(type);
 			else
 				return false;
@@ -257,7 +268,7 @@ package com.lionsteel.LD24.entities
 		
 		public function addArm(type:int):Boolean
 		{
-			if (arms == ArmType.NONE && type != ArmType.NONE)
+			if (arms == ArmType.NONE && type != ArmType.NONE && !locked[EvolutionTypes.ARM_EVOLUTION])
 				setArm(type);
 			else
 				return false;
@@ -266,7 +277,7 @@ package com.lionsteel.LD24.entities
 		
 		public function addTail(type:int):Boolean
 		{
-			if (tail == TailType.NONE && type!=TailType.NONE)
+			if (tail == TailType.NONE && type!=TailType.NONE && !locked[EvolutionTypes.TAIL_EVOLUTION])
 				setTail(type);
 			else
 				return false;
@@ -275,7 +286,7 @@ package com.lionsteel.LD24.entities
 		
 		public function addHorn(type:int):Boolean
 		{
-			if (horn == HornType.NONE&&type != HornType.NONE)
+			if (horn == HornType.NONE&&type != HornType.NONE && !locked[EvolutionTypes.HORN_EVOLUTION])
 				setHorn(type);
 			else
 				return false;

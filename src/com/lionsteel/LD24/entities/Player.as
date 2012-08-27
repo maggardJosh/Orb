@@ -21,6 +21,7 @@ package com.lionsteel.LD24.entities
 	import net.flashpunk.Graphic;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
+	import net.flashpunk.graphics.Text;
 	import net.flashpunk.graphics.TiledSpritemap;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;	
@@ -33,6 +34,7 @@ package com.lionsteel.LD24.entities
 	public class Player extends Monster 
 	{
 		private var maxHealth:int;
+		private var lives:int;
 		private var defense:int;
 		
 		private var healthContainer:Image;
@@ -62,27 +64,23 @@ package com.lionsteel.LD24.entities
 		
 		private var traitHolderImage:Image;
 		private var traitLockImage:Image;
+		private var livesImage:Image;
 		
 		private var emptyKillCount:Image;
 		
 		private var tempPowerUp:PowerUp;
-		private var locked:Array = new Array;
 		
 		
 		
 		public function Player(level:Level) 
 		{
-			locked[EvolutionTypes.ARM_EVOLUTION] = false;
-			locked[EvolutionTypes.HORN_EVOLUTION] = false;
-			locked[EvolutionTypes.LEG_EVOLUTION] = false;
-			locked[EvolutionTypes.TAIL_EVOLUTION] = false;
-			locked[EvolutionTypes.WING_EVOLUTION] = false;
-			
+			lives = 3;
 			emptyKillCount = new Image(GFX.TRAIT_BOX);
 			traitLockImage = new Image(GFX.TRAIT_LOCKED);
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
 			traitHolderImage = new Image(GFX.TRAIT_HOLDER);
+			livesImage = new Image(GFX.LIVES_ICON);
 			
 			traitHolderImage.alpha = .7;
 			
@@ -110,10 +108,27 @@ package com.lionsteel.LD24.entities
 			updateMovement();
 			handleCollision();
 			updateCamera();
+			checkLife();
 			
 			if (world == null)
 				return;
 			checkKillCounts();
+		}
+		
+		private function checkLife():void
+		{
+			if (health <= 0)
+			{
+				if (lives > 0)
+				{
+					GameWorld(world).resetLevel();
+					lives--;
+					health = maxHealth;
+				}
+				else {
+					GameWorld(this.world).gameOver();
+				}
+			}
 		}
 		
 		private function checkKillCounts():void
@@ -122,31 +137,31 @@ package com.lionsteel.LD24.entities
 			{
 				world.add(new dropIndicator(LegType.KILL_COLOR_IMAGES[legKillType], new Point(C.KILL_COUNT_START_X ).add(FP.camera), new Point(x, y)))
 				legKillCount = 0;
-				world.add(new LegEvolution(legKillType, new Point(x, y)));
+				currentLevel.add(new LegEvolution(legKillType, new Point(x, y)));
 			}
 			if (armKillCount > 0 && armKillCount >= ArmType.KILL_COUNT[armKillType])
 			{
 				world.add(new dropIndicator(ArmType.KILL_COLOR_IMAGES[armKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING).add(FP.camera), new Point(x, y)))
 				armKillCount = 0;
-				world.add(new ArmEvolution(armKillType, new Point(x, y)));
+				currentLevel.add(new ArmEvolution(armKillType, new Point(x, y)));
 			}
 			if (hornKillCount > 0 && hornKillCount >= HornType.KILL_COUNT[armKillType])
 			{
 				world.add(new dropIndicator(HornType.KILL_COLOR_IMAGES[hornKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 2).add(FP.camera), new Point(x, y)))
 				hornKillCount = 0;
-				world.add(new HornEvolution(hornKillType, new Point(x, y)));
+				currentLevel.add(new HornEvolution(hornKillType, new Point(x, y)));
 			}
 			if (tailKillCount > 0 && tailKillCount >= TailType.KILL_COUNT[tailKillType])
 			{
 				world.add(new dropIndicator(TailType.KILL_COLOR_IMAGES[tailKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 3).add(FP.camera), new Point(x, y)))
 				tailKillCount = 0;
-				world.add(new TailEvolution(tailKillType, new Point(x, y)));
+				currentLevel.add(new TailEvolution(tailKillType, new Point(x, y)));
 			}
 			if (wingKillCount > 0 && wingKillCount >= WingType.KILL_COUNT[wingKillType])
 			{
 				world.add(new dropIndicator(WingType.KILL_COLOR_IMAGES[wingKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 4).add(FP.camera), new Point(x, y)))
 				wingKillCount = 0;
-				world.add(new WingEvolution(wingKillType, new Point(x, y)));
+				currentLevel.add(new WingEvolution(wingKillType, new Point(x, y)));
 			}
 		}
 		
@@ -173,12 +188,15 @@ package com.lionsteel.LD24.entities
 					}
 				}
 				else
-				if (this.y > enemy.y && enemy.velY > 0 && enemy.x + enemy.width * 2 / 3 > x && enemy.x + enemy.width * 1 / 3 < x + width)
+				if (this.y > enemy.y && enemy.velY > 0 && enemy.x + enemy.width * 2 / 3 > x && enemy.x + enemy.width * 1 / 3 < x + width)	//Enemy Falling onto you
 				{
-					if (horn == HornType.NONE && damageCount <= 0)
+					if (horn == HornType.NONE)
 					{
-						takeDamage(enemy.getDamage());
-						bounce(enemy);
+						if (damageCount <= 0)
+						{
+							takeDamage(enemy.getDamage());
+							bounce(enemy);
+						}
 					}
 					else
 					{
@@ -187,7 +205,7 @@ package com.lionsteel.LD24.entities
 					}
 				}
 				else
-				if ( damageCount <= 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)		//If
+				if ( damageCount <= 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)			//Running into enemies
 				{
 					takeDamage(enemy.getDamage());
 					bounce(enemy);
@@ -335,11 +353,13 @@ package com.lionsteel.LD24.entities
 				
 				if (collisionEntity != null)
 				{
-					if (tempPowerUp != null)
-					{
-						tempPowerUp.drop(this);
-					}
-					(collisionEntity as PowerUp).pickup(this);
+					var tempPUVar:PowerUp = tempPowerUp;
+					if((collisionEntity as PowerUp).pickup(this))
+						if (tempPUVar!= null)
+						{
+							tempPUVar.drop(this);
+						}
+					
 				}
 				
 				collisionEntity = collide("Mate", x, y);
@@ -354,20 +374,23 @@ package com.lionsteel.LD24.entities
 		{
 			
 			var copyOfSelf:Monster = copy();
-			world.add(copyOfSelf);
+			currentLevel.add(copyOfSelf);
 			this.setArm(ArmType.NONE);
 			this.setLeg(LegType.NONE);
 			this.setWing(WingType.NONE);
 			this.setTail(TailType.NONE);
 			this.setHorn(HornType.NONE);
 			
+			this.health = maxHealth;
 			
 			for (var step:int = 0; step < EvolutionTypes.NUM_EVOLUTIONS; step++)
 				locked[step] = false;
 				
 			this.evolution++;
+			if (evolution > EvolutionTypes.NUM_EVOLUTIONS)
+				evolution = EvolutionTypes.NUM_EVOLUTIONS;
 			var gotAttrib:Boolean = false;
-			for (var step:int= 0; step < evolution; step++)
+			for (var step:int = 0; step < evolution; step++)
 			{
 				
 				gotAttrib = false;
@@ -689,9 +712,17 @@ package com.lionsteel.LD24.entities
 				}
 				healthContainer.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
 			}
+			drawLives();
 			drawKillCounts();
+			
 		}
 		
+		private function drawLives()
+		{
+			for (var ind:int = 0; ind < lives; ind++)
+			{
+				livesImage.render(FP.buffer, new Point(0 + livesImage.width * ind, healthContainer.height), new Point());
+			}
+		}
 	}
-
 }

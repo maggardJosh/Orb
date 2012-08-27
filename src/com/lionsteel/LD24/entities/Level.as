@@ -45,7 +45,7 @@ package com.lionsteel.LD24.entities
 		
 		public function clearLevel():void
 		{
-			for each(var entity in enemyList)
+			for each(var entity:Entity in enemyList)
 			{
 				if(entity.world != null)
 					entity.world.remove(entity);
@@ -162,6 +162,12 @@ package com.lionsteel.LD24.entities
 				mateVar.y = int(dataElement.@y);
 				world.add(mateVar);
 			}
+		}
+		
+		public function add(entity:Entity):void
+		{
+			world.add(entity);
+			enemyList.push(entity);
 		}
 		
 		override public function update():void 

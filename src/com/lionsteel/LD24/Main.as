@@ -6,6 +6,7 @@ package com.lionsteel.LD24
 	import com.lionsteel.LD24.BodyTypes.TailType;
 	import com.lionsteel.LD24.BodyTypes.WingType;
 	import com.lionsteel.LD24.worlds.GameWorld;
+	import com.lionsteel.LD24.worlds.MainMenu;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import net.flashpunk.Engine;
@@ -29,7 +30,7 @@ package com.lionsteel.LD24
 			WingType.init();
 			
 			super(640, 480, 60, true);
-			FP.world = new GameWorld();
+			FP.world = new MainMenu();
 			FP.screen.color = 0x3333AA;
 			
 			//Define controls for arrow keys and wasd

@@ -48,6 +48,7 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/Trait_Holder.png")] public static const TRAIT_HOLDER:Class;
 		[Embed(source = "assets/Trait_Holder_Locked.png")] public static const TRAIT_LOCKED:Class;
 		[Embed(source = "assets/e_key.png")] public static const E_KEY:Class;
+		[Embed(source = "assets/egg_blue_small.png")] public static const LIVES_ICON:Class;
 		
 		[Embed(source = "assets/KillCount/trait_box.png")] public static const TRAIT_BOX:Class;
 		

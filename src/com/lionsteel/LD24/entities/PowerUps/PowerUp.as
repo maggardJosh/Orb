@@ -25,10 +25,14 @@ package com.lionsteel.LD24.entities.PowerUps
 		}
 		public function drop(player:Player):void
 		{
-
+			this.x = player.x;
+			this.y = player.y;
+			player.currentLevel.add(this);
 		}
-		public function pickup(player:Player):void
+		public function pickup(player:Player):Boolean
 		{
+			
+			return false;
 			
 		}
 		override public function update():void 

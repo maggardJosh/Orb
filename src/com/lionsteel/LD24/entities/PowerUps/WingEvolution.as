@@ -44,17 +44,19 @@ package com.lionsteel.LD24.entities.PowerUps
 		{
 			player.setWing(WingType.NONE);
 			player.world.add(new dropIndicator(WingType.KILL_COLOR_IMAGES[typeOfWing], C.WING_POWERUP_POS, new Point(player.x, player.y)));
-			this.x = player.x;
-			this.y = player.y;
-			player.world.add(this);
+			super.drop(player);
 		}
-		override public function pickup(player:Player):void 
+		override public function pickup(player:Player):Boolean 
 		{
-			player.addWing(typeOfWing);
-			player.world.add(new killIndicator(WingType.KILL_COLOR_IMAGES[typeOfWing], new Point(player.x, player.y),  C.WING_POWERUP_POS));
-			player.setTempPowerUp(this);
-			this.world.remove(this);
-
+			if (player.addWing(typeOfWing))
+			{
+				player.world.add(new killIndicator(WingType.KILL_COLOR_IMAGES[typeOfWing], new Point(player.x, player.y),  C.WING_POWERUP_POS));
+				player.setTempPowerUp(this);
+				this.world.remove(this);
+				return true;
+			}
+			else
+			return false;
 		}
 		
 	}

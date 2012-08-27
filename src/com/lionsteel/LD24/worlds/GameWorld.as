@@ -7,6 +7,7 @@ package com.lionsteel.LD24.worlds
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Backdrop;
 	import net.flashpunk.graphics.Emitter;
+	import net.flashpunk.graphics.Text;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	import net.flashpunk.World;
@@ -50,7 +51,6 @@ package com.lionsteel.LD24.worlds
 			
 			
 			
-			
 			addGraphic(backgroundTwo);
 			add(player);
 			
@@ -59,6 +59,27 @@ package com.lionsteel.LD24.worlds
 			nextLevel();
 			
 			
+		}
+		
+		public function gameOver():void
+		{
+			FP.world = new GameOver();
+		}
+		
+		public function resetLevel():void
+		{
+			if (currentLevel != null)
+			{
+				currentLevel.clearLevel();
+				this.remove(currentLevel);
+			}
+			currentLevel = new Level(levels[levelNum], particleEmitter, this, player);
+			
+			player.setLevel(currentLevel);
+			
+			player.x = currentLevel.playerStart.x;
+			player.y = currentLevel.playerStart.y;
+			currentLevel.player = player;
 		}
 		
 		public function nextLevel():void
