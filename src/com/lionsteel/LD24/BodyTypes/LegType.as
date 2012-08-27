@@ -10,7 +10,7 @@ package com.lionsteel.LD24.BodyTypes
 	public class LegType
 	{
 		public static const NONE:int = -1;
-		public static const BASE:int = 0;
+		public static const JABA:int = 0;
 		public static const SPIDER:int = 1;
 		
 		
@@ -22,11 +22,18 @@ package com.lionsteel.LD24.BodyTypes
 		
 		public static function init():void
 		{
+		
 			KILL_IMAGES[SPIDER] = new Image(GFX.LEG_SPIDER_COUNT);
 			KILL_IMAGES[SPIDER].alpha = .2;
 			KILL_COUNT[SPIDER] = 3;
 			KILL_COLOR_IMAGES[SPIDER] = GFX.LEG_SPIDER_COUNT_COLOR;
 			IMAGE[SPIDER] = new Image(GFX.LEG_SPIDER_COUNT_COLOR);
+			
+			KILL_IMAGES[JABA] = new Image(GFX.LEG_JABA_COUNT);
+			KILL_IMAGES[JABA].alpha = .2;
+			KILL_COUNT[JABA] = 3;
+			KILL_COLOR_IMAGES[JABA] = GFX.LEG_JABA_COUNT_COLOR;
+			IMAGE[JABA] = new Image(GFX.LEG_JABA_COUNT_COLOR);
 		}
 		
 		//Returns the height the player should be off the ground
@@ -35,10 +42,10 @@ package com.lionsteel.LD24.BodyTypes
 		{
 			switch(typeOfLeg)
 			{
-				case LegType.BASE:
-					return 50;
 				case LegType.SPIDER:
 					return 50;
+				case LegType.JABA:
+					return 30;
 				default:
 					trace("Leg type " + typeOfLeg + " not found");
 					return C.TILE_SIZE;

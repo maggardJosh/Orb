@@ -32,10 +32,13 @@ package com.lionsteel.LD24.entities.PowerUps
 			{
 				case LegType.SPIDER:
 					anim = new Spritemap(GFX.SPIDER_LEG_PICKUP, 32, 32);
-					anim.add("idle", [0,1], .1, true);
-					anim.play("idle");
+					break;
+				case LegType.JABA:
+					anim = new Spritemap(GFX.LEG_JABA_PICKUP, 32, 32);
 					break;
 			}
+			anim.add("idle", [0,1], .1, true);
+			anim.play("idle");
 			this.graphic = anim;
 		}
 		

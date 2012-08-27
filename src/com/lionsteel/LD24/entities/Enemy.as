@@ -55,7 +55,10 @@ package com.lionsteel.LD24.entities
 						hasEvolved = addHorn(HornType.SPIKE);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
-						hasEvolved = addLeg(LegType.SPIDER);
+						if(FP.random<.5)
+							hasEvolved = addLeg(LegType.SPIDER);
+						else
+							hasEvolved = addLeg(LegType.JABA);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
 						hasEvolved = addTail(TailType.SCORPION);
@@ -70,8 +73,6 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
-		public function getDamage():Number
-		{ 	return damage; }
 		
 		override public function update():void 
 		{

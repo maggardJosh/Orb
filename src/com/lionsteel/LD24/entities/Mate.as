@@ -31,7 +31,7 @@ package com.lionsteel.LD24.entities
 		private var hasEvolved:Boolean = false;
 		private var eKeyImage:Image;
 		
-		private var collidingWithPlayer:Boolean = false;
+		public var collidingWithPlayer:Boolean = false;
 		
 		public function Mate(numEvolutions:int, level:Level) 
 		{
@@ -63,7 +63,10 @@ package com.lionsteel.LD24.entities
 						hasEvolved = addHorn(HornType.SPIKE);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
-						hasEvolved = addLeg(LegType.SPIDER);
+						if(FP.random<.5)
+							hasEvolved = addLeg(LegType.SPIDER);
+							else
+							hasEvolved = addLeg(LegType.JABA);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
 						hasEvolved = addTail(TailType.SCORPION);

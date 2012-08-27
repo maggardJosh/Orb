@@ -1,6 +1,7 @@
 package com.lionsteel.LD24.worlds 
 {
 	import adobe.utils.CustomActions;
+	import com.lionsteel.LD24.entities.Player;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
 	import net.flashpunk.FP;
@@ -56,7 +57,7 @@ package com.lionsteel.LD24.worlds
 			switch(selectedMenu)
 			{
 				case 0:		//Start Game
-					FP.world = new GameWorld();
+					FP.world = new GameWorld(0,new Player(null));
 					break;
 					
 				case 1:	//Quit Game

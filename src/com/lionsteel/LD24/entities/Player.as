@@ -11,6 +11,7 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.killIndicator;
+	import com.lionsteel.LD24.worlds.DescendantScreen;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
@@ -33,7 +34,6 @@ package com.lionsteel.LD24.entities
 	 */
 	public class Player extends Monster 
 	{
-		private var maxHealth:int;
 		private var lives:int;
 		private var defense:int;
 		
@@ -74,15 +74,14 @@ package com.lionsteel.LD24.entities
 		
 		public function Player(level:Level) 
 		{
-			lives = 3;
+			lives = 1;
 			emptyKillCount = new Image(GFX.TRAIT_BOX);
 			traitLockImage = new Image(GFX.TRAIT_LOCKED);
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
 			traitHolderImage = new Image(GFX.TRAIT_HOLDER);
 			livesImage = new Image(GFX.LIVES_ICON);
-			
-			traitHolderImage.alpha = .7;
+			traitHolderImage.alpha = .9;
 			
 			tintColor = 0xFFFFFF;
 			
@@ -97,7 +96,6 @@ package com.lionsteel.LD24.entities
 			super(currentLevel);
 			type = "Player";
 			health = 3.0;
-			maxHealth = 3;
 			damage = 1.0
 		}
 		
@@ -123,7 +121,7 @@ package com.lionsteel.LD24.entities
 				{
 					GameWorld(world).resetLevel();
 					lives--;
-					health = maxHealth;
+					health = getTotalHearts();
 				}
 				else {
 					GameWorld(this.world).gameOver();
@@ -174,14 +172,21 @@ package com.lionsteel.LD24.entities
 				{
 					if (enemy.horn == HornType.NONE)
 					{
+						
 						enemy.takeDamage(damage * 1.5);
 						enemy.bounce(this);
-						this.velY = jumpForce * .9;
+						enemy.velY = 0;
+						if (Input.check("UP"))
+							this.velY = getJumpForce() * 1.4;
+						else
+							this.velY = getJumpForce() * .9;
 					}
 					else
 					{
 						if (damageCount <= 0)
 						{
+							if (enemy.velY < 0)
+								enemy.velY = 0;
 							bounce(enemy);
 							takeDamage(enemy.getDamage());
 						}
@@ -196,12 +201,15 @@ package com.lionsteel.LD24.entities
 						{
 							takeDamage(enemy.getDamage());
 							bounce(enemy);
+							enemy.velY = jumpForce;
 						}
 					}
 					else
 					{
 						enemy.takeDamage(damage * 1.5);
 						enemy.bounce(this);
+						if (this.velY < 0)
+							this.velY = 0;
 					}
 				}
 				else
@@ -209,6 +217,7 @@ package com.lionsteel.LD24.entities
 				{
 					takeDamage(enemy.getDamage());
 					bounce(enemy);
+					enemy.bounce(this);
 				}
 		}
 		
@@ -380,8 +389,8 @@ package com.lionsteel.LD24.entities
 			this.setWing(WingType.NONE);
 			this.setTail(TailType.NONE);
 			this.setHorn(HornType.NONE);
-			
-			this.health = maxHealth;
+			this.tempPowerUp = null;
+			this.health = getTotalHearts();
 			
 			for (var step:int = 0; step < EvolutionTypes.NUM_EVOLUTIONS; step++)
 				locked[step] = false;
@@ -390,7 +399,7 @@ package com.lionsteel.LD24.entities
 			if (evolution > EvolutionTypes.NUM_EVOLUTIONS)
 				evolution = EvolutionTypes.NUM_EVOLUTIONS;
 			var gotAttrib:Boolean = false;
-			for (var step:int = 0; step < evolution; step++)
+			for (step = 0; step < evolution; step++)
 			{
 				
 				gotAttrib = false;
@@ -492,7 +501,9 @@ package com.lionsteel.LD24.entities
 				if (!gotAttrib)
 					step--;
 			}
-			GameWorld(this.world).nextLevel();
+			currentLevel.clearLevel();
+			FP.world.remove(this);
+			FP.world = new DescendantScreen(copyOfSelf, mate, this,  GameWorld(FP.world).levelNum+ 1);
 		}
 		
 		
@@ -516,7 +527,7 @@ package com.lionsteel.LD24.entities
 		
 		private function handleControls():void
 		{
-			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.SPIDER); else setLeg(LegType.NONE);
+			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.JABA); else setLeg(LegType.NONE);
 			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.SPIKE); else setHorn(HornType.NONE);
 			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BAT); else setWing(WingType.NONE);
 			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.SCORPION); else setTail(TailType.NONE);
@@ -581,7 +592,7 @@ package com.lionsteel.LD24.entities
 					y = collideYRoom.y + Math.floor((y-collideYRoom.y + height) / C.TILE_SIZE) * C.TILE_SIZE - height;		//Place at the top of the tile they have collided with
 					velY = 0;
 					grounded = true;
-					jumpsLeft = totalJumps;		//Reset jump left count
+					jumpsLeft = getTotalJumps();		//Reset jump left count
 				}
 				
 			}
@@ -696,7 +707,7 @@ package com.lionsteel.LD24.entities
 				if (locked[EvolutionTypes.HORN_EVOLUTION])
 				traitLockImage.render(FP.buffer, C.HORN_POWERUP_POS, new Point());
 			
-			for (var healthInd:Number = 0; healthInd < maxHealth; healthInd++)
+			for (var healthInd:Number = 0; healthInd < getTotalHearts(); healthInd++)
 			{
 				if (health >= healthInd + 1)
 					healthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
@@ -704,7 +715,7 @@ package com.lionsteel.LD24.entities
 				{
 					var healthRatio:Number = healthInd + 1 - health;
 					healthRatio = 1 - healthRatio;
-					if (healthRatio > 0.01)
+					if (healthRatio > 0.1)
 					{
 						var partialHealthFiller:Image = new Image(GFX.HEALTH_FILLER, new Rectangle(0, 0, Number(healthFiller.width) * healthRatio, healthFiller.height));
 						partialHealthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
@@ -717,7 +728,7 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
-		private function drawLives()
+		private function drawLives():void
 		{
 			for (var ind:int = 0; ind < lives; ind++)
 			{
