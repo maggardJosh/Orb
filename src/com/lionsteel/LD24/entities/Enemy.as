@@ -29,10 +29,10 @@ package com.lionsteel.LD24.entities
 		public function Enemy(numEvolutions:int, level:Level) 
 		{
 			
-			killBox = new Entity();
-			pushBox = new Entity();
-			killBox.type = "EnemyKillBox";
-			pushBox.type = "EnemyPushBox";
+			armPushBox = new Entity();
+			tailPushBox = new Entity();
+			armPushBox.type = "EnemyArmPushBox";
+			tailPushBox.type = "EnemyTailPushBox";
 			if (FP.random < .5)
 				tintColor = 0xFF8888;
 			else
@@ -40,7 +40,7 @@ package com.lionsteel.LD24.entities
 			super(level);
 			health = numEvolutions +1;
 			type = "Enemy";
-			damage = .3;
+			_damage = .3;
 			var hasEvolved:Boolean = false;
 			for ( var x:int = 0; x < numEvolutions; x++)
 			{
@@ -49,10 +49,16 @@ package com.lionsteel.LD24.entities
 				switch(upgrade)
 				{
 					case EvolutionTypes.ARM_EVOLUTION:
-						hasEvolved = addArm(ArmType.BASE);
+						if(FP.random < .5)
+							hasEvolved = addArm(ArmType.BASE);
+						else
+							hasEvolved = addArm(ArmType.CLAW);
 						break;
 					case EvolutionTypes.HORN_EVOLUTION:
-						hasEvolved = addHorn(HornType.SPIKE);
+						if(FP.random <.5)
+							hasEvolved = addHorn(HornType.SPIKE);
+						else
+							hasEvolved = addHorn(HornType.PLANT);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
 						if(FP.random<.5)
@@ -61,10 +67,16 @@ package com.lionsteel.LD24.entities
 							hasEvolved = addLeg(LegType.JABA);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
-						hasEvolved = addTail(TailType.SCORPION);
+						if(FP.random<.5)
+							hasEvolved = addTail(TailType.SCORPION);
+						else
+							hasEvolved = addTail(TailType.MONKEY);
 						break;
 					case EvolutionTypes.WING_EVOLUTION:
-						hasEvolved = addWing(WingType.BAT);
+						if(FP.random<.5)
+							hasEvolved = addWing(WingType.BAT);
+						else
+							hasEvolved = addWing(WingType.TINY);
 						break;
 				}
 				if (!hasEvolved)
@@ -85,22 +97,63 @@ package com.lionsteel.LD24.entities
 		
 		private function checkPlayerBoxes():void
 		{
+			var xBounceVar:Number = 30;
+			var yBounceVar:Number = -15;
+			var damageVar:Number = 1.0;
 			if (damageCount <= 0)
 			{
-				collisionEntity = collide("playerPushBox", x, y);
+				switch(currentLevel.player.tail)
+				{
+					case TailType.SCORPION:
+						yBounceVar *= .5;
+						xBounceVar *= .3;
+						break;
+					case TailType.MONKEY:
+						yBounceVar *= 2;
+						xBounceVar *= .5;
+						if (currentLevel.player.numTailDamagedThisAttack > 0)
+							damageVar = 0;
+						break;
+				}
+				collisionEntity = collide("playerTailPushBox", x, y);
 				if (collisionEntity != null)
 				{
-					bounce(collisionEntity);
-					takeDamage(currentLevel.player.damage);
+					
+					currentLevel.player.numTailDamagedThisAttack++;
+					bounce(collisionEntity, xBounceVar, yBounceVar);
+					takeDamage(currentLevel.player.getDamage()*damageVar);
 				}
-				collisionEntity = collide("playerKillBox", x, y);
+				
+				xBounceVar = 30;
+				yBounceVar = -15;
+				damageVar = 1.0;
+				switch(currentLevel.player.arms)
+				{
+					case ArmType.BASE:
+						if (numArmDamagedThisAttack > 0)
+							damageVar = 0;
+						break;
+					case ArmType.CLAW:
+						xBounceVar *= .3;
+						yBounceVar *= .5;
+						break;
+				}
+				collisionEntity = collide("playerArmPushBox", x, y);
 				if (collisionEntity != null)
-					takeDamage(currentLevel.player.damage * 2);
+				{
+					
+					currentLevel.player.numArmDamagedThisAttack++;
+					bounce(collisionEntity, xBounceVar, yBounceVar);
+					takeDamage(currentLevel.player.getDamage()*damageVar);
+				}
+				
 			} else { damageCount -= 16; }
 		}
 		
 		public function takeDamage(damageAmount:Number):void
 		{
+			if (damageAmount == 0)
+				return;
 			for (var ind:int = 0; ind < 20; ind ++)
 				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
 			health -= damageAmount;

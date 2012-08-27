@@ -39,8 +39,8 @@ package com.lionsteel.LD24.entities
 			ponyTail = new Image(GFX.PONY_TAIL);
 			ponyTailOffset = new Point( -100 / 2 + C.TILE_SIZE / 2, -80 / 2 + C.TILE_SIZE / 2);
 			
-			killBox = new Entity();
-			pushBox = new Entity();
+			armPushBox = new Entity();
+			tailPushBox = new Entity();
 			tintColor = 0xFF6666;
 			super(level);
 			setBody(BodyType.MATE);
@@ -57,22 +57,34 @@ package com.lionsteel.LD24.entities
 				switch(upgrade)
 				{
 					case EvolutionTypes.ARM_EVOLUTION:
-						hasEvolved = addArm(ArmType.BASE);
+						if(FP.random < .5)
+							hasEvolved = addArm(ArmType.BASE);
+						else
+							hasEvolved = addArm(ArmType.CLAW);
 						break;
 					case EvolutionTypes.HORN_EVOLUTION:
-						hasEvolved = addHorn(HornType.SPIKE);
+						if(FP.random <.5)
+							hasEvolved = addHorn(HornType.SPIKE);
+						else
+							hasEvolved = addHorn(HornType.PLANT);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
 						if(FP.random<.5)
 							hasEvolved = addLeg(LegType.SPIDER);
-							else
+						else
 							hasEvolved = addLeg(LegType.JABA);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
-						hasEvolved = addTail(TailType.SCORPION);
+						if(FP.random<.5)
+							hasEvolved = addTail(TailType.SCORPION);
+						else
+							hasEvolved = addTail(TailType.MONKEY);
 						break;
 					case EvolutionTypes.WING_EVOLUTION:
-						hasEvolved = addWing(WingType.BAT);
+						if(FP.random<.5)
+							hasEvolved = addWing(WingType.BAT);
+						else
+							hasEvolved = addWing(WingType.TINY);
 						break;
 				}
 				if (!hasEvolved)

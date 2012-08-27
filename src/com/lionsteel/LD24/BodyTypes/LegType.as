@@ -13,6 +13,7 @@ package com.lionsteel.LD24.BodyTypes
 		public static const JABA:int = 0;
 		public static const SPIDER:int = 1;
 		
+		public static const NUM_LEGS:int = 2;
 		
 		public static var KILL_COUNT:Array = new Array();		//Number of kills needed to get this
 		public static var KILL_IMAGES:Array = new Array();
@@ -31,7 +32,7 @@ package com.lionsteel.LD24.BodyTypes
 			
 			KILL_IMAGES[JABA] = new Image(GFX.LEG_JABA_COUNT);
 			KILL_IMAGES[JABA].alpha = .2;
-			KILL_COUNT[JABA] = 3;
+			KILL_COUNT[JABA] = 5;
 			KILL_COLOR_IMAGES[JABA] = GFX.LEG_JABA_COUNT_COLOR;
 			IMAGE[JABA] = new Image(GFX.LEG_JABA_COUNT_COLOR);
 		}

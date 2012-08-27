@@ -11,6 +11,7 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.killIndicator;
+	import com.lionsteel.LD24.Utils;
 	import com.lionsteel.LD24.worlds.DescendantScreen;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.accessibility.ISearchableText;
@@ -71,7 +72,6 @@ package com.lionsteel.LD24.entities
 		private var tempPowerUp:PowerUp;
 		
 		
-		
 		public function Player(level:Level) 
 		{
 			lives = 1;
@@ -85,18 +85,18 @@ package com.lionsteel.LD24.entities
 			
 			tintColor = 0xFFFFFF;
 			
-			pushBox = new Entity();
-			killBox = new Entity();
-			pushBox.width = C.TILE_SIZE;
-			pushBox.height = C.TILE_SIZE;
-			pushBox.type = "playerPushBox";
-			killBox.width = C.TILE_SIZE*1.5;
-			killBox.height = C.TILE_SIZE*1.5;
-			killBox.type = "playerKillBox";
+			armPushBox = new Entity();
+			tailPushBox= new Entity();
+			armPushBox.width = C.TILE_SIZE;
+			armPushBox.height = C.TILE_SIZE;
+			armPushBox.type = "playerArmPushBox";
+			tailPushBox.width = C.TILE_SIZE*2;
+			tailPushBox.height = C.TILE_SIZE*2;
+			tailPushBox.type = "playerTailPushBox";
 			super(currentLevel);
 			type = "Player";
-			health = 3.0;
-			damage = 1.0
+			health = 3;
+			_damage = 1;
 		}
 		
 		override public function update():void 
@@ -165,23 +165,10 @@ package com.lionsteel.LD24.entities
 		
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
-			//if (enemy.damageCount > 0 )
-			//	return;
 			//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
-					if (enemy.horn == HornType.NONE)
-					{
-						
-						enemy.takeDamage(damage * 1.5);
-						enemy.bounce(this);
-						enemy.velY = 0;
-						if (Input.check("UP"))
-							this.velY = getJumpForce() * 1.4;
-						else
-							this.velY = getJumpForce() * .9;
-					}
-					else
+					if (enemy.horn == HornType.SPIKE)
 					{
 						if (damageCount <= 0)
 						{
@@ -190,26 +177,41 @@ package com.lionsteel.LD24.entities
 							bounce(enemy);
 							takeDamage(enemy.getDamage());
 						}
+					
+					}
+					else
+					{
+						//Jumped on enemy without spike
+						jumpsLeft = getTotalJumps();
+						enemy.takeDamage(getDamage());
+						enemy.bounce(this);
+						enemy.velY = 0;
+						if (Input.check("UP"))
+							this.velY = getJumpForce() * 1.4;
+						else
+							this.velY = getJumpForce() * .9;
 					}
 				}
 				else
 				if (this.y > enemy.y && enemy.velY > 0 && enemy.x + enemy.width * 2 / 3 > x && enemy.x + enemy.width * 1 / 3 < x + width)	//Enemy Falling onto you
 				{
-					if (horn == HornType.NONE)
+					if (horn == HornType.SPIKE)
 					{
+						
+						enemy.takeDamage(getDamage());
+						enemy.bounce(this);
+						if (this.velY < 0)
+							this.velY = 0;
+					}
+					else
+					{
+						
 						if (damageCount <= 0)
 						{
 							takeDamage(enemy.getDamage());
 							bounce(enemy);
 							enemy.velY = jumpForce;
 						}
-					}
-					else
-					{
-						enemy.takeDamage(damage * 1.5);
-						enemy.bounce(this);
-						if (this.velY < 0)
-							this.velY = 0;
 					}
 				}
 				else
@@ -513,6 +515,7 @@ package com.lionsteel.LD24.entities
 		}
 		private function takeDamage(damageAmount:Number):void
 		{
+			Utils.flash.start(0xFF0000, .1,.5);
 			for (var ind:int = 0; ind < 20; ind ++)
 				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
 			health -= damageAmount;
@@ -527,11 +530,13 @@ package com.lionsteel.LD24.entities
 		
 		private function handleControls():void
 		{
-			if (Input.pressed(Key.DIGIT_1)) if (legs == LegType.NONE) setLeg(LegType.JABA); else setLeg(LegType.NONE);
-			if (Input.pressed(Key.DIGIT_2)) if (horn == HornType.NONE) setHorn(HornType.SPIKE); else setHorn(HornType.NONE);
-			if (Input.pressed(Key.DIGIT_3)) if (wings == WingType.NONE) setWing(WingType.BAT); else setWing(WingType.NONE);
-			if (Input.pressed(Key.DIGIT_4)) if (tail == TailType.NONE) setTail(TailType.SCORPION); else setTail(TailType.NONE);
-			if (Input.pressed(Key.DIGIT_5)) if (arms == ArmType.NONE) setArm(ArmType.BASE); else setArm(ArmType.NONE);
+			if (Input.pressed(Key.DIGIT_1)) setLeg(legs+1);// if (legs == LegType.NONE) setLeg(LegType.JABA); else setLeg(LegType.NONE);
+			if (Input.pressed(Key.DIGIT_2)) setArm(arms+1);// if (arms == ArmType.NONE) setArm(ArmType.CLAW); else setArm(ArmType.NONE);
+			if (Input.pressed(Key.DIGIT_3)) setHorn(horn+1);// if (horn == HornType.NONE) setHorn(HornType.PLANT); else setHorn(HornType.NONE);
+			if (Input.pressed(Key.DIGIT_4)) setTail(tail+1);// if (tail == TailType.NONE) setTail(TailType.MONKEY); else setTail(TailType.NONE);
+			if (Input.pressed(Key.DIGIT_5)) setWing(wings+1);// if (wings == WingType.NONE) setWing(WingType.TINY); else setWing(WingType.NONE);
+			if (Input.pressed(Key.R)){ setLeg( -1); setArm( -1); setHorn( -1); setTail( -1); setWing( -1);}
+			if (Input.pressed(Key.K)) health = 0;
 			
 			if (Input.pressed("UP") )
 				tryJump();

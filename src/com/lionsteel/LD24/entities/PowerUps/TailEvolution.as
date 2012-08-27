@@ -34,10 +34,14 @@ package com.lionsteel.LD24.entities.PowerUps
 			{
 				case TailType.SCORPION:
 					anim = new Spritemap(GFX.SCORPION_TAIL_PICKUP, 32, 32);
-					anim.add("idle", [0, 1], .1, true);
-					anim.play("idle");
 					break;
+				case TailType.MONKEY:
+					anim = new Spritemap(GFX.TAIL_MONKEY_PICKUP, 32, 32);
+					break;
+					
 			}
+			anim.add("idle", [0, 1], .1, true);
+					anim.play("idle");
 			this.graphic = anim;
 		}
 		

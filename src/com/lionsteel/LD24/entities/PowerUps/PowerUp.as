@@ -56,6 +56,7 @@ package com.lionsteel.LD24.entities.PowerUps
 					y = collideRoom.y + Math.floor((y-collideRoom.y + height) / C.TILE_SIZE) * C.TILE_SIZE - height;		//Place at the top of the tile they have collided with
 					grounded = true;
 			}
+
 			collideRoom = collide("PowerUp", x, y);
 			if (collideRoom != null)
 			{

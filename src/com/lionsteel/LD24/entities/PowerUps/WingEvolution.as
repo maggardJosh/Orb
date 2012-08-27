@@ -33,10 +33,13 @@ package com.lionsteel.LD24.entities.PowerUps
 			{
 				case WingType.BAT:
 					anim = new Spritemap(GFX.BAT_WING_PICKUP, 32, 32);
-					anim.add("idle", [0, 1], .1, true);
-					anim.play("idle");
+					break;
+				case WingType.TINY:
+					anim = new Spritemap(GFX.WING_TINY_PICKUP, 32, 32);
 					break;
 			}
+			anim.add("idle", [0, 1], .1, true);
+			anim.play("idle");
 			this.graphic = anim;
 		}
 		

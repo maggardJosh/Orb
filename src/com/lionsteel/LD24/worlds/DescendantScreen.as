@@ -59,7 +59,10 @@ package com.lionsteel.LD24.worlds
 			if (descendant.eggImage.alpha > 0)
 				descendant.eggImage.alpha -= .01;
 			if (Input.pressed("INTERACT") || Input.pressed("ATTACK"))
+			{
+				descendant.eggImage.alpha = 0;
 				FP.world = new GameWorld(nextLevel, descendant);
+			}
 			super.update();
 		}
 		

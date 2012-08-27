@@ -34,10 +34,13 @@ package com.lionsteel.LD24.entities.PowerUps
 			{
 				case HornType.SPIKE:
 					anim = new Spritemap(GFX.SPIKE_HORN_PICKUP, 32, 32);
-					anim.add("idle", [0, 1], .1, true);
-					anim.play("idle");
+					break;
+				case HornType.PLANT:
+					anim = new Spritemap(GFX.HORN_PLANT_PICKUP, 32, 32);
 					break;
 			}
+			anim.add("idle", [0, 1], .1, true);
+			anim.play("idle");
 			this.graphic = anim;
 		}
 		

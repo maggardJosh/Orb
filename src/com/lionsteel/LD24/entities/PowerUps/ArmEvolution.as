@@ -33,10 +33,13 @@ package com.lionsteel.LD24.entities.PowerUps
 			{
 				case ArmType.BASE:
 					anim = new Spritemap(GFX.BASE_ARM_PICKUP, 32, 32);
-					anim.add("idle", [0, 1], .1, true);
-					anim.play("idle");
+					break;
+				case ArmType.CLAW:
+					anim = new Spritemap(GFX.ARM_CLAW_PICKUP, 32, 32);
 					break;
 			}
+			anim.add("idle", [0, 1], .1, true);
+			anim.play("idle");
 			this.graphic = anim;
 		}
 		

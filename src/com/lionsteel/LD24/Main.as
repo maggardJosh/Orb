@@ -1,10 +1,9 @@
 package com.lionsteel.LD24
 {
-	import com.lionsteel.LD24.BodyTypes.ArmType;
-	import com.lionsteel.LD24.BodyTypes.HornType;
-	import com.lionsteel.LD24.BodyTypes.LegType;
-	import com.lionsteel.LD24.BodyTypes.TailType;
-	import com.lionsteel.LD24.BodyTypes.WingType;
+
+	import com.lionsteel.LD24.BodyTypes.*;
+	import com.lionsteel.LD24.Utils.Flash;
+	import com.lionsteel.LD24.Utils.Quake;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import com.lionsteel.LD24.worlds.MainMenu;
 	import flash.display.Sprite;
@@ -41,6 +40,19 @@ package com.lionsteel.LD24
 			Input.define("RIGHT", Key.RIGHT, Key.D);
 			Input.define("ATTACK", Key.ENTER);
 			Input.define("INTERACT", Key.E);
+		}
+		
+		override public function update():void 
+		{
+			Utils.quake.update();
+			Utils.flash.update();
+			super.update();
+		}
+		
+		override public function render():void 
+		{
+			super.render();
+			Utils.flash.render();
 		}
 		
 	}
