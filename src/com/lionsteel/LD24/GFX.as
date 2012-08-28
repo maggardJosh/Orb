@@ -51,6 +51,7 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
 		[Embed(source = "assets/backgroundTwo.png")] public static const BACKGROUND_TWO:Class;
 		[Embed(source = "assets/tileSet.png")] public static const TILE_SET:Class;
+		[Embed(source = "assets/TITLE.png")] public static const MAIN_MENU_BG:Class;
 		
 		//GUI
 		[Embed(source = "assets/heart_empty.png")] public static const HEALTH_CONTAINER:Class;

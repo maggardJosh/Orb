@@ -49,30 +49,35 @@ package com.lionsteel.LD24.entities
 				switch(upgrade)
 				{
 					case EvolutionTypes.ARM_EVOLUTION:
-						if(FP.random < .5)
-							hasEvolved = addArm(ArmType.BASE);
-						else
-							hasEvolved = addArm(ArmType.CLAW);
+						if(arms==ArmType.NONE)
+							if(FP.random < .5)
+								hasEvolved = addArm(ArmType.BASE);
+							else
+								hasEvolved = addArm(ArmType.CLAW);
 						break;
 					case EvolutionTypes.HORN_EVOLUTION:
+						if(horn == HornType.NONE)
 						if(FP.random <.5)
 							hasEvolved = addHorn(HornType.SPIKE);
 						else
 							hasEvolved = addHorn(HornType.PLANT);
 						break;
 					case EvolutionTypes.LEG_EVOLUTION:
+						if(legs == LegType.NONE)
 						if(FP.random<.5)
 							hasEvolved = addLeg(LegType.SPIDER);
 						else
 							hasEvolved = addLeg(LegType.JABA);
 						break;
 					case EvolutionTypes.TAIL_EVOLUTION:
+						if(tail == TailType.NONE)
 						if(FP.random<.5)
 							hasEvolved = addTail(TailType.SCORPION);
 						else
 							hasEvolved = addTail(TailType.MONKEY);
 						break;
 					case EvolutionTypes.WING_EVOLUTION:
+						if(wings == WingType.NONE)
 						if(FP.random<.5)
 							hasEvolved = addWing(WingType.BAT);
 						else

@@ -72,7 +72,7 @@ package com.lionsteel.LD24.entities
 		
 		public function Player(level:Level) 
 		{
-			lives = 1;
+			lives = 3;
 			emptyKillCount = new Image(GFX.TRAIT_BOX);
 			traitLockImage = new Image(GFX.TRAIT_LOCKED);
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
@@ -396,7 +396,6 @@ package com.lionsteel.LD24.entities
 			
 			for (var step:int = 0; step < EvolutionTypes.NUM_EVOLUTIONS; step++)
 				locked[step] = false;
-				
 			this.evolution++;
 			if (evolution > EvolutionTypes.NUM_EVOLUTIONS)
 				evolution = EvolutionTypes.NUM_EVOLUTIONS;

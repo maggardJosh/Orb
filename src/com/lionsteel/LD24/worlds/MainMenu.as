@@ -6,6 +6,7 @@ package com.lionsteel.LD24.worlds
 	import flash.geom.Point;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Backdrop;
+	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Text;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.World;
@@ -19,6 +20,8 @@ package com.lionsteel.LD24.worlds
 		private var selectedMenu:int = 0;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
+		
+		private var mainBackground:Image;
 		public function MainMenu() 
 		{
 			
@@ -31,6 +34,8 @@ package com.lionsteel.LD24.worlds
 			backgroundTwo.scrollX = .4;
 			backgroundTwo.scrollY = .4;		
 			
+			mainBackground = new Image(GFX.MAIN_MENU_BG);
+			
 			
 		//	addGraphic(backgroundTwo);
 		//	addGraphic(backgroundOne);
@@ -39,14 +44,7 @@ package com.lionsteel.LD24.worlds
 		override public function update():void 
 		{
 			FP.camera.x += 2;
-			if (Input.pressed("UP"))
-				selectedMenu--;
-			if (Input.pressed("DOWN"))
-				selectedMenu++;
-			if (selectedMenu < 0)
-				selectedMenu = 1;
-			else if (selectedMenu > 1)
-				selectedMenu = 0;
+		
 			if (Input.pressed("ATTACK") || Input.pressed("INTERACT"))
 				doAction();
 			super.update();
@@ -54,43 +52,21 @@ package com.lionsteel.LD24.worlds
 		
 		private function doAction():void
 		{
-			switch(selectedMenu)
-			{
-				case 0:		//Start Game
-					FP.world = new GameWorld(0,new Player(null));
-					break;
-					
-				case 1:	//Quit Game
-					
-					break;
-			}
+
+			FP.world = new GameWorld(0,new Player(null));
+
 		}
 		override public function render():void 
 		{
 			backgroundTwo.render(FP.buffer, new Point(backgroundTwo.x, backgroundTwo.y), FP.camera);
-			if (selectedMenu == 0)
-			{
-				Text.size = 40;
-			}
-			else
-				Text.size = 32;
-			var startMenu:Text = new Text("Start Game");
-			if (selectedMenu == 0)
-				startMenu.color = 0xAAAA00;
-			else
-				startMenu.color = 0xFFFFFF;
+			
+			Text.size = 40;
+			var startMenu:Text = new Text("Press Enter");
 
-			startMenu.render(FP.buffer, new Point(FP.halfWidth - startMenu.width / 2, FP.halfHeight - startMenu.height / 2 - 30), new Point());
-			if (selectedMenu == 1)
-				Text.size = 40;
-			else
-				Text.size = 32;
-			var quitMenu:Text = new Text("Quit Game");
-			if (selectedMenu == 1)
-				quitMenu.color = 0xAAAA00;
-			else
-				quitMenu.color = 0xFFFFFF;
-			quitMenu.render(FP.buffer, new Point(FP.halfWidth - quitMenu.width / 2, FP.halfHeight - quitMenu.height / 2 + 30), new Point());
+			startMenu.color = 0xFFFFFF;
+			
+			mainBackground.render(FP.buffer, new Point(), new Point());
+			startMenu.render(FP.buffer, new Point(FP.halfWidth - startMenu.width / 2, FP.halfHeight - startMenu.height / 2 +30), new Point());
 			backgroundOne.render(FP.buffer, new Point(backgroundOne.x, backgroundOne.y), FP.camera);
 			
 			super.render();

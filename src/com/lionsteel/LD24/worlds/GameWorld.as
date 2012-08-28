@@ -25,7 +25,10 @@ package com.lionsteel.LD24.worlds
 		[Embed (source = "../assets/Levels/Tutorial_level.oel", mimeType = "application/octet-stream")] private const tutLevelXML:Class;
 		[Embed (source = "../assets/Levels/LEVEL_ONE.oel", mimeType = "application/octet-stream")] private const levelOneXML:Class;
 		[Embed (source = "../assets/Levels/LEVEL_TWO.oel", mimeType = "application/octet-stream")] private const levelTwoXML:Class;
-		private var levels:Array = new Array( tutLevelXML, levelOneXML, levelTwoXML );
+		[Embed (source = "../assets/Levels/LEVEL_THREE.oel", mimeType = "application/octet-stream")] private const levelThreeXML:Class;
+		[Embed (source = "../assets/Levels/LEVEL_FOUR.oel", mimeType = "application/octet-stream")] private const levelFourXML:Class;
+		[Embed (source = "../assets/Levels/LEVEL_FIVE.oel", mimeType = "application/octet-stream")] private const levelFiveXML:Class;
+		private var levels:Array = new Array( tutLevelXML, levelOneXML, levelTwoXML, levelThreeXML, levelFiveXML);
 		public var levelNum:int;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
@@ -46,11 +49,11 @@ package com.lionsteel.LD24.worlds
 			Text.size = 28;
 			tutEndText = new Text("Have Fun!");
 			
-			tutText[0] = new Text("Use WASD to move\nand space to jump");
+			tutText[0] = new Text("Use WASD to move\nand space to jump\n(Press escape to skip tutorial)");
 			tutText[1] = new Text("Jump on enemies to kill them\n(Watch out for spikes)");
 			tutText[2] = new Text("Kill enough similar\nenemies in a row\nto get their traits\n(Use E to pick up dropped traits)");
 			tutText[3] = new Text("Certain traits allow you\nto fly or jump multiple times\n(Hold Space to coast)");
-			tutText[4] = new Text("Use Enter to attack");
+			tutText[4] = new Text("Use Enter to attack with your\narms or tail");
 			tutText[5] = new Text("Use E to pick a mate\nMating randomizes your traits\nand allows you to have\nmore at one time");
 			
 			tutPos[ -1] = 0;
@@ -144,6 +147,13 @@ package com.lionsteel.LD24.worlds
 		{
 			
 			super.update();
+			
+			if (levelNum == 0 && Input.pressed(Key.ESCAPE))
+			{
+				currentLevel.clearLevel();
+				FP.world.remove(player);
+				FP.world = new GameWorld(1, new Player(currentLevel));
+			}
 			
 			if(levelNum == 1 && tutEndCount < 2000)
 				tutEndCount += 16
