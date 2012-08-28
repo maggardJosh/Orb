@@ -28,7 +28,7 @@ package com.lionsteel.LD24.worlds
 		[Embed (source = "../assets/Levels/LEVEL_THREE.oel", mimeType = "application/octet-stream")] private const levelThreeXML:Class;
 		[Embed (source = "../assets/Levels/LEVEL_FOUR.oel", mimeType = "application/octet-stream")] private const levelFourXML:Class;
 		[Embed (source = "../assets/Levels/LEVEL_FIVE.oel", mimeType = "application/octet-stream")] private const levelFiveXML:Class;
-		private var levels:Array = new Array( tutLevelXML, levelOneXML, levelTwoXML, levelThreeXML, levelFiveXML);
+		public var levels:Array = new Array( tutLevelXML, levelOneXML, levelTwoXML, levelThreeXML, levelFourXML, levelFiveXML);
 		public var levelNum:int;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
@@ -87,8 +87,6 @@ package com.lionsteel.LD24.worlds
 			player.layer = -1;
 			
 			
-			
-			
 			addGraphic(backgroundTwo);
 			add(player);
 			addGraphic(backgroundOne);
@@ -128,11 +126,6 @@ package com.lionsteel.LD24.worlds
 				this.remove(currentLevel);
 			}
 			
-			if (levelNum >= levels.length)
-			{
-				FP.world = new GameOver();
-				return;
-			}
 			currentLevel = new Level(levels[levelNum], particleEmitter, this, player);
 			
 			player.setLevel(currentLevel);

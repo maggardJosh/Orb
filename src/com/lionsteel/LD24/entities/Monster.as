@@ -536,7 +536,7 @@ package com.lionsteel.LD24.entities
 					frontWingAnim.add("birth", [0], .1, true);
 					wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
 					wingJumpAdded = 1;
-					maxYVel = C.START_MAX_Y_VEL;
+					maxYVel = C.START_MAX_Y_VEL * .5;
 					if (legs == LegType.NONE)
 					{
 						y -= WingType.wingHeight(wings) - height;
@@ -705,7 +705,6 @@ package com.lionsteel.LD24.entities
 					height = LegType.legHeight(LegType.JABA);
 					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
 					legSpeedVar = .5;
-					legJumpVar = .8;
 					legHealthVar = 2;
 					health += 2;
 					break;

@@ -295,8 +295,8 @@ package com.lionsteel.LD24.entities
 		}
 		override public function render():void 
 		{
-			particleEmitter.render(FP.buffer, new Point, FP.camera);
 			super.render();
+			particleEmitter.render(FP.buffer, new Point, FP.camera);
 		}
 	}
 

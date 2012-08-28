@@ -47,7 +47,7 @@ package com.lionsteel.LD24.worlds
 			descendant.y = 320;
 			
 			Main.DescendantHistory.push(leftParent);
-			Main.DescendantHistory.push(descendant.copy());
+			//Main.DescendantHistory.push(descendant.copy());
 			
 			screen = new Image(GFX.DESCENDANT_SCREEN);
 			

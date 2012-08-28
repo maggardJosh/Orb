@@ -11,8 +11,10 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.killIndicator;
+	import com.lionsteel.LD24.Main;
 	import com.lionsteel.LD24.Utils;
 	import com.lionsteel.LD24.worlds.DescendantScreen;
+	import com.lionsteel.LD24.worlds.GameOver;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
@@ -384,6 +386,13 @@ package com.lionsteel.LD24.entities
 		private function mate(mate:Mate):void
 		{
 			
+			if (GameWorld(world).levelNum+1 >= GameWorld(world).levels.length)
+			{
+				Main.DescendantHistory.push(copy());
+				FP.world.remove(this);
+				FP.world = new GameOver();
+				return;
+			}
 			var copyOfSelf:Monster = copy();
 			currentLevel.add(copyOfSelf);
 			this.setArm(ArmType.NONE);
@@ -529,6 +538,7 @@ package com.lionsteel.LD24.entities
 		
 		private function handleControls():void
 		{
+			/* Cheats
 			if (Input.pressed(Key.DIGIT_1)) setLeg(legs+1);// if (legs == LegType.NONE) setLeg(LegType.JABA); else setLeg(LegType.NONE);
 			if (Input.pressed(Key.DIGIT_2)) setArm(arms+1);// if (arms == ArmType.NONE) setArm(ArmType.CLAW); else setArm(ArmType.NONE);
 			if (Input.pressed(Key.DIGIT_3)) setHorn(horn+1);// if (horn == HornType.NONE) setHorn(HornType.PLANT); else setHorn(HornType.NONE);
@@ -536,6 +546,8 @@ package com.lionsteel.LD24.entities
 			if (Input.pressed(Key.DIGIT_5)) setWing(wings+1);// if (wings == WingType.NONE) setWing(WingType.TINY); else setWing(WingType.NONE);
 			if (Input.pressed(Key.R)){ setLeg( -1); setArm( -1); setHorn( -1); setTail( -1); setWing( -1);}
 			if (Input.pressed(Key.K)) health = 0;
+			*/
+			
 			
 			if (Input.pressed("UP") )
 				tryJump();
