@@ -46,7 +46,7 @@ package com.lionsteel.LD24.BodyTypes
 				case LegType.SPIDER:
 					return 50;
 				case LegType.JABA:
-					return 30;
+					return 40;
 				default:
 					trace("Leg type " + typeOfLeg + " not found");
 					return C.TILE_SIZE;

@@ -52,10 +52,23 @@ package com.lionsteel.LD24.entities.PowerUps
 		
 		override public function pickup(player:Player):Boolean 
 		{
+			var noPowerUp:Boolean = false;
+			if (player.arms != ArmType.NONE  && player.tempPowerUp != null)
+				player.tempPowerUp = new ArmEvolution(player.arms, new Point());
+			else
+				if (player.arms != ArmType.NONE)		//If has part but no power up yet
+					noPowerUp = true;
 			if (player.addArm(typeOfArm))
 			{
-				player.world.add(new killIndicator(ArmType.KILL_COLOR_IMAGES[typeOfArm], new Point(player.x, player.y), C.ARM_POWERUP_POS));
-				player.setTempPowerUp(this);
+				player.world.add(new killIndicator(ArmType.KILL_COLOR_IMAGES[typeOfArm], new Point(player.x, player.y),  C.ARM_POWERUP_POS));
+				if (player.tempPowerUp != null)
+					player.tempPowerUp.drop(player);
+				player.setArm(this.typeOfArm);
+				if (noPowerUp)
+					player.setTempPowerUp(null);
+				else
+					player.setTempPowerUp(this);
+					
 				this.world.remove(this);
 				return true;
 			}

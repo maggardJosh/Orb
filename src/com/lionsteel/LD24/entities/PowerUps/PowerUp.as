@@ -32,7 +32,7 @@ package com.lionsteel.LD24.entities.PowerUps
 		}
 		public function pickup(player:Player):Boolean
 		{
-			
+			//Overidden function
 			return false;
 			
 		}

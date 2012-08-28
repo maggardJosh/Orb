@@ -1,7 +1,16 @@
 package com.lionsteel.LD24.entities 
 {
+	import com.lionsteel.LD24.BodyTypes.ArmType;
+	import com.lionsteel.LD24.BodyTypes.HornType;
+	import com.lionsteel.LD24.BodyTypes.LegType;
+	import com.lionsteel.LD24.BodyTypes.TailType;
+	import com.lionsteel.LD24.BodyTypes.WingType;
 	import com.lionsteel.LD24.C;
+	import com.lionsteel.LD24.entities.PowerUps.ArmEvolution;
+	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
+	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
+	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import net.flashpunk.Entity;
@@ -26,6 +35,7 @@ package com.lionsteel.LD24.entities
 		
 		public var playerStart:Point;
 		public var particleEmitter:Emitter;
+		private var levelNum:int;
 		
 		public var player:Player;
 		private var enemyList:Array = new Array();
@@ -161,6 +171,113 @@ package com.lionsteel.LD24.entities
 				mateVar.x = int(dataElement.@x);
 				mateVar.y = int(dataElement.@y);
 				world.add(mateVar);
+			}
+			
+			if (GameWorld(world).levelNum == 0)
+				spawnTutorialStuff();
+		}
+		
+		private function spawnTutorialStuff():void
+		{
+			var newEnemy:Enemy;
+			
+			//Jump Tutorial
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.SPIKE);
+			newEnemy.x = 31*C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setArm(ArmType.BASE);
+			newEnemy.x = 28 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setTail(TailType.MONKEY);
+			newEnemy.x = 30 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setLeg(LegType.JABA);
+			newEnemy.x = 31 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setLeg(LegType.JABA);
+			newEnemy.x = 31 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setLeg(LegType.JABA);
+			newEnemy.x = 31 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			//Trait Tutorial
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x = 46 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x =  47* C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x =  47* C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x =  47* C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x =  50* C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x = 55 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x = 55 * C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			newEnemy = new Enemy(0, this);
+			newEnemy.setHorn(HornType.PLANT);
+			newEnemy.x =  57* C.TILE_SIZE;
+			newEnemy.y = 25 * C.TILE_SIZE;
+			add(newEnemy);
+			
+			
+			add(new WingEvolution(WingType.BAT, new Point(70 * C.TILE_SIZE, 20 * C.TILE_SIZE)));
+			add(new ArmEvolution(ArmType.BASE, new Point(105 * C.TILE_SIZE, 10 * C.TILE_SIZE)));
+			
+			for ( var ind:int = 0; ind < 10; ind ++)
+			{
+				newEnemy = new Enemy(0, this);
+				newEnemy.setHorn(HornType.SPIKE);
+				newEnemy.x = 115 * C.TILE_SIZE;
+				newEnemy.y = 20 * C.TILE_SIZE;
+				add(newEnemy);
 			}
 		}
 		

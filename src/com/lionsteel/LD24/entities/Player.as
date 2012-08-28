@@ -69,8 +69,6 @@ package com.lionsteel.LD24.entities
 		
 		private var emptyKillCount:Image;
 		
-		private var tempPowerUp:PowerUp;
-		
 		
 		public function Player(level:Level) 
 		{
@@ -143,7 +141,7 @@ package com.lionsteel.LD24.entities
 				armKillCount = 0;
 				currentLevel.add(new ArmEvolution(armKillType, new Point(x, y)));
 			}
-			if (hornKillCount > 0 && hornKillCount >= HornType.KILL_COUNT[armKillType])
+			if (hornKillCount > 0 && hornKillCount >= HornType.KILL_COUNT[hornKillType])
 			{
 				world.add(new dropIndicator(HornType.KILL_COLOR_IMAGES[hornKillType], new Point(C.KILL_COUNT_START_X + C.KILL_X_SPACING * 2).add(FP.camera), new Point(x, y)))
 				hornKillCount = 0;
@@ -364,18 +362,20 @@ package com.lionsteel.LD24.entities
 				
 				if (collisionEntity != null)
 				{
-					var tempPUVar:PowerUp = tempPowerUp;
-					if((collisionEntity as PowerUp).pickup(this))
-						if (tempPUVar!= null)
-						{
-							tempPUVar.drop(this);
-						}
-					
+					(collisionEntity as PowerUp).pickup(this)
 				}
 				
 				collisionEntity = collide("Mate", x, y);
 				if (collisionEntity != null)
 				{
+					if (GameWorld(world).levelNum == 0)
+					{
+						
+						currentLevel.clearLevel();
+						FP.world.remove(this);
+						FP.world = new GameWorld(1, new Player(currentLevel));
+					}
+					else
 					mate(Mate(collisionEntity));
 				}
 			}
@@ -403,7 +403,7 @@ package com.lionsteel.LD24.entities
 			var gotAttrib:Boolean = false;
 			for (step = 0; step < evolution; step++)
 			{
-				
+				tempPowerUp = null;
 				gotAttrib = false;
 				if (FP.random < .5)
 				{
@@ -411,7 +411,7 @@ package com.lionsteel.LD24.entities
 					switch(FP.rand(EvolutionTypes.NUM_EVOLUTIONS))
 					{
 						case EvolutionTypes.ARM_EVOLUTION:
-								if (copyOfSelf.arms != ArmType.NONE)
+								if (copyOfSelf.arms != ArmType.NONE && !locked[EvolutionTypes.ARM_EVOLUTION])
 								{
 									gotAttrib =addArm(copyOfSelf.arms);
 									if (gotAttrib)
@@ -419,7 +419,7 @@ package com.lionsteel.LD24.entities
 								}
 							break;
 						case EvolutionTypes.HORN_EVOLUTION:
-							if (copyOfSelf.horn != HornType.NONE)
+							if (copyOfSelf.horn != HornType.NONE && !locked[EvolutionTypes.HORN_EVOLUTION])
 							{
 								gotAttrib = addHorn(copyOfSelf.horn);
 								if (gotAttrib)
@@ -427,7 +427,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.LEG_EVOLUTION:
-							if (copyOfSelf.legs != LegType.NONE)
+							if (copyOfSelf.legs != LegType.NONE && !locked[EvolutionTypes.LEG_EVOLUTION])
 							{
 								gotAttrib = addLeg(copyOfSelf.legs);
 								if (gotAttrib)
@@ -435,7 +435,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.TAIL_EVOLUTION:
-							if (copyOfSelf.tail != TailType.NONE)
+							if (copyOfSelf.tail != TailType.NONE && !locked[EvolutionTypes.TAIL_EVOLUTION])
 							{
 								gotAttrib = addTail(copyOfSelf.tail);
 								if (gotAttrib)
@@ -443,7 +443,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.WING_EVOLUTION:
-							if (copyOfSelf.wings != WingType.NONE)
+							if (copyOfSelf.wings != WingType.NONE && !locked[EvolutionTypes.WING_EVOLUTION])
 							{
 								gotAttrib = addWing(copyOfSelf.wings);
 								if (gotAttrib)
@@ -459,7 +459,7 @@ package com.lionsteel.LD24.entities
 					switch(FP.rand(EvolutionTypes.NUM_EVOLUTIONS))
 					{
 						case EvolutionTypes.ARM_EVOLUTION:
-								if (mate.arms != ArmType.NONE)
+								if (mate.arms != ArmType.NONE && !locked[EvolutionTypes.ARM_EVOLUTION])
 								{
 									gotAttrib = addArm(mate.arms);
 									if (gotAttrib)
@@ -467,7 +467,7 @@ package com.lionsteel.LD24.entities
 								}
 							break;
 						case EvolutionTypes.HORN_EVOLUTION:
-							if (mate.horn != HornType.NONE)
+							if (mate.horn != HornType.NONE && !locked[EvolutionTypes.HORN_EVOLUTION])
 							{
 								gotAttrib = addHorn(mate.horn);
 								if (gotAttrib)
@@ -475,7 +475,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.LEG_EVOLUTION:
-							if (mate.legs != LegType.NONE)
+							if (mate.legs != LegType.NONE && !locked[EvolutionTypes.LEG_EVOLUTION])
 							{
 								gotAttrib = addLeg(mate.legs);
 								if (gotAttrib)
@@ -483,7 +483,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.TAIL_EVOLUTION:
-							if (mate.tail != TailType.NONE)
+							if (mate.tail != TailType.NONE && !locked[EvolutionTypes.TAIL_EVOLUTION])
 							{
 								gotAttrib = addTail(mate.tail);
 								if (gotAttrib)
@@ -491,7 +491,7 @@ package com.lionsteel.LD24.entities
 							}
 							break;
 						case EvolutionTypes.WING_EVOLUTION:
-							if (mate.wings != WingType.NONE)
+							if (mate.wings != WingType.NONE && !locked[EvolutionTypes.WING_EVOLUTION])
 							{
 								gotAttrib = addWing(mate.wings);
 								if (gotAttrib)
@@ -700,18 +700,6 @@ package com.lionsteel.LD24.entities
 			{
 				WingType.IMAGE[wings].render(FP.buffer, C.WING_POWERUP_POS, new Point());
 			}
-			
-			if (locked[EvolutionTypes.LEG_EVOLUTION])
-				traitLockImage.render(FP.buffer, C.LEG_POWERUP_POS, new Point());
-				if (locked[EvolutionTypes.ARM_EVOLUTION])
-				traitLockImage.render(FP.buffer, C.ARM_POWERUP_POS, new Point());
-				if (locked[EvolutionTypes.TAIL_EVOLUTION])
-				traitLockImage.render(FP.buffer, C.TAIL_POWERUP_POS, new Point());
-				if (locked[EvolutionTypes.WING_EVOLUTION])
-				traitLockImage.render(FP.buffer, C.WING_POWERUP_POS, new Point());
-				if (locked[EvolutionTypes.HORN_EVOLUTION])
-				traitLockImage.render(FP.buffer, C.HORN_POWERUP_POS, new Point());
-			
 			for (var healthInd:Number = 0; healthInd < getTotalHearts(); healthInd++)
 			{
 				if (health >= healthInd + 1)

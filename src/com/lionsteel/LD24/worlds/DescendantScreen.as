@@ -61,6 +61,7 @@ package com.lionsteel.LD24.worlds
 			if (Input.pressed("INTERACT") || Input.pressed("ATTACK"))
 			{
 				descendant.eggImage.alpha = 0;
+				descendant
 				FP.world = new GameWorld(nextLevel, descendant);
 			}
 			super.update();

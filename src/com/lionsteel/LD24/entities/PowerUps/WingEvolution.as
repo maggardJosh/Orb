@@ -51,10 +51,23 @@ package com.lionsteel.LD24.entities.PowerUps
 		}
 		override public function pickup(player:Player):Boolean 
 		{
+			var noPowerUp:Boolean = false;
+			if (player.wings != WingType.NONE  && player.tempPowerUp != null)
+				player.tempPowerUp = new WingEvolution(player.wings,new Point());
+			else
+				if (player.wings != WingType.NONE)		//If has part but no power up yet
+					noPowerUp = true;
+				
 			if (player.addWing(typeOfWing))
 			{
 				player.world.add(new killIndicator(WingType.KILL_COLOR_IMAGES[typeOfWing], new Point(player.x, player.y),  C.WING_POWERUP_POS));
-				player.setTempPowerUp(this);
+				if (player.tempPowerUp != null)
+					player.tempPowerUp.drop(player);
+				player.setWing(this.typeOfWing);
+				if (noPowerUp)
+					player.setTempPowerUp(null);
+				else
+					player.setTempPowerUp(this);
 				this.world.remove(this);
 				return true;
 			}

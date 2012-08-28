@@ -1,5 +1,7 @@
 package com.lionsteel.LD24.worlds 
 {
+	import com.lionsteel.LD24.BodyTypes.WingType;
+	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.entities.Enemy;
 	import com.lionsteel.LD24.entities.Level;
 	import com.lionsteel.LD24.entities.Player;
@@ -20,9 +22,10 @@ package com.lionsteel.LD24.worlds
 	 */
 	public class GameWorld extends World 
 	{
-		[Embed (source = "../assets/Levels/levelOne.oel", mimeType = "application/octet-stream")] private const levelOneXML:Class;
-		[Embed (source = "../assets/Levels/levelTwo.oel", mimeType = "application/octet-stream")] private const levelTwoXML:Class;
-		private var levels:Array = new Array( levelOneXML, levelTwoXML );
+		[Embed (source = "../assets/Levels/Tutorial_level.oel", mimeType = "application/octet-stream")] private const tutLevelXML:Class;
+		[Embed (source = "../assets/Levels/LEVEL_ONE.oel", mimeType = "application/octet-stream")] private const levelOneXML:Class;
+		[Embed (source = "../assets/Levels/LEVEL_TWO.oel", mimeType = "application/octet-stream")] private const levelTwoXML:Class;
+		private var levels:Array = new Array( tutLevelXML, levelOneXML, levelTwoXML );
 		public var levelNum:int;
 		private var backgroundOne:Backdrop;
 		private var backgroundTwo:Backdrop;
@@ -30,23 +33,37 @@ package com.lionsteel.LD24.worlds
 		private var currentLevel:Level;
 		
 		private var tutText:Array = new Array();
+		private var tutPos:Array = new Array();
 		
-		private var tutCount:int = 0;
+		private var tutEndCount:int = 0;
 		private var tutLengthEach:int = 5000;
+		
+		private var tutEndText:Text;
 		
 		private var particleEmitter:Emitter;
 		public function GameWorld( levelNum:int, playerVar:Player) 
 		{
-			Text.size = 30;
-			tutText[0] = new Text("WASD - Move");
-			tutText[1] = new Text("Space - Jump");
-			tutText[2] = new Text("E - Interact/Pickup");
-			tutText[3] = new Text("Enter - Attack with Arms or Tail");
-			tutText[4] = new Text("Kill the same type of enemy\nenough times and gain their ability!");
-			tutText[5] = new Text("Good Luck!");
+			Text.size = 28;
+			tutEndText = new Text("Have Fun!");
 			
+			tutText[0] = new Text("Use WASD to move\nand space to jump");
+			tutText[1] = new Text("Jump on enemies to kill them\n(Watch out for spikes)");
+			tutText[2] = new Text("Kill enough similar\nenemies in a row\nto get their traits\n(Use E to pick up dropped traits)");
+			tutText[3] = new Text("Certain traits allow you\nto fly or jump multiple times\n(Hold Space to coast)");
+			tutText[4] = new Text("Use Enter to attack");
+			tutText[5] = new Text("Use E to pick a mate\nMating randomizes your traits\nand allows you to have\nmore at one time");
+			
+			tutPos[ -1] = 0;
+			tutPos[0] = 24 * C.TILE_SIZE;
+			tutPos[1] = 44 * C.TILE_SIZE;
+			tutPos[2] = 71 * C.TILE_SIZE;
+			tutPos[3] = 108 * C.TILE_SIZE;
+			tutPos[4] = 180 * C.TILE_SIZE;
+			tutPos[5] = 200 * C.TILE_SIZE;
 			for (var ind:int = 0; ind < tutText.length; ind++)
 				tutText[ind].alpha = 0;
+		
+			
 			
 			this.levelNum = levelNum;
 			particleEmitter = new Emitter(GFX.PARTICLE_ONE, 10, 10);
@@ -109,7 +126,10 @@ package com.lionsteel.LD24.worlds
 			}
 			
 			if (levelNum >= levels.length)
-				levelNum = 0;
+			{
+				FP.world = new GameOver();
+				return;
+			}
 			currentLevel = new Level(levels[levelNum], particleEmitter, this, player);
 			
 			player.setLevel(currentLevel);
@@ -122,10 +142,14 @@ package com.lionsteel.LD24.worlds
 		
 		override public function update():void 
 		{
+			
 			super.update();
 			
-			if(levelNum == 0 && tutCount < tutText.length*tutLengthEach)
-				tutCount += 16
+			if(levelNum == 1 && tutEndCount < 2000)
+				tutEndCount += 16
+			else
+			if (levelNum == 1 && tutEndText.alpha > 0)
+				tutEndText.alpha -= .01;
 				
 			backgroundOne.x -= .1;
 			backgroundTwo.x -= .05;
@@ -139,16 +163,21 @@ package com.lionsteel.LD24.worlds
 			{
 				for (var ind:int = 0; ind < tutText.length; ind++)
 				{
-					if (int(tutCount / tutLengthEach) != ind)
+					if ( player.x < tutPos[ind] && player.x > tutPos[ind-1])
 					{
-						if(Text(tutText[ind]).alpha >0)
-							Text(tutText[ind]).alpha -= .1;
-					}
-						else
 						if(Text(tutText[ind]).alpha < 1)
 							Text(tutText[ind]).alpha += .03;
-						Text(tutText[ind]).render(FP.buffer, new Point(FP.halfWidth - Text(tutText[ind]).width / 2, 100), new Point());
+					}
+						else
+						if(Text(tutText[ind]).alpha >0)
+							Text(tutText[ind]).alpha -= .1;
+							
+					Text(tutText[ind]).render(FP.buffer, new Point(FP.halfWidth - Text(tutText[ind]).width / 2, 80), new Point());
 				}
+			}else
+			if (levelNum == 1)
+			{
+				tutEndText.render(FP.buffer,  new Point(FP.halfWidth - tutEndText.width / 2, 100), new Point());
 			}
 		}
 		

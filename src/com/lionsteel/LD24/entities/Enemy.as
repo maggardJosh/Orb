@@ -130,7 +130,7 @@ package com.lionsteel.LD24.entities
 				switch(currentLevel.player.arms)
 				{
 					case ArmType.BASE:
-						if (numArmDamagedThisAttack > 0)
+						if (currentLevel.player.numArmDamagedThisAttack > 0)
 							damageVar = 0;
 						break;
 					case ArmType.CLAW:
@@ -181,8 +181,17 @@ package com.lionsteel.LD24.entities
 				if(velX<0)		//Moving left
 					x = collideRoom.x + Math.floor((x- collideRoom.x) / C.TILE_SIZE) * C.TILE_SIZE + C.TILE_SIZE;		//place to the right of tile we have collided with
 				
-					velX = 0;
-					facingLeft = !facingLeft;
+				velX = 0;
+				if (grounded)
+			{
+					state = AI_STATE.JUMPING;
+					tryJump();
+			}
+					else
+				{
+					if(velY > 0)
+						facingLeft = !facingLeft;
+				}
 			}
 			
 			//Update y movement and then check collision

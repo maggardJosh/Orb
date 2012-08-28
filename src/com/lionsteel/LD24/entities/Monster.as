@@ -161,6 +161,8 @@ package com.lionsteel.LD24.entities
 		public var numArmDamagedThisAttack:int = 0;
 		public var numTailDamagedThisAttack:int = 0;
 		
+		public var tempPowerUp:PowerUp;
+		
 		public function Monster(level:Level) 
 		{
 			this.currentLevel = level;
@@ -329,16 +331,28 @@ package com.lionsteel.LD24.entities
 		}
 		public function addLeg(type:int):Boolean
 		{
-			if (legs == LegType.NONE && type!=LegType.NONE && !locked[EvolutionTypes.LEG_EVOLUTION])
+			if (legs == LegType.NONE && type != LegType.NONE)
 				setLeg(type);
+			else
+			if (legs != LegType.NONE)
+			{
+				tempPowerUp = new LegEvolution(type, new Point());
+				setLeg(type);
+			}
 			else
 				return false;
 			return true;
 		}
 		public function addWing(type:int):Boolean
 		{
-			if (wings == WingType.NONE && type != WingType.NONE && !locked[EvolutionTypes.WING_EVOLUTION])
+			if (wings == WingType.NONE && type != WingType.NONE)
 				setWing(type);
+			else
+			if(type!=WingType.NONE)
+			{
+				tempPowerUp = new WingEvolution(wings,new Point());
+				setWing(type);
+			}
 			else
 				return false;
 			return true;
@@ -346,8 +360,14 @@ package com.lionsteel.LD24.entities
 		
 		public function addArm(type:int):Boolean
 		{
-			if (arms == ArmType.NONE && type != ArmType.NONE && !locked[EvolutionTypes.ARM_EVOLUTION])
+			if (arms == ArmType.NONE && type != ArmType.NONE)
 				setArm(type);
+			else
+			if (type != ArmType.NONE)
+			{
+				tempPowerUp = new ArmEvolution(arms, new Point());
+				setArm(type);
+			}
 			else
 				return false;
 			return true;
@@ -355,8 +375,14 @@ package com.lionsteel.LD24.entities
 		
 		public function addTail(type:int):Boolean
 		{
-			if (tail == TailType.NONE && type!=TailType.NONE && !locked[EvolutionTypes.TAIL_EVOLUTION])
+			if (tail == TailType.NONE && type!=TailType.NONE)
 				setTail(type);
+			else
+			if (tail != TailType.NONE)
+			{
+				tempPowerUp = new TailEvolution(tail, new Point());
+				setTail(type);
+			}
 			else
 				return false;
 			return true;
@@ -364,8 +390,14 @@ package com.lionsteel.LD24.entities
 		
 		public function addHorn(type:int):Boolean
 		{
-			if (horn == HornType.NONE&&type != HornType.NONE && !locked[EvolutionTypes.HORN_EVOLUTION])
+			if (horn == HornType.NONE&&type != HornType.NONE)
 				setHorn(type);
+			else
+			if (horn != HornType.NONE)
+			{
+				tempPowerUp = new HornEvolution(horn, new Point());
+				setHorn(type);
+			}
 			else
 				return false;
 			return true;
@@ -489,7 +521,7 @@ package com.lionsteel.LD24.entities
 					maxYVel = 3;
 					if (legs == LegType.NONE)
 					{
-						y -= height - WingType.wingHeight(wings);
+						y -=  WingType.wingHeight(wings) - height;
 						height = WingType.wingHeight(wings);
 						
 					}
@@ -507,7 +539,7 @@ package com.lionsteel.LD24.entities
 					maxYVel = C.START_MAX_Y_VEL;
 					if (legs == LegType.NONE)
 					{
-						y -= height - WingType.wingHeight(wings);
+						y -= WingType.wingHeight(wings) - height;
 						height = WingType.wingHeight(wings);
 						
 					}

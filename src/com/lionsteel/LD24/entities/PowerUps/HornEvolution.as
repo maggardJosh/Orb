@@ -53,14 +53,29 @@ package com.lionsteel.LD24.entities.PowerUps
 		
 		override public function pickup(player:Player):Boolean 
 		{
+			var noPowerUp:Boolean = false;
+			if (player.horn != HornType.NONE  && player.tempPowerUp != null)
+				player.tempPowerUp = new HornEvolution(player.horn,new Point());
+			else
+				if (player.horn != HornType.NONE)		//If has part but no power up yet
+					noPowerUp = true;
+				
 			if (player.addHorn(typeOfHorn))
 			{
-				player.world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[typeOfHorn], new Point(player.x, player.y), C.HORN_POWERUP_POS));
-				player.setTempPowerUp(this);
+				player.world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[typeOfHorn], new Point(player.x, player.y),  C.HORN_POWERUP_POS));
+				if (player.tempPowerUp != null)
+					player.tempPowerUp.drop(player);
+				player.setHorn(this.typeOfHorn);
+				if (noPowerUp)
+					player.setTempPowerUp(null);
+				else
+					player.setTempPowerUp(this);
 				this.world.remove(this);
 				return true;
-			}else
-				return false;
+			}
+			else
+			return false;
+			
 		}
 		
 		
