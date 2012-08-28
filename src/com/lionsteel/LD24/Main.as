@@ -23,6 +23,7 @@ package com.lionsteel.LD24
 		public static var DescendantHistory:Array = new Array();
 		public function Main()
 		{
+			
 			ArmType.init();
 			TailType.init();
 			LegType.init();
@@ -40,7 +41,17 @@ package com.lionsteel.LD24
 			Input.define("RIGHT", Key.RIGHT, Key.D);
 			Input.define("ATTACK", Key.ENTER);
 			Input.define("INTERACT", Key.E);
+			
+			
+			
 		}
+		
+		override public function init():void 
+		{
+			Kongregate.connect(FP.stage);
+			super.init();
+		}
+		
 		
 		override public function update():void 
 		{

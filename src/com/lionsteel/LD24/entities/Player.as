@@ -11,6 +11,7 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.killIndicator;
+	import com.lionsteel.LD24.Kongregate;
 	import com.lionsteel.LD24.Main;
 	import com.lionsteel.LD24.Utils;
 	import com.lionsteel.LD24.worlds.DescendantScreen;
@@ -371,8 +372,7 @@ package com.lionsteel.LD24.entities
 				if (collisionEntity != null)
 				{
 					if (GameWorld(world).levelNum == 0)
-					{
-						
+					{						
 						currentLevel.clearLevel();
 						FP.world.remove(this);
 						FP.world = new GameWorld(1, new Player(currentLevel));
@@ -391,6 +391,7 @@ package com.lionsteel.LD24.entities
 				Main.DescendantHistory.push(copy());
 				FP.world.remove(this);
 				FP.world = new GameOver();
+				Kongregate.submit("BeatGame", 1);
 				return;
 			}
 			var copyOfSelf:Monster = copy();
