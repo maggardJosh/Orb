@@ -373,6 +373,7 @@ package com.lionsteel.LD24.entities
 				{
 					if (GameWorld(world).levelNum == 0)
 					{						
+						Kongregate.submit("BeatTutorial", 1);
 						currentLevel.clearLevel();
 						FP.world.remove(this);
 						FP.world = new GameWorld(1, new Player(currentLevel));

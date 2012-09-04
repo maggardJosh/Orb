@@ -9,6 +9,7 @@ package com.lionsteel.LD24.worlds
 	import flash.geom.Point;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.graphics.Text;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.World;
 	
@@ -24,6 +25,8 @@ package com.lionsteel.LD24.worlds
 		private var descendant:Player;
 		private var nextLevel:int;
 		private var lowerHeight:int;		//Used to show bottom of screen
+		
+		private var pressEnterText:Text;
 		public function DescendantScreen(leftParent:Monster, rightParent:Monster, descendant:Player, nextLevel:int) 
 		{
 			lowerHeight = 1;
@@ -32,6 +35,8 @@ package com.lionsteel.LD24.worlds
 			this.descendant = descendant;
 			this.nextLevel = nextLevel;
 		
+			pressEnterText = new Text("Press Enter")
+			
 			leftParent.x = 190;
 			leftParent.y = 120;
 			leftParent.facingLeft = false;
@@ -73,6 +78,9 @@ package com.lionsteel.LD24.worlds
 			leftParent.render();
 			rightParent.render();
 			Monster(descendant).render();
+			
+			if (descendant.eggImage.alpha == 0)
+				pressEnterText.render(FP.buffer, new Point(FP.halfWidth - pressEnterText.width / 2, FP.height - pressEnterText.height -10), new Point());
 			super.render();
 		}
 		
