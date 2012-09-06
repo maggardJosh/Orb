@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\LD24.swf" />
+    <movie path="bin\Orb.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
