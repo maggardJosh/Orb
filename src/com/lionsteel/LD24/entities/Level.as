@@ -6,9 +6,6 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.BodyTypes.TailType;
 	import com.lionsteel.LD24.BodyTypes.WingType;
 	import com.lionsteel.LD24.C;
-	import com.lionsteel.LD24.entities.PowerUps.ArmEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
-	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.geom.Point;
@@ -162,17 +159,6 @@ package com.lionsteel.LD24.entities
 				world.add(enemyAdd);
 			}
 			
-			var mateVar:Mate;
-			dataList = xmlData.entities.Mate;
-			for each(dataElement in dataList)
-			{
-				mateVar = new Mate(this.player.evolution + 1, this);
-				enemyList.push(mateVar);
-				mateVar.x = int(dataElement.@x);
-				mateVar.y = int(dataElement.@y);
-				world.add(mateVar);
-			}
-			
 			if (GameWorld(world).levelNum == 0)
 				spawnTutorialStuff();
 		}
@@ -267,9 +253,6 @@ package com.lionsteel.LD24.entities
 			newEnemy.y = 25 * C.TILE_SIZE;
 			add(newEnemy);
 			
-			
-			add(new WingEvolution(WingType.BAT, new Point(70 * C.TILE_SIZE, 20 * C.TILE_SIZE)));
-			add(new ArmEvolution(ArmType.BASE, new Point(105 * C.TILE_SIZE, 10 * C.TILE_SIZE)));
 			
 			for ( var ind:int = 0; ind < 10; ind ++)
 			{

@@ -35,18 +35,6 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/Player/tails/tail_scorpion.png")] public static const TAIL_SCORPION_ANIM:Class;
 		[Embed(source = "assets/Player/tails/tail_monkey.png")] public static const TAIL_MONKEY_ANIM:Class;
 		
-		//Pickups
-		[Embed(source = "assets/PowerUps/leg_spider_pickup.png")] public static const SPIDER_LEG_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/wing_bat_pickup.png")] public static const BAT_WING_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/arm_base_pickup.png")] public static const BASE_ARM_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/tail_scorpion_pickup.png")] public static const SCORPION_TAIL_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/horn_spike_pickup.png")] public static const SPIKE_HORN_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/leg_jaba_pickup.png")] public static const LEG_JABA_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/arm_claw_pickup.png")] public static const ARM_CLAW_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/head_plant_pickup.png")] public static const HORN_PLANT_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/tail_monkey_pickup.png")] public static const TAIL_MONKEY_PICKUP:Class;
-		[Embed(source = "assets/PowerUps/wing_tiny_pickup.png")] public static const WING_TINY_PICKUP:Class;
-		
 		//Background and tileset
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
 		[Embed(source = "assets/backgroundTwo.png")] public static const BACKGROUND_TWO:Class;
@@ -86,6 +74,9 @@ package com.lionsteel.LD24
 		
 		//Screens
 		[Embed(source = "assets/descendantScreen.png")] public static const DESCENDANT_SCREEN:Class;
+		
+		//Misc.
+		[Embed(source = "assets/blankImage.png")] public static const BLANK_IMAGE:Class;
 	}
 
 }

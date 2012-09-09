@@ -3,11 +3,6 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.AI_STATE;
 	import com.lionsteel.LD24.BodyTypes.*;
 	import com.lionsteel.LD24.C;
-	import com.lionsteel.LD24.entities.PowerUps.ArmEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.HornEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.LegEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.TailEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
 	import net.flashpunk.Entity;
@@ -170,7 +165,7 @@ package com.lionsteel.LD24.entities
 		//Apply velocity and check collisions
 		private function updateMovement():void
 		{
-			velY += C.GRAVITY * floatVar;		//Gravity
+			velY += C.GRAVITY;		//Gravity
 			if (velY > maxYVel)		//If pressing down let fall faster
 				velY = maxYVel;												//Else limit y vel
 			

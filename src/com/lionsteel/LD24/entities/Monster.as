@@ -2,14 +2,7 @@ package com.lionsteel.LD24.entities
 {
 	import com.lionsteel.LD24.BodyTypes.*;
 	import com.lionsteel.LD24.C;
-	import com.lionsteel.LD24.entities.PowerUps.ArmEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.HornEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.LegEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.PowerUp;
-	import com.lionsteel.LD24.entities.PowerUps.TailEvolution;
-	import com.lionsteel.LD24.entities.PowerUps.WingEvolution;
 	import com.lionsteel.LD24.GFX;
-	import com.lionsteel.LD24.killIndicator;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.SoundCodec;
@@ -47,7 +40,6 @@ package com.lionsteel.LD24.entities
 		protected var jumpsLeft:int = 0;
 		protected var totalJumps:int = 1;		//this is the total jumps you get when you land (more with diff wings)
 
-		protected var floatVar:Number = 1.0;		//Gravity is multiplied by this (with wings this is lower)
 		protected var maxYVel:Number = C.START_MAX_Y_VEL;
 		
 		public var _damage:Number = 1.0;
@@ -72,7 +64,7 @@ package com.lionsteel.LD24.entities
 		
 		protected function getSpeed():Number
 		{
-			return C.START_PLAYER_SPEED * legSpeedVar * armSpeedVar * tailSpeedVar * hornSpeedVar * wingSpeedVar;
+			return C.START_PLAYER_SPEED * legSpeedVar * ArmType.SPEED_VAR[arms] * tailSpeedVar * hornSpeedVar * wingSpeedVar;
 		}
 		
 		private var legDamageVar:Number = 1.0;
@@ -161,8 +153,6 @@ package com.lionsteel.LD24.entities
 		public var numArmDamagedThisAttack:int = 0;
 		public var numTailDamagedThisAttack:int = 0;
 		
-		public var tempPowerUp:PowerUp;
-		
 		public function Monster(level:Level) 
 		{
 			this.currentLevel = level;
@@ -236,31 +226,6 @@ package com.lionsteel.LD24.entities
 			currentLevel.particleEmitter.emit("death", x+FP.random*20-10, y+FP.random*20-10);
 			
 			
-			if (this.legs != LegType.NONE)
-			{
-				currentLevel.player.addLegKill(legs);
-				world.add(new killIndicator(LegType.KILL_COLOR_IMAGES[legs], new Point(x, y), new Point(C.KILL_COUNT_START_X, 0)));
-			}
-			if (this.wings != WingType.NONE)
-			{
-				currentLevel.player.addWingKill(wings);
-				world.add(new killIndicator(WingType.KILL_COLOR_IMAGES[wings], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*4, 0)));
-			}
-			if (this.arms != ArmType.NONE)
-			{
-				currentLevel.player.addArmKill(arms); 
-				world.add(new killIndicator(ArmType.KILL_COLOR_IMAGES[arms], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING, 0)));
-			}
-			if (this.tail != TailType.NONE)
-			{
-				currentLevel.player.addTailKill(tail);
-				world.add(new killIndicator(TailType.KILL_COLOR_IMAGES[tail], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*3, 0)));
-			}
-			if (this.horn != HornType.NONE)
-			{
-				currentLevel.player.addHornKill(horn);
-				world.add(new killIndicator(HornType.KILL_COLOR_IMAGES[horn], new Point(x, y), new Point(C.KILL_COUNT_START_X+C.KILL_X_SPACING*2, 0)));
-			}
 			this.world.remove(this);
 		}
 		
@@ -333,26 +298,12 @@ package com.lionsteel.LD24.entities
 		{
 			if (legs == LegType.NONE && type != LegType.NONE)
 				setLeg(type);
-			else
-			if (legs != LegType.NONE)
-			{
-				tempPowerUp = new LegEvolution(type, new Point());
-				setLeg(type);
-			}
-			else
-				return false;
 			return true;
 		}
 		public function addWing(type:int):Boolean
 		{
 			if (wings == WingType.NONE && type != WingType.NONE)
 				setWing(type);
-			else
-			if(type!=WingType.NONE)
-			{
-				tempPowerUp = new WingEvolution(wings,new Point());
-				setWing(type);
-			}
 			else
 				return false;
 			return true;
@@ -363,12 +314,6 @@ package com.lionsteel.LD24.entities
 			if (arms == ArmType.NONE && type != ArmType.NONE)
 				setArm(type);
 			else
-			if (type != ArmType.NONE)
-			{
-				tempPowerUp = new ArmEvolution(arms, new Point());
-				setArm(type);
-			}
-			else
 				return false;
 			return true;
 		}
@@ -378,12 +323,6 @@ package com.lionsteel.LD24.entities
 			if (tail == TailType.NONE && type!=TailType.NONE)
 				setTail(type);
 			else
-			if (tail != TailType.NONE)
-			{
-				tempPowerUp = new TailEvolution(tail, new Point());
-				setTail(type);
-			}
-			else
 				return false;
 			return true;
 		}
@@ -392,12 +331,6 @@ package com.lionsteel.LD24.entities
 		{
 			if (horn == HornType.NONE&&type != HornType.NONE)
 				setHorn(type);
-			else
-			if (horn != HornType.NONE)
-			{
-				tempPowerUp = new HornEvolution(horn, new Point());
-				setHorn(type);
-			}
 			else
 				return false;
 			return true;
@@ -501,7 +434,6 @@ package com.lionsteel.LD24.entities
 			switch(type)
 			{
 				case WingType.NONE:
-					floatVar = 1.0;
 					wingJumpVar = 1.0;
 					wingSpeedVar = 1.0;
 					wingJumpAdded = 0;
@@ -598,53 +530,15 @@ package com.lionsteel.LD24.entities
 		
 		public function setArm(type:int):void
 		{
-			if (type >= ArmType.NUM_ARMS)
+			if (type >= ArmType.NUM_PARTS)
 				type = -1;
 			arms = type;
-			switch(type)
-			{
-				case ArmType.NONE:
-					armDamageVar = 1.0;
-					if (health > armHealthVar)
-						health -= armHealthVar;		//take back health if we can
-					armHealthVar = 0;
-					armJumpAdded = 0;
-					armJumpVar = 1.0;
-					armSpeedVar = 1.0;
-					return;
-				case ArmType.BASE:
-					frontArmAnim = new Spritemap(GFX.ARM_BASE_FRONT_ANIM, 100, 80);
-					backArmAnim = new Spritemap(GFX.ARM_BASE_BACK_ANIM, 100, 80);
-					frontArmAnim.add("idle",[0] ,.1, true);
-					frontArmAnim.add("walk", [4,5,6,7], .1, true);
-					frontArmAnim.add("jump", [8], .1, true);
-					frontArmAnim.add("fall", [12], .1, true);
-					frontArmAnim.add("meleeStart", [16], .7, false);
-					frontArmAnim.add("melee", [16,17,18,19,19,19],.3, false);
-					frontArmAnim.add("range", [20], .1, true);
-					frontArmAnim.add("crouch", [24], .1, true);
-					frontArmAnim.add("birth", [28], .1, true);
-					armDamageVar = 1.3;
-					armHealthVar = 1;
-					armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
-					break;
-				case ArmType.CLAW:
-					frontArmAnim = new Spritemap(GFX.ARM_CLAW_FRONT_ANIM, 100, 80);
-					backArmAnim = new Spritemap(GFX.ARM_CLAW_BACK_ANIM, 100, 80);
-					frontArmAnim.add("idle",[0] ,.1, true);
-					frontArmAnim.add("walk", [4,5,6,7], .1, true);
-					frontArmAnim.add("jump", [8], .1, true);
-					frontArmAnim.add("fall", [12], .1, true);
-					frontArmAnim.add("meleeStart", [16], .7, false);
-					frontArmAnim.add("melee", [16,17,18,19,19,19],.3, false);
-					frontArmAnim.add("range", [0], .1, true);
-					frontArmAnim.add("crouch", [0], .1, true);
-					frontArmAnim.add("birth", [0], .1, true);
-					armDamageVar = 1.3;
-					armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
-					break;
-
-			}
+			frontArmAnim = ArmType.getFrontAnim(arms);
+			backArmAnim = ArmType.getBackAnim(arms);
+			
+			
+			armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
+			
 			frontArmAnim.color = tintColor;
 			backArmAnim.color = tintColor;
 		}
