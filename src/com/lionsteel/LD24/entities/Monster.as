@@ -531,7 +531,7 @@ package com.lionsteel.LD24.entities
 		public function setArm(type:int):void
 		{
 			if (type >= ArmType.NUM_PARTS)
-				type = -1;
+				type = 0;
 			arms = type;
 			frontArmAnim = ArmType.getFrontAnim(arms);
 			backArmAnim = ArmType.getBackAnim(arms);

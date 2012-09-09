@@ -1,28 +1,70 @@
 package com.lionsteel.LD24.BodyTypes 
 {
+	import com.lionsteel.LD24.ElementTypes.ElementTypes;
 	import com.lionsteel.LD24.GFX;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	/**
-	 * ...
+	 * Class containing static methods for dealing
+	 * with different arm type stats and GFX
 	 * @author Josh Maggard
 	 */
 	public class ArmType
 	{
-		public static const NONE:int = -1;
-		public static const BASE:int = 0;
-		public static const CLAW:int = 1;
 		
-		public static const NUM_PARTS:int = 2;
+		//{region Arm Types
 		
-		public static var TRAIT_POINT_COUNT:Array = new Array();				//Number of trait points needed to get this
-		public static var GREYSCALE_IMAGE:Array = new Array();		//Black and white image of this
-		public static var IMAGE:Array = new Array();							//Image of this part (no animation)
+		public static const NONE:int = 0;		
+		public static const BASE:int = 1;		
+		public static const CLAW:int = 2;		
 		
-		public static var DAMAGE:Array = new Array();						//Damage this part does
-		public static var SPEED_VAR:Array = new Array();					//Speed variables for each arm type
-		public static var JUMP_FORCE_VAR:Array = new Array();		//Monster's jump force is multiplied by this before jumping.
+		public static const NUM_PARTS:int = 3;				//total number of parts (+1 for none)
 		
+		//} endregion
+		
+		//{region Part Stats
+		
+		public static var TRAIT_POINT_COUNT:Vector.<uint> = new Vector.<uint>(NUM_PARTS, true);					//Number of trait points needed
+		public static var GREYSCALE_IMAGE:Vector.<Image> = new Vector.<Image>(NUM_PARTS, true);					//Black and white image of this
+		public static var IMAGE:Vector.<Image> = new Vector.<Image>(NUM_PARTS, true);							//Image of this part (no animation)
+		
+		public static var PART_DAMAGE:Vector.<uint> = new Vector.<uint>(NUM_PARTS, true);						//Damage this part does
+		
+		public static var SPEED_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);						//Speed variables for each arm type
+		public static var JUMP_FORCE_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);				//Monster's jump force is multiplied by this before jumping.		
+		public static var DEFENSE_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);					//Defense variable for each part
+		public static var TOTAL_DAMAGE_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);				//Effects damage dealt by everything
+		public static var ELEMENT_DEFENSE:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>(NUM_PARTS, true);
+		
+		//}endregion
+		
+		//{region Init Function
+		/**
+		 * Call this function in main's init to initialize all parts GFX and stats
+		 */
+		public static function init():void
+		{
+			// Create each part's element defense array
+			// Each part contains an array that contains each element's defense value
+			// And each part is in an array... soooo it's an array within an array! :D
+			// (Basically float[NUM_PARTS][NUM_ELEMENTS])
+			for (var x:int = 0; x < NUM_PARTS; x++ )
+				ELEMENT_DEFENSE[x] = new Vector.<Number>(ElementTypes.NUM_ELEMENTS, true);			//Side note: These all initialize to 0 automatically... Yataa! That's what we want!
+			
+			noneSetup();
+			baseSetup();
+			clawSetup();
+		}
+		
+		//}endregion
+		
+		//{region Front & Back Anim Functions
+		
+		/**
+		 * Returns a copy of front arm anim sheet 
+		 * @param type of part
+		 * @return Spritemap with animations for the part indicated by param type
+		 */
 		public static function getFrontAnim(type:int):Spritemap
 		{
 			var animSheet:Spritemap;
@@ -65,6 +107,11 @@ package com.lionsteel.LD24.BodyTypes
 			return animSheet;
 		}
 		
+		/**
+		 * Returns a copy of back arm anim sheet 
+		 * @param type of part
+		 * @return Spritemap with animations for the part indicated by param type
+		 */
 		public static function getBackAnim(type:int):Spritemap
 		{
 			var animSheet:Spritemap;
@@ -83,6 +130,9 @@ package com.lionsteel.LD24.BodyTypes
 			return animSheet;
 		}
 		
+		//} endregion
+		
+		//{region Setup Functions for Part images & stats
 		private static function noneSetup():void
 		{
 			GREYSCALE_IMAGE[NONE] = new Image(GFX.BLANK_IMAGE);
@@ -90,7 +140,7 @@ package com.lionsteel.LD24.BodyTypes
 			TRAIT_POINT_COUNT[NONE] = 10;
 			IMAGE[NONE] = new Image(GFX.BLANK_IMAGE);
 			
-			DAMAGE[NONE] = 1;
+			PART_DAMAGE[NONE] = 1;
 			JUMP_FORCE_VAR[NONE] = 1.0;
 			SPEED_VAR[NONE] = 1.0;
 			
@@ -102,14 +152,13 @@ package com.lionsteel.LD24.BodyTypes
 			TRAIT_POINT_COUNT[BASE] = 10;
 			IMAGE[BASE] = new Image(GFX.ARM_BASE_COUNT_COLOR);
 			
-			DAMAGE[BASE] = 1;
+			PART_DAMAGE[BASE] = 1;
 			JUMP_FORCE_VAR[BASE] = 1.0;
 			SPEED_VAR[BASE] = 1.0;
 			
 			
 			
 		}
-		
 		private static function clawSetup():void
 		{
 			
@@ -118,18 +167,14 @@ package com.lionsteel.LD24.BodyTypes
 			TRAIT_POINT_COUNT[CLAW] = 3;
 			IMAGE[CLAW] = new Image(GFX.ARM_CLAW_COUNT_COLOR);
 			
-			DAMAGE[CLAW] = 1;
+			PART_DAMAGE[CLAW] = 1;
 			JUMP_FORCE_VAR[CLAW] = 1.0;
 			SPEED_VAR[CLAW] = 1.0;
 			
 			
 		}
-		public static function init():void
-		{
-			noneSetup();
-			baseSetup();
-			clawSetup();
-		}
+		//} endregion
+		
 	}
 
 }
