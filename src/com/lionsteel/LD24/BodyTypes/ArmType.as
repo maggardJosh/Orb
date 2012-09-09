@@ -6,7 +6,7 @@ package com.lionsteel.LD24.BodyTypes
 	import net.flashpunk.graphics.Spritemap;
 	
 	/**
-	 * Class containing static methods for dealing
+	 * SSSClass containing static methods for dealing
 	 * with different arm type stats and GFX
 	 * @author Josh Maggard
 	 */
