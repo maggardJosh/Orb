@@ -86,7 +86,7 @@ package com.lionsteel.LD24.entities
 		
 		protected function getJumpForce():Number
 		{
-			return jumpForce * legJumpVar * armJumpVar * tailJumpVar * hornJumpVar * wingJumpVar;
+			return jumpForce * LegType.JUMP_FORCE_VAR[legs] * ArmType.JUMP_FORCE_VAR[arms] * TailType.JUMP_FORCE_VAR[tail] * HornType.JUMP_FORCE_VAR[horn] * WingType.JUMP_FORCE_VAR[wings];
 		}
 		
 		protected var legJumpAdded:int = 0;
@@ -97,7 +97,7 @@ package com.lionsteel.LD24.entities
 		
 		protected function getTotalJumps():int
 		{
-			return totalJumps + legJumpAdded + armJumpAdded + tailJumpAdded + hornJumpAdded + wingJumpAdded;
+			return totalJumps + legJumpAdded + armJumpAdded + tailJumpAdded + hornJumpAdded + WingType.JUMPS_ADDED[wings];
 		}
 		
 		private var bodyAnim:Spritemap;
@@ -412,55 +412,17 @@ package com.lionsteel.LD24.entities
 		
 		public function setWing(type:int):void
 		{
-			if (type >= WingType.NUM_WINGS)	
-				type = -1;
+			if (type >= WingType.NUM_PARTS)	
+				type = 0;
 			wings = type;
-			switch(type)
-			{
-				case WingType.NONE:
-					wingJumpVar = 1.0;
-					wingSpeedVar = 1.0;
-					wingJumpAdded = 0;
-					maxYVel = C.START_MAX_Y_VEL;
-					if (legs == LegType.NONE)
-						height = 32;
-					return;
-				case WingType.BAT:
-					frontWingAnim = new Spritemap(GFX.WING_BAT_FRONT_ANIM, 100, 80);
-					backWingAnim = new Spritemap(GFX.WING_BAT_BACK_ANIM, 100, 80);
-					frontWingAnim.add("idle", [0,1,2,3], .1, true);
-					frontWingAnim.add("walk", [4, 5, 6, 7], .1, true);
-					frontWingAnim.add("jump", [8,9,10,11], .07, false);
-					frontWingAnim.add("fall", [12,13,14,15], .1, false);
-					wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
-					wingJumpAdded = 2;
-					maxYVel = 3;
-					if (legs == LegType.NONE)
-					{
-						y -=  WingType.wingHeight(wings) - height;
-						height = WingType.wingHeight(wings);
-						
-					}
-					break;
-					case WingType.TINY:
-					frontWingAnim = new Spritemap(GFX.WING_TINY_FRONT_ANIM, 100, 80);
-					backWingAnim = new Spritemap(GFX.WING_TINY_BACK_ANIM, 100, 80);
-					frontWingAnim.add("idle", [0], .1, true);
-					frontWingAnim.add("walk", [4, 5, 6, 7], .1, true);
-					frontWingAnim.add("jump", [8,9,10,11], .07, false);
-					frontWingAnim.add("fall", [12], .1, false);
-					frontWingAnim.add("birth", [0], .1, true);
-					wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
-					wingJumpAdded = 1;
-					maxYVel = C.START_MAX_Y_VEL * .5;
-					if (legs == LegType.NONE)
-					{
-						y -= WingType.wingHeight(wings) - height;
-						height = WingType.wingHeight(wings);
-						
-					}
-				break;
-			}
+			
+			frontWingAnim = WingType.getFrontAnim(type);
+			backWingAnim = WingType.getBackAnim(type);
+			
+			maxYVel = C.START_MAX_Y_VEL * WingType.FLOAT_VAR[type];			//Find new max *floating* y velocity
+			
+			wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
+			
 			frontWingAnim.color = tintColor;
 			backWingAnim.color = tintColor;
 		}

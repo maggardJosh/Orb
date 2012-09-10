@@ -88,6 +88,7 @@ package com.lionsteel.LD24.BodyTypes
 						add("crouch", [0], .3, true);
 						add("birth", [0], .3, true);
 						play("idle");
+						
 					}
 				break;
 				case SPIDER:						
