@@ -86,6 +86,7 @@ package com.lionsteel.LD24.entities
 		
 		protected function getJumpForce():Number
 		{
+			
 			return jumpForce * LegType.JUMP_FORCE_VAR[legs] * ArmType.JUMP_FORCE_VAR[arms] * TailType.JUMP_FORCE_VAR[tail] * HornType.JUMP_FORCE_VAR[horn] * WingType.JUMP_FORCE_VAR[wings];
 		}
 		
