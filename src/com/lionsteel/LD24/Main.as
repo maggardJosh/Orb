@@ -29,6 +29,7 @@ package com.lionsteel.LD24
 			LegType.init();
 			HornType.init();
 			WingType.init();
+			BodyType.init();
 			
 			super(640, 480, 60, true);
 			FP.world = new MainMenu();

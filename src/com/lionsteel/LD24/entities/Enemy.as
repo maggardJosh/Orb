@@ -95,6 +95,7 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
+		//TODO Implement TailType and ArmType attacks. Also add bounceVars to TailType and ArmType.
 		private function checkPlayerBoxes():void
 		{
 			var xBounceVar:Number = 30;

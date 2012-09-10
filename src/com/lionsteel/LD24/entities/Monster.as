@@ -35,8 +35,8 @@ package com.lionsteel.LD24.entities
 		protected var armPushBox:Entity;
 		protected var tailPushBox:Entity;
 		
-		//Facing direction
-		public var facingLeft:Boolean = false;
+		
+		public var facingLeft:Boolean = false;			//Facing direction
 		protected var jumpsLeft:int = 0;
 		protected var totalJumps:int = 1;		//this is the total jumps you get when you land (more with diff wings)
 
@@ -45,60 +45,55 @@ package com.lionsteel.LD24.entities
 		public var _damage:Number = 1.0;
 		public var health:Number;
 		
-		private var legHealthVar:int = 0;
-		private var armHealthVar:int = 0;
-		private var tailHealthVar:int = 0;
-		private var hornHealthVar:int = 0;
-		private var wingHealthVar:int = 0;
-		
+		//{region Get Modifiers Functions
+		/**
+		 * Returns the max health based on current body parts
+		 * @return max health considering body parts
+		 */
 		protected function getTotalHearts():int
 		{
-			return 3 + legHealthVar + armHealthVar + tailHealthVar + hornHealthVar + wingHealthVar;
+			return C.START_HEALTH + BodyType.HEARTS_ADDED[body] + LegType.HEARTS_ADDED[legs] + ArmType.HEARTS_ADDED[arms] + TailType.HEARTS_ADDED[tail] + HornType.HEARTS_ADDED[horn] + WingType.HEARTS_ADDED[wings];
 		}
 		
-		private var legSpeedVar:Number = 1.0;		//Speed multplied by this	
-		private var armSpeedVar:Number = 1.0;
-		private var tailSpeedVar:Number = 1.0;
-		private var hornSpeedVar:Number = 1.0;
-		private var wingSpeedVar:Number = 1.0;		//Speed multplied by this	
-		
+		/**
+		 * Multiplies speed by all the body part speed modifiers
+		 * @return adjusted speed
+		 */
 		protected function getSpeed():Number
 		{
-			return C.START_PLAYER_SPEED * legSpeedVar * ArmType.SPEED_VAR[arms] * tailSpeedVar * hornSpeedVar * wingSpeedVar;
+			return C.START_PLAYER_SPEED * BodyType.SPEED_VAR[body] * LegType.SPEED_VAR[legs] * ArmType.SPEED_VAR[arms] * TailType.SPEED_VAR[tail] * HornType.SPEED_VAR[horn] * WingType.SPEED_VAR[wings];
 		}
 		
-		private var legDamageVar:Number = 1.0;
-		private var armDamageVar:Number = 1.0;
-		private var tailDamageVar:Number = 1.0;
-		private var hornDamageVar:Number = 1.0;
-		private var wingDamageVar:Number = 1.0;
-		
+		/**
+		 * Multiplies our damage by the total damage modifiers of each body part
+		 * @return adjusted damage
+		 */
 		public function getDamage():Number
 		{
-			return _damage * legDamageVar * armDamageVar * tailDamageVar * hornDamageVar * wingDamageVar;
+			return _damage * BodyType.TOTAL_DAMAGE_VAR[body] * LegType.TOTAL_DAMAGE_VAR[legs] * ArmType.TOTAL_DAMAGE_VAR[arms] * TailType.TOTAL_DAMAGE_VAR[tail] * HornType.TOTAL_DAMAGE_VAR[horn] * WingType.TOTAL_DAMAGE_VAR[wings];
 		}
 		
-		protected var legJumpVar:Number = 1.0;		//Multply jump force by this
-		protected var armJumpVar:Number = 1.0;
-		protected var tailJumpVar:Number = 1.0;
-		protected var hornJumpVar:Number = 1.0;
-		protected var wingJumpVar:Number = 1.0;	//Multply jump force by this
-		
+		/**
+		 * Multiplies our jumpforce by all the body part jump force modifiers
+		 * @return adjusted jumpforce
+		 */
 		protected function getJumpForce():Number
 		{
-			return jumpForce * LegType.JUMP_FORCE_VAR[legs] * ArmType.JUMP_FORCE_VAR[arms] * TailType.JUMP_FORCE_VAR[tail] * HornType.JUMP_FORCE_VAR[horn] * WingType.JUMP_FORCE_VAR[wings];
+			return jumpForce * BodyType.JUMP_FORCE_VAR[body] * LegType.JUMP_FORCE_VAR[legs] * ArmType.JUMP_FORCE_VAR[arms] * TailType.JUMP_FORCE_VAR[tail] * HornType.JUMP_FORCE_VAR[horn] * WingType.JUMP_FORCE_VAR[wings];
 		}
 		
-		protected var legJumpAdded:int = 0;
-		protected var armJumpAdded:int = 0;
-		protected var tailJumpAdded:int = 0;
-		protected var hornJumpAdded:int = 0;
-		protected var wingJumpAdded:int = 0;
 		
+		/**
+		 * Takes into account all jump variables of all the parts
+		 * to get the total jumps should be allowed
+		 * @return total number of jumps based on body parts
+		 */
 		protected function getTotalJumps():int
 		{
-			return totalJumps + legJumpAdded + armJumpAdded + tailJumpAdded + hornJumpAdded + WingType.JUMPS_ADDED[wings];
+			return totalJumps + BodyType.JUMPS_ADDED[body] + LegType.JUMPS_ADDED[legs] + ArmType.JUMPS_ADDED[arms]+ TailType.JUMPS_ADDED[tail]+ HornType.JUMPS_ADDED[horn] + WingType.JUMPS_ADDED[wings];
 		}
+		
+		//}endregion
 		
 		private var bodyAnim:Spritemap;
 		private var frontArmAnim:Spritemap;
@@ -125,7 +120,7 @@ package com.lionsteel.LD24.entities
 		
 		//Start everything out at nothing
 		//(Set bodytype in constructor)
-		public var body:int = BodyType.NONE;
+		public var body:int = BodyType.BASE;
 		public var arms:int = ArmType.NONE;
 		public var legs:int = LegType.NONE;
 		public var tail:int = TailType.NONE;
@@ -369,31 +364,11 @@ package com.lionsteel.LD24.entities
 		protected function setBody(type:int):void
 		{
 			body = type;
-			switch(type)
-			{
-				case BodyType.BASE: 		//Base Body
-					bodyAnim = new Spritemap(GFX.BASE_BODY_ANIM,32, 32);
-					bodyAnim.add("idle", [ 0], .1, true);
-					bodyAnim.add("walk", [1], .1, true);
-					bodyAnim.add("jump", [2], .1, true);
-					bodyAnim.add("fall", [3], .1, true);
-					bodyAnim.add("melee", [4], .1, true);
-					bodyAnim.add("range", [5], .1, true);
-					bodyAnim.add("crouch", [6], .1, true);
-					bodyAnim.add("birth", [7,7,7], .03, false);
-					bodyAnim.play("idle");
-					
-					width = 32;
-				break;
-				case BodyType.MATE: 		//Base Body
-					bodyAnim = new Spritemap(GFX.MATE_BODY_ANIM,32, 32);
-					bodyAnim.add("idle", [ 0], .1, true);
-					
-					bodyAnim.play("idle");
-					
-					width = 32;
-					return;
-			}
+			
+			bodyAnim = BodyType.getAnim(type);
+			
+			width = 32;
+			
 			bodyAnim.color = tintColor;
 		}
 		
@@ -502,11 +477,12 @@ package com.lionsteel.LD24.entities
 			bodyAnim.play("idle");
 			checkAnims();
 		}
+		
 		protected function moveRight(speed:Number):void
 		{
 			if (!hasControl)
 				return;
-			velX += speed * legSpeedVar * wingSpeedVar;
+			velX += speed;
 			facingLeft = false;
 			
 		}
@@ -515,7 +491,7 @@ package com.lionsteel.LD24.entities
 		{
 			if (!hasControl)
 				return;
-			velX -= speed * legSpeedVar * wingSpeedVar;
+			velX -= speed;
 			facingLeft = true;
 			
 		}

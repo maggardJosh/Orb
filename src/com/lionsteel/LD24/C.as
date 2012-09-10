@@ -17,6 +17,8 @@ package com.lionsteel.LD24
 		public static const ARM_MELEE_COOLDOWN:int = 800;
 		public static const TAIL_MELEE_COOLDOWN:int = 800;
 		
+		public static const START_HEALTH:int = 3;		//Number of hearts the player starts out with
+		
 		public static const MAX_VEL_X:Number = 4;
 		public static const MAX_VEL_Y:Number = 17;
 		
