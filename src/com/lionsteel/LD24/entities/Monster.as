@@ -530,66 +530,18 @@ package com.lionsteel.LD24.entities
 		
 		public function setLeg(type:int):void
 		{
-			if (type >= LegType.NUM_LEGS)
-				type = -1;
+			if (type >= LegType.NUM_PARTS)
+				type = 0;
 			legs = type;
-			switch(type)
-			{
-				case LegType.NONE:
-					if(wings == WingType.NONE)
-						height = 32;
-					else
-						height = WingType.wingHeight(wings);
-					if (health > legHealthVar)
-						health -= legHealthVar;		//Take away extra health if possible
-					legDamageVar = 1.0;
-					legHealthVar = 0;
-					legJumpAdded = 0;
-					legJumpVar = 1.0;
-					legSpeedVar = 1.0;
-				return;
-			case LegType.SPIDER:
-					frontLegAnim = new Spritemap(GFX.LEG_SPIDER_FRONT_ANIM, 100, 80);
-					backLegAnim = new Spritemap(GFX.LEG_SPIDER_BACK_ANIM, 100,80);
-					frontLegAnim.add("idle", [0], .3, true);
-					frontLegAnim.add("walk", [4, 5, 6, 7], .25, true);
-					frontLegAnim.add("jump", [8], .3, true);
-					frontLegAnim.add("fall", [12], .3, true);
-					frontLegAnim.add("attack", [16], .3, true);
-					frontLegAnim.add("range", [16], .3, true);
-					frontLegAnim.add("crouch", [16], .3, true);
-					frontLegAnim.add("birth", [16], .3, true);
-					frontLegAnim.play("idle");
-					y -= LegType.legHeight(LegType.SPIDER) - height;
-					height = LegType.legHeight(LegType.SPIDER);
-					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
-					legSpeedVar = 1.5;
-					legJumpVar = 1.5;
-					
-				break;
-				case LegType.JABA:
-					frontLegAnim = new Spritemap(GFX.LEG_JABA_FRONT_ANIM, 100, 54);
-					backLegAnim = new Spritemap(GFX.LEG_JABA_FRONT_ANIM, 100,54);
-					frontLegAnim.add("idle", [0], .3, true);
-					frontLegAnim.add("walk", [4, 5, 6, 7], .06, true);
-					frontLegAnim.add("jump", [8], .3, true);
-					frontLegAnim.add("fall", [12], .3, true);
-					frontLegAnim.add("attack", [0], .3, true);
-					frontLegAnim.add("range", [0], .3, true);
-					frontLegAnim.add("crouch", [0], .3, true);
-					frontLegAnim.add("birth", [0], .3, true);
-					frontLegAnim.play("idle");
-					y -= LegType.legHeight(LegType.JABA) - height;
-					height = LegType.legHeight(LegType.JABA);
-					legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
-					legSpeedVar = .5;
-					legHealthVar = 2;
-					health += 2;
-					break;
-			default:
-				trace("Leg type " + type + "Does not exist");
-				break;
-			}
+			
+			y -= LegType.legHeight(legs) -height;
+			height = LegType.legHeight(legs);
+			
+			frontLegAnim = LegType.getFrontAnim(type);
+			backLegAnim = LegType.getBackAnim(type);
+			
+			legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
+			
 			backLegAnim.color = tintColor;
 			frontLegAnim.color = tintColor;
 		}
