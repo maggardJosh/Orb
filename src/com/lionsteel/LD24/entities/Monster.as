@@ -467,48 +467,14 @@ package com.lionsteel.LD24.entities
 		
 		public function setTail(type:int):void
 		{
-			if (type >= TailType.NUM_TAILS)
-				type = -1;
+			if (type >= TailType.NUM_PARTS)
+				type = 0;
 			tail = type;
-			switch(type)
-			{
-				case TailType.NONE:
-					tailDamageVar = 1.0;
-					tailHealthVar = 0;
-					tailJumpAdded = 0;
-					tailJumpVar = 1.0;
-					tailSpeedVar = 1.0;
-					return;
-				case TailType.SCORPION:
-					tailAnim = new Spritemap(GFX.TAIL_SCORPION_ANIM, 120, 100);
-					tailAnim.add("idle",[0] ,.1, true);
-					tailAnim.add("walk", [4,5,6,7], .1, true);
-					tailAnim.add("jump", [8], .1, true);
-					tailAnim.add("fall", [12], .1, true);
-					tailAnim.add("meleeStart", [16], .7, false);
-					tailAnim.add("melee", [16,17,18,19,19,19,19],.3, false);
-					tailAnim.add("range", [20], .1, true);
-					tailAnim.add("crouch", [24], .1, true);
-					tailAnim.add("birth", [28], .1, true);
-					tailSpeedVar = 1.2;
-					tailOffset = new Point( -tailAnim.width / 2 + width / 2, -tailAnim.height / 2 + C.TILE_SIZE/2);
-					break;
-					case TailType.MONKEY:
-					tailAnim = new Spritemap(GFX.TAIL_MONKEY_ANIM, 120, 100);
-					tailAnim.add("idle",[0] ,.1, true);
-					tailAnim.add("walk", [4,5,6,7], .1, true);
-					tailAnim.add("jump", [8], .1, true);
-					tailAnim.add("fall", [12], .1, true);
-					tailAnim.add("meleeStart", [16], .7, false);
-					tailAnim.add("melee", [16,17,18,19,19,19,19],.3, false);
-					tailAnim.add("range", [0], .1, true);
-					tailAnim.add("crouch", [0], .1, true);
-					tailAnim.add("birth", [0], .1, true);
-					tailJumpVar = 1.3;
-					tailSpeedVar = 1.3;
-					tailOffset = new Point( -tailAnim.width / 2 + width / 2, -tailAnim.height / 2 + C.TILE_SIZE/2);
-					break;
-			}
+			
+			tailAnim = TailType.getAnim(type);
+			
+			tailOffset = new Point( -tailAnim.width / 2 + width / 2, -tailAnim.height / 2 + C.TILE_SIZE/2);
+			
 			tailAnim.color = tintColor;
 		}
 		
