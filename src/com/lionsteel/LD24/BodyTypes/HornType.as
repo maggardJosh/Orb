@@ -59,14 +59,14 @@ package com.lionsteel.LD24.BodyTypes
 		
 		//}endregion
 		
-		//{region Front & Back Anim Functions
+		//{region Anim Function
 		
 		/**
 		 * Returns a copy of front arm anim sheet 
 		 * @param type of part
 		 * @return Spritemap with animations for the part indicated by param type
 		 */
-		public static function getFrontAnim(type:int):Spritemap
+		public static function getAnim(type:int):Spritemap
 		{
 			var animSheet:Spritemap;
 			switch(type)
@@ -74,59 +74,27 @@ package com.lionsteel.LD24.BodyTypes
 				case NONE:
 					animSheet = new Spritemap(GFX.BLANK_IMAGE);
 				break;
-				case BASE:
-					animSheet = new Spritemap(GFX.ARM_BASE_FRONT_ANIM, 100, 80);
+				case SPIKE:
+					animSheet = new Spritemap(GFX.HORN_SPIKE_ANIM, 64, 64);
 					with (animSheet)
 					{
-						add("idle",[0] ,.1, true);
-						add("walk", [4,5,6,7], .1, true);
-						add("jump", [8], .1, true);
-						add("fall", [12], .1, true);
-						add("meleeStart", [16], .7, false);
-						add("melee", [16,17,18,19,19,19],.3, false);
-						add("range", [20], .1, true);
-						add("crouch", [24], .1, true);
-						add("birth", [28], .1, true);
+						add("idle", [0], .1, true);
+						add("jump", [2], .1, true);
+						add("walk", [1], .1, true);
+						add("fall", [3], .1, true);
+						
 					}
 				break;
-				case CLAW:
-						animSheet = new Spritemap(GFX.ARM_CLAW_FRONT_ANIM, 100, 80);
-						with (animSheet)
-						{
-							add("idle",[0] ,.1, true);
-							add("walk", [4,5,6,7], .1, true);
-							add("jump", [8], .1, true);
-							add("fall", [12], .1, true);
-							add("meleeStart", [16], .7, false);
-							add("melee", [16,17,18,19,19,19],.3, false);
-							add("range", [0], .1, true);
-							add("crouch", [0], .1, true);
-							add("birth", [0], .1, true);
-						}
+				case PLANT:
+					animSheet = new Spritemap(GFX.HORN_PLANT_ANIM, 50,70);
+					with (animSheet)
+					{
+						add("idle", [0], .1, true);
+						add("walk", [1], .1, true);
+						add("jump", [2], .1, true);
+						add("fall", [3], .1, true);
+					}
 				break;		
-			}
-			return animSheet;
-		}
-		
-		/**
-		 * Returns a copy of back arm anim sheet 
-		 * @param type of part
-		 * @return Spritemap with animations for the part indicated by param type
-		 */
-		public static function getBackAnim(type:int):Spritemap
-		{
-			var animSheet:Spritemap;
-			switch(type)
-			{
-				case NONE:
-					animSheet = new Spritemap(GFX.BLANK_IMAGE);
-					break;
-				case BASE:
-					animSheet = new Spritemap(GFX.ARM_BASE_BACK_ANIM, 100, 80);
-					break;
-				case CLAW:
-					animSheet = new Spritemap(GFX.ARM_CLAW_BACK_ANIM, 100, 80);
-					break;
 			}
 			return animSheet;
 		}
@@ -152,7 +120,6 @@ package com.lionsteel.LD24.BodyTypes
 			GREYSCALE_IMAGE[SPIKE].alpha = .2;
 			TRAIT_POINT_COUNT[SPIKE] = 5;
 			IMAGE[SPIKE] = new Image(GFX.HORN_SPIKE_COUNT_COLOR);
-			RM_BASE_COUNT_COLOR);
 			
 			PART_DAMAGE[SPIKE] = 1;
 			JUMP_FORCE_VAR[SPIKE] = 1.0;
@@ -167,9 +134,9 @@ package com.lionsteel.LD24.BodyTypes
 			TRAIT_POINT_COUNT[PLANT] = 5;
 			IMAGE[PLANT] = new Image(GFX.HORN_PLANT_COUNT_COLOR);
 			
-			PART_DAMAGE[CLAW] = 0;
-			JUMP_FORCE_VAR[CLAW] = 1.0;
-			SPEED_VAR[CLAW] = 1.0;
+			PART_DAMAGE[PLANT] = 0;
+			JUMP_FORCE_VAR[PLANT] = 1.0;
+			SPEED_VAR[PLANT] = 1.0;
 			
 			
 		}

@@ -399,30 +399,14 @@ package com.lionsteel.LD24.entities
 		
 		public function setHorn(type:int):void 
 		{
-			if (type >= HornType.NUM_HORNS)
+			if (type >= HornType.NUM_PARTS)
 				type = HornType.NONE;
 			horn = type;
-			switch(type)
-			{
-				case HornType.NONE:
-					return;
-				case HornType.SPIKE:
-					hornAnim = new Spritemap(GFX.HORN_SPIKE_ANIM, 64, 64);
-					hornAnim.add("idle", [0], .1, true);
-					hornAnim.add("walk", [1], .1, true);
-					hornAnim.add("jump", [2], .1, true);
-					hornAnim.add("fall", [3], .1, true);
-					hornOffset = new Point(-hornAnim.width/2 + C.TILE_SIZE/2, -hornAnim.height/2 + C.TILE_SIZE/2)
-				break;
-			case HornType.PLANT:
-					hornAnim = new Spritemap(GFX.HORN_PLANT_ANIM, 50,70);
-					hornAnim.add("idle", [0], .1, true);
-					hornAnim.add("walk", [1], .1, true);
-					hornAnim.add("jump", [2], .1, true);
-					hornAnim.add("fall", [3], .1, true);
-					hornOffset = new Point(-hornAnim.width/2 + C.TILE_SIZE/2, -hornAnim.height/2 + C.TILE_SIZE/2)
-				break;
-			}
+			
+			hornAnim = HornType.getAnim(type);
+			
+			hornOffset = new Point( -hornAnim.width / 2 + C.TILE_SIZE / 2, -hornAnim.height / 2 + C.TILE_SIZE / 2)
+			
 			hornAnim.color = tintColor;
 		}
 		
