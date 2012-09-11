@@ -28,9 +28,12 @@ package com.lionsteel.LD24.entities
 		public static const ATTACK:int = 4;
 		
 		protected var state:int = IDLE;
-		public var damageCount:int = 0;
 		
-		protected var tintColor:uint;
+		/** Invulnerability counter
+		 *  If greater than 0 then this cannot take damage */ 
+		public var damageCount:int = 0;		
+		
+		protected var tintColor:uint;				
 		
 		protected var armPushBox:Entity;
 		protected var tailPushBox:Entity;
@@ -38,7 +41,6 @@ package com.lionsteel.LD24.entities
 		
 		public var facingLeft:Boolean = false;			//Facing direction
 		protected var jumpsLeft:int = 0;
-		protected var totalJumps:int = 1;		//this is the total jumps you get when you land (more with diff wings)
 
 		protected var maxYVel:Number = C.START_MAX_Y_VEL;
 		
@@ -90,7 +92,7 @@ package com.lionsteel.LD24.entities
 		 */
 		protected function getTotalJumps():int
 		{
-			return totalJumps + BodyType.JUMPS_ADDED[body] + LegType.JUMPS_ADDED[legs] + ArmType.JUMPS_ADDED[arms]+ TailType.JUMPS_ADDED[tail]+ HornType.JUMPS_ADDED[horn] + WingType.JUMPS_ADDED[wings];
+			return 1 + BodyType.JUMPS_ADDED[body] + LegType.JUMPS_ADDED[legs] + ArmType.JUMPS_ADDED[arms]+ TailType.JUMPS_ADDED[tail]+ HornType.JUMPS_ADDED[horn] + WingType.JUMPS_ADDED[wings];
 		}
 		
 		//}endregion
@@ -118,7 +120,7 @@ package com.lionsteel.LD24.entities
 		
 		protected var hasControl:Boolean = true;
 		
-		//Start everything out at nothing
+		//{region body parts
 		//(Set bodytype in constructor)
 		public var body:int = BodyType.BASE;
 		public var arms:int = ArmType.NONE;
@@ -126,6 +128,7 @@ package com.lionsteel.LD24.entities
 		public var tail:int = TailType.NONE;
 		public var wings:int = WingType.NONE;
 		public var horn:int = HornType.NONE;
+		//}endregion
 		
 		public var velX:Number=0, velY:Number=0;
 		protected var friction:Number = .8;
@@ -143,22 +146,12 @@ package com.lionsteel.LD24.entities
 		protected var collisionEntity:Entity;
 		public var currentLevel:Level;
 		
-		public var locked:Array = new Array;
-		
 		public var numArmDamagedThisAttack:int = 0;
 		public var numTailDamagedThisAttack:int = 0;
 		
 		public function Monster(level:Level) 
 		{
 			this.currentLevel = level;
-			
-			
-			locked[EvolutionTypes.ARM_EVOLUTION] = false;
-			locked[EvolutionTypes.HORN_EVOLUTION] = false;
-			locked[EvolutionTypes.LEG_EVOLUTION] = false;
-			locked[EvolutionTypes.TAIL_EVOLUTION] = false;
-			locked[EvolutionTypes.WING_EVOLUTION] = false;
-			
 			
 			eggImage = new Image(GFX.EGG_BIG);
 			eggOffset = new Point( -eggImage.width / 2 + C.TILE_SIZE/2, -eggImage.height / 2 );
@@ -224,22 +217,25 @@ package com.lionsteel.LD24.entities
 			this.world.remove(this);
 		}
 		
-		
+		/**
+		 * Bounces this monster away from entity
+		 * @param	entity	Entity to bounce away from
+		 * @param	xBounce	xVelocity to use
+		 * @param	yBounce	yVelocity to use
+		 */
 		public function bounce(entity:Entity, xBounce:Number = 30, yBounce:Number = -15):void
 		{
 			if (entity.x < x)
 			{
-			//	facingLeft = true;
 				velX = xBounce;
 				velY = yBounce;
-				
 			} 
 			else
 			{
-			//	facingLeft = false;
 				velX = -xBounce;
 				velY = yBounce;
 			}
+			
 			if(this is Player)
 				damageCount = C.INVULNERABLE_COUNT;
 			else
@@ -289,6 +285,8 @@ package com.lionsteel.LD24.entities
 				
 			}
 		}
+		
+		//{region Add Body Part Section
 		public function addLeg(type:int):Boolean
 		{
 			if (legs == LegType.NONE && type != LegType.NONE)
@@ -330,6 +328,7 @@ package com.lionsteel.LD24.entities
 				return false;
 			return true;
 		}
+		//}endregion
 		
 		public function tryAttack():void
 		{
@@ -340,14 +339,12 @@ package com.lionsteel.LD24.entities
 				state = ATTACK;
 				bodyAnim.play("attack", true);
 				frontArmAnim.play("meleeStart", true);
-				attackCount = C.ATTACK_COUNT;
 				meleeArmCooldown = C.ARM_MELEE_COOLDOWN;
 			}else if (tail != TailType.NONE && meleeTailCooldown <= 0)
 			{
 				state = ATTACK;
 				bodyAnim.play("attack", true);
 				tailAnim.play("meleeStart", true);
-				attackCount = C.ATTACK_COUNT;
 				meleeTailCooldown = C.TAIL_MELEE_COOLDOWN;
 			}
 		}

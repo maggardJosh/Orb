@@ -8,6 +8,9 @@ package com.lionsteel.LD24
 	public class C 
 	{
 		public static const TILE_SIZE:int = 32;
+		public static const FRAMES_PER_SECOND:int = 60;									//Frames per second NOTE: IF YOU CHANGE THIS YOU HAVE TO CHANGE THE META DATA IN MAIN!!!!!!
+		public static const MILLI_PER_FRAME:int = 1000 / FRAMES_PER_SECOND;				//Milliseconds per frame (Used for counters)
+		
 		public static const GRAVITY:Number = .8;
 		public static const START_MAX_Y_VEL:Number = 10;
 		public static const START_PLAYER_SPEED:Number = .8;
@@ -21,20 +24,6 @@ package com.lionsteel.LD24
 		
 		public static const MAX_VEL_X:Number = 4;
 		public static const MAX_VEL_Y:Number = 17;
-		
-		public static const ATTACK_COUNT:int = 100;
-		
-		public static const KILL_COUNT_START_X:int = 30 * 6;
-		public static const KILL_X_SPACING:int = 60;
-		
-		public static const TRAIT_HOLDER_POS:Point = new Point( -12, 90);
-		
-		public static const LEG_POWERUP_POS:Point = new Point(10, 10).add(TRAIT_HOLDER_POS);
-		public static const ARM_POWERUP_POS:Point = new Point(0, 60).add(LEG_POWERUP_POS);
-		public static const HORN_POWERUP_POS:Point = new Point(0, 60).add(ARM_POWERUP_POS);
-		public static const TAIL_POWERUP_POS:Point = new Point(0, 60).add(HORN_POWERUP_POS);
-		
-		public static const WING_POWERUP_POS:Point = new Point(0, 60).add(TAIL_POWERUP_POS);
 		
 		
 	}

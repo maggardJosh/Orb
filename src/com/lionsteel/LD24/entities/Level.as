@@ -108,7 +108,7 @@ package com.lionsteel.LD24.entities
 				playerStart = new Point( int(dataElement.@x), int(dataElement.@y));
 			}
 			var enemyAdd:Enemy;
-			
+			/*
 			
 			dataList = xmlData.entities.OneTrait;
 			for each(dataElement in dataList)
@@ -157,112 +157,10 @@ package com.lionsteel.LD24.entities
 				enemyAdd.x = int(dataElement.@x);
 				enemyAdd.y = int(dataElement.@y);
 				world.add(enemyAdd);
-			}
+			}*/
 			
-			if (GameWorld(world).levelNum == 0)
-				spawnTutorialStuff();
 		}
 		
-		private function spawnTutorialStuff():void
-		{
-			var newEnemy:Enemy;
-			
-			//Jump Tutorial
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.SPIKE);
-			newEnemy.x = 31*C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setArm(ArmType.BASE);
-			newEnemy.x = 28 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setTail(TailType.MONKEY);
-			newEnemy.x = 30 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setLeg(LegType.JABA);
-			newEnemy.x = 31 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setLeg(LegType.JABA);
-			newEnemy.x = 31 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setLeg(LegType.JABA);
-			newEnemy.x = 31 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			//Trait Tutorial
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x = 46 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x =  47* C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x =  47* C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x =  47* C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x =  50* C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x = 55 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x = 55 * C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			newEnemy = new Enemy(0, this);
-			newEnemy.setHorn(HornType.PLANT);
-			newEnemy.x =  57* C.TILE_SIZE;
-			newEnemy.y = 25 * C.TILE_SIZE;
-			add(newEnemy);
-			
-			
-			for ( var ind:int = 0; ind < 10; ind ++)
-			{
-				newEnemy = new Enemy(0, this);
-				newEnemy.setHorn(HornType.SPIKE);
-				newEnemy.x = 115 * C.TILE_SIZE;
-				newEnemy.y = 20 * C.TILE_SIZE;
-				add(newEnemy);
-			}
-		}
 		
 		public function add(entity:Entity):void
 		{

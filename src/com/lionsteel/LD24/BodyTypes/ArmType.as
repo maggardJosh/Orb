@@ -38,6 +38,9 @@ package com.lionsteel.LD24.BodyTypes
 		public static var DEFENSE_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);					//Defense variable for each part
 		public static var TOTAL_DAMAGE_VAR:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);				//Effects damage dealt by everything
 		public static var ELEMENT_DEFENSE:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>(NUM_PARTS, true);
+		public static var X_BOUNCE:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);						//X Velocity to set when hitting something
+		public static var Y_BOUNCE:Vector.<Number> = new Vector.<Number>(NUM_PARTS, true);						//Y Velocity to set when hitting something
+		public static var NUM_DAMAGE_PER_ATTACK:Vector.<int> = new Vector.<int>(NUM_PARTS, true);					//Number of enemies this part can damage in one swing
 		
 		//}endregion
 		

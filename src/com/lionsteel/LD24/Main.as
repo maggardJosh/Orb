@@ -31,7 +31,7 @@ package com.lionsteel.LD24
 			WingType.init();
 			BodyType.init();
 			
-			super(640, 480, 60, true);
+			super(640, 480, C.FRAMES_PER_SECOND, true);
 			FP.world = new MainMenu();
 			FP.screen.color = 0x3333AA;
 			

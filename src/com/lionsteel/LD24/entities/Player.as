@@ -123,7 +123,8 @@ package com.lionsteel.LD24.entities
 		
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
-			//Falling onto enemy
+			
+			/*//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
 					if (enemy.horn == HornType.SPIKE)
@@ -178,7 +179,7 @@ package com.lionsteel.LD24.entities
 					takeDamage(enemy.getDamage());
 					bounce(enemy);
 					enemy.bounce(this);
-				}
+				}*/
 		}
 		
 		private function handleCollision():void 
