@@ -207,8 +207,6 @@ package com.lionsteel.LD24.entities
 			for (var ind:int = 0; ind < 20; ind ++)
 				currentLevel.particleEmitter.emit("death", x + halfWidth, y + halfWidth);
 			health -= damageAmount;
-			if (health <= 0)
-				kill();
 		}
 		
 		public function setLevel(level:Level):void
@@ -234,7 +232,7 @@ package com.lionsteel.LD24.entities
 				
 			if (Input.pressed("ATTACK"))
 			{
-				tryAttack();
+				tryMelee();
 			}
 			
 			pauseAttack = Input.check("ATTACK");

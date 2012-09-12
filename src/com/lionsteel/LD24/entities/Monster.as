@@ -16,7 +16,8 @@ package com.lionsteel.LD24.entities
 	import org.flashdevelop.utils.TraceLevel;
 	
 	/**
-	 * 
+	 * Monster is what the player controls.
+	 * It can be given different body parts that have different effects.
 	 * @author Josh Maggard
 	 */
 	public class Monster extends Entity 
@@ -138,8 +139,8 @@ package com.lionsteel.LD24.entities
 		protected var pos:Point = new Point();
 		private var _camPos:Point = new Point();
 		
-		private var meleeArmCooldown:int = 0;
-		private var meleeTailCooldown:int = 0;
+		private var meleeCountdown:int = 0;
+		private var rangedCountdown:int = 0;
 		
 		private var attackCount:int  = 0;
 		
@@ -162,6 +163,10 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
+		/**
+		 * Get a direct copy of this monster
+		 * @return a copy of this monster object
+		 */
 		public function copy():Monster
 		{
 			var newMon:Monster = new Monster(currentLevel);
@@ -181,10 +186,27 @@ package com.lionsteel.LD24.entities
 			return newMon;
 		}
 		
-		override public function update():void 
+		/**
+		 * clamps all variables between their max and min values
+		 */
+		private function clamps():void
 		{
 			velX = FP.clamp(velX, -C.MAX_VEL_X, C.MAX_VEL_X);
 			velY = FP.clamp(velY, -C.MAX_VEL_Y, C.MAX_VEL_Y);
+			
+			
+			if (health > getTotalHearts())
+				health = getTotalHearts();
+		}
+		
+		/**
+		 * Update velocity, animations, state and counters.
+		 * Also other things...
+		 */
+		override public function update():void 
+		{
+			
+			//TODO Probably add a passive function for bodies to use (Set special abilities)
 			
 			if (horn == HornType.PLANT)
 			{
@@ -192,8 +214,7 @@ package com.lionsteel.LD24.entities
 				health += .0003;
 			}
 			
-			if (health > getTotalHearts())
-				health = getTotalHearts();
+			clamps();
 			
 			if (eggImage.alpha > 0)
 				eggImage.alpha -= .02;
@@ -201,20 +222,6 @@ package com.lionsteel.LD24.entities
 			checkAnims();
 			checkState();
 			checkCounters();
-		}
-		
-		
-		public function kill():void
-		{
-			if (this is Player)
-				return;
-			if (this.world == null)
-				return;
-			for (var ind:int = 0; ind < 40; ind++)	
-			currentLevel.particleEmitter.emit("death", x+FP.random*20-10, y+FP.random*20-10);
-			
-			
-			this.world.remove(this);
 		}
 		
 		/**
@@ -225,44 +232,46 @@ package com.lionsteel.LD24.entities
 		 */
 		public function bounce(entity:Entity, xBounce:Number = 30, yBounce:Number = -15):void
 		{
-			if (entity.x < x)
+			if (entity.x < x)			//We are on the right side of the entity
 			{
 				velX = xBounce;
 				velY = yBounce;
 			} 
-			else
+			else					//We are on the left side
 			{
-				velX = -xBounce;
+				velX = -xBounce;		//REVERSE X VELOCITY
 				velY = yBounce;
 			}
 			
-			if(this is Player)
-				damageCount = C.INVULNERABLE_COUNT;
-			else
-				damageCount = 100;
+			damageCount = C.INVULNERABLE_COUNT;	
+
 		}
 		
+		/**
+		 * Simply counts counters down if they are > 0
+		 */
 		private function checkCounters():void
 		{
-			if (meleeArmCooldown > 0)
-				meleeArmCooldown -= 16;
-			if (meleeTailCooldown > 0)
-				meleeTailCooldown -= 16;
+			if (meleeCountdown > 0)
+				meleeCountdown -= C.MILLI_PER_FRAME;
+			if (rangedCountdown > 0)
+				rangedCountdown -= C.MILLI_PER_FRAME;
 			if (attackCount > 0)
-				attackCount -= 16;
+				attackCount -= C.MILLI_PER_FRAME;
 		}
 		
+		/**
+		 * Detects what we are doing and set our state
+		 * Used for animations
+		 */
 		private function checkState():void
 		{
 			
 			switch(state)
 			{
 				case ATTACK:
-				
 					if (attackCount <= 0)
-					{
 						state = IDLE;
-					}
 					break;
 				case IDLE:
 					if (Math.abs(velX) > .3)
@@ -330,25 +339,51 @@ package com.lionsteel.LD24.entities
 		}
 		//}endregion
 		
-		public function tryAttack():void
+		//{region try stuff functions
+		public function tryMelee():void
 		{
 			if (!hasControl)
 				return;
-			if (arms != ArmType.NONE && meleeArmCooldown <= 0)
+			if (arms != ArmType.NONE && meleeCountdown <= 0)
 			{
+				//TODO: Melee combo system
 				state = ATTACK;
 				bodyAnim.play("attack", true);
 				frontArmAnim.play("meleeStart", true);
-				meleeArmCooldown = C.ARM_MELEE_COOLDOWN;
-			}else if (tail != TailType.NONE && meleeTailCooldown <= 0)
-			{
-				state = ATTACK;
-				bodyAnim.play("attack", true);
-				tailAnim.play("meleeStart", true);
-				meleeTailCooldown = C.TAIL_MELEE_COOLDOWN;
+				meleeCountdown = C.ARM_MELEE_COOLDOWN;
 			}
 		}
 		
+		public function tryRanged():void
+		{
+			if (!hasControl)
+				return;
+			if (tail != TailType.NONE && rangedCountdown <= 0)
+			{
+				//TODO: Ranged Attack
+			}
+		}
+		
+		protected function tryJump():void
+		{
+			if (!hasControl)
+				return;
+			if (jumpsLeft > 0)
+			{
+				velY = getJumpForce();
+				jumpsLeft--;
+				grounded = false;
+				state = JUMPING;
+				bodyAnim.play("jump", true);
+			}
+		}
+		
+		//}endregion
+		
+		/**
+		 * simply resets character's velocity and plays birth animation
+		 * and makes sure the player has no control
+		 */
 		public function startBirth():void
 		{
 			velX = 0;
@@ -358,6 +393,7 @@ package com.lionsteel.LD24.entities
 			hasControl = false;
 		}
 		
+		//{region setBodyPart functions
 		protected function setBody(type:int):void
 		{
 			body = type;
@@ -446,20 +482,9 @@ package com.lionsteel.LD24.entities
 			frontLegAnim.color = tintColor;
 		}
 		
-		protected function tryJump():void
-		{
-			if (!hasControl)
-				return;
-			if (jumpsLeft > 0)
-			{
-				velY = getJumpForce();
-				jumpsLeft--;
-				grounded = false;
-				state = JUMPING;
-				bodyAnim.play("jump", true);
-			}
-		}
+		//}endregion
 		
+		//{region play anim functions
 		public function playBirth():void
 		{
 			bodyAnim.play("birth");
@@ -474,7 +499,9 @@ package com.lionsteel.LD24.entities
 			bodyAnim.play("idle");
 			checkAnims();
 		}
+		//}endregion
 		
+		//{region move functions
 		protected function moveRight(speed:Number):void
 		{
 			if (!hasControl)
@@ -492,8 +519,11 @@ package com.lionsteel.LD24.entities
 			facingLeft = true;
 			
 		}
+		//}endregion
 		
-		//Checks body type and animation placement
+		/**
+		 * Checks body type and animation placement
+		 */
 		private function checkAnims():void
 		{
 			
@@ -552,8 +582,10 @@ package com.lionsteel.LD24.entities
 				frontWingAnim.flipped = facingLeft;
 				backWingAnim.flipped = facingLeft;
 			}
+			
 			if (tail != TailType.NONE)
 			{
+				//If we are attacking with tail then it is on it's own
 				if (tailAnim.currentAnim == "meleeStart")
 				{
 					if (tailAnim.complete && !pauseAttack)
@@ -593,6 +625,7 @@ package com.lionsteel.LD24.entities
 			}
 			if (arms != ArmType.NONE)
 			{
+				//If we are attacking with our arms then they animate on their own
 				if (frontArmAnim.currentAnim == "meleeStart")
 				{
 					if (frontArmAnim.complete && !pauseAttack)
@@ -628,7 +661,7 @@ package com.lionsteel.LD24.entities
 					}
 				}
 				else
-				frontArmAnim.play(bodyAnim.currentAnim);
+					frontArmAnim.play(bodyAnim.currentAnim);
 				frontArmAnim.update();
 				backArmAnim.frame = frontArmAnim.frame;
 				frontArmAnim.flipped = facingLeft;
@@ -636,6 +669,9 @@ package com.lionsteel.LD24.entities
 			}
 		}
 		
+		/**
+		 * Renders all body parts in the correct order
+		 */
 		override public function render():void 
 		{
 			
@@ -662,10 +698,7 @@ package com.lionsteel.LD24.entities
 				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
 
 			if (bodyAnim.currentAnim == "birth")
-			{
 				eggImage.render(FP.buffer, pos.add(eggOffset), FP.camera);
-				
-			}
 			
 		}
 	}
