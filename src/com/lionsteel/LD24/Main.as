@@ -2,12 +2,7 @@ package com.lionsteel.LD24
 {
 
 	import com.lionsteel.LD24.BodyTypes.*;
-	import com.lionsteel.LD24.Utils.Flash;
-	import com.lionsteel.LD24.Utils.Quake;
-	import com.lionsteel.LD24.worlds.GameWorld;
 	import com.lionsteel.LD24.worlds.MainMenu;
-	import flash.display.Sprite;
-	import flash.events.Event;
 	import net.flashpunk.Engine;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
@@ -24,31 +19,35 @@ package com.lionsteel.LD24
 		public function Main()
 		{
 			
-			ArmType.init();
-			TailType.init();
-			LegType.init();
-			HornType.init();
-			WingType.init();
-			BodyType.init();
 			
 			super(640, 480, C.FRAMES_PER_SECOND, true);
 			FP.world = new MainMenu();
 			FP.screen.color = 0x3333AA;
 			
-			//Define controls for arrow keys and wasd
+			//{region define controls
 			Input.define("UP", Key.UP, Key.W, Key.SPACE);
 			Input.define("DOWN", Key.DOWN, Key.S);
 			Input.define("LEFT", Key.LEFT, Key.A);
 			Input.define("RIGHT", Key.RIGHT, Key.D);
 			Input.define("ATTACK", Key.ENTER);
 			Input.define("INTERACT", Key.E);
-			
+			//}endregion
 			
 			
 		}
 		
 		override public function init():void 
 		{
+			
+			//{region BodyType inits
+			ArmType.init();
+			TailType.init();
+			LegType.init();
+			HornType.init();
+			WingType.init();
+			BodyType.init();
+			//}endregion
+			
 			Kongregate.connect(FP.stage);
 			super.init();
 		}
