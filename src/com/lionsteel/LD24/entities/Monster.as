@@ -4,16 +4,10 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.GFX;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	import flash.media.SoundCodec;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
-	import net.flashpunk.graphics.TiledSpritemap;
-	import net.flashpunk.utils.Input;
-	import net.flashpunk.utils.Key;	
-	import org.flashdevelop.utils.TraceLevel;
 	
 	/**
 	 * Monster is what the player controls.
@@ -41,10 +35,10 @@ package com.lionsteel.LD24.entities
 		public var facingLeft:Boolean = false;			//Facing direction
 		protected var jumpsLeft:int = 0;
 
-		protected var maxYVel:Number = C.START_MAX_Y_VEL;
+		protected var maxYVel:Number = C.START_MAX_Y_VEL;		//How slow they fall when 'floating'
 		
-		public var _damage:Number = 1.0;
-		public var health:Number;
+		public var _damage:Number = 1.0;		//All damage dealt goes through this variable (realDamage = damageAmount * _damage) so 1.0 is normal damage amount
+		public var health:Number;				//Decimal number representing health
 		
 		//{region Get Modifiers Functions
 		/**
@@ -96,6 +90,7 @@ package com.lionsteel.LD24.entities
 		
 		//}endregion
 		
+		//{region body part anims
 		private var bodyAnim:Spritemap;
 		private var frontArmAnim:Spritemap;
 		private var backArmAnim:Spritemap;
@@ -105,6 +100,7 @@ package com.lionsteel.LD24.entities
 		private var frontWingAnim:Spritemap;
 		private var backWingAnim:Spritemap;
 		private var hornAnim:Spritemap;
+		//}endregion 
 		
 		public var eggImage:Image;
 		private var eggOffset:Point;
@@ -131,23 +127,24 @@ package com.lionsteel.LD24.entities
 		public var horn:int = HornType.NONE;
 		//}endregion
 		
+		//{region physics stuff
 		public var velX:Number=0, velY:Number=0;
 		protected var friction:Number = .8;
 		protected var jumpForce:Number = -15;
 		protected var grounded:Boolean  = false;
+		//}endregion
 		
 		protected var pos:Point = new Point();
 		
-		private var meleeCountdown:int = 0;
-		private var rangedCountdown:int = 0;
+		private var meleeCountdown:int = 0;		//stores melee cooldown counter
+		private var rangedCountdown:int = 0;	//Stores ranged cooldown counter	
 		
-		private var attackCount:int  = 0;
+		protected var collisionEntity:Entity;		//Entity used to detect all collisions
+		public var currentLevel:Level;			//Current level this monster belongs to
 		
-		protected var collisionEntity:Entity;
-		public var currentLevel:Level;
-		
-		public var numArmDamagedThisAttack:int = 0;
-		public var numTailDamagedThisAttack:int = 0;
+		public var numArmDamagedThisAttack:int = 0;		//Number of enemies this arm attack has damaged (per attack)
+		public var numTailDamagedThisAttack:int = 0;	//Number of enemies this tail attack has damaged (per attack)
+		//TODO numTailDamaged == useless? maybe..
 		
 		public function Monster(level:Level) 
 		{
@@ -204,7 +201,7 @@ package com.lionsteel.LD24.entities
 		override public function update():void 
 		{
 			
-			//TODO Probably add a passive function for bodies to use (Set special abilities)
+			//TODO Probably add a passive function for bodies to use (for 'full set' special abilities)
 			
 			if (horn == HornType.PLANT)
 			{
@@ -217,7 +214,7 @@ package com.lionsteel.LD24.entities
 			if (eggImage.alpha > 0)
 				eggImage.alpha -= .02;
 			super.update();
-			checkAnims();
+			
 			checkState();
 			checkCounters();
 		}
@@ -241,6 +238,8 @@ package com.lionsteel.LD24.entities
 				velY = yBounce;
 			}
 			
+			//TODO bounce disables player having control until grounded again?
+			
 			invulnerabiltyCounter = C.INVULNERABLE_COUNT;	
 
 		}
@@ -254,8 +253,6 @@ package com.lionsteel.LD24.entities
 				meleeCountdown -= C.MILLI_PER_FRAME;
 			if (rangedCountdown > 0)
 				rangedCountdown -= C.MILLI_PER_FRAME;
-			if (attackCount > 0)
-				attackCount -= C.MILLI_PER_FRAME;
 		}
 		
 		/**
@@ -268,8 +265,8 @@ package com.lionsteel.LD24.entities
 			switch(state)
 			{
 				case ATTACK:
-					if (attackCount <= 0)
-						state = IDLE;
+					//TODO proper attack state handling
+					state = IDLE;
 					break;
 				case IDLE:
 					if (Math.abs(velX) > .3)
@@ -293,7 +290,7 @@ package com.lionsteel.LD24.entities
 			}
 		}
 		
-		//{region Add Body Part Section
+		//{region public Add Body Part Section
 		public function addLeg(type:int):Boolean
 		{
 			if (legs == LegType.NONE && type != LegType.NONE)
@@ -335,6 +332,97 @@ package com.lionsteel.LD24.entities
 				return false;
 			return true;
 		}
+		//}endregion
+		
+		//{region private setBodyPart functions
+		protected function setBody(type:int):void
+		{
+			body = type;
+			
+			bodyAnim = BodyType.getAnim(type);
+			
+			width = 32;
+			
+			bodyAnim.color = tintColor;
+		}
+		
+		protected function setHorn(type:int):void 
+		{
+			if (type >= HornType.NUM_PARTS)
+				type = HornType.NONE;
+			horn = type;
+			
+			hornAnim = HornType.getAnim(type);
+			
+			hornOffset = new Point( -hornAnim.width / 2 + C.TILE_SIZE / 2, -hornAnim.height / 2 + C.TILE_SIZE / 2)
+			
+			hornAnim.color = tintColor;
+		}
+		
+		protected function setWing(type:int):void
+		{
+			if (type >= WingType.NUM_PARTS)	
+				type = 0;
+			wings = type;
+			
+			frontWingAnim = WingType.getFrontAnim(type);
+			backWingAnim = WingType.getBackAnim(type);
+			
+			maxYVel = C.START_MAX_Y_VEL * WingType.FLOAT_VAR[type];			//Find new max *floating* y velocity
+			
+			wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
+			
+			frontWingAnim.color = tintColor;
+			backWingAnim.color = tintColor;
+		}
+		
+		protected function setTail(type:int):void
+		{
+			if (type >= TailType.NUM_PARTS)
+				type = 0;
+			tail = type;
+			
+			tailAnim = TailType.getAnim(type);
+			
+			tailOffset = new Point( -tailAnim.width / 2 + width / 2, -tailAnim.height / 2 + C.TILE_SIZE/2);
+			
+			tailAnim.color = tintColor;
+		}
+		
+		protected function setArm(type:int):void
+		{
+			if (type >= ArmType.NUM_PARTS)
+				type = 0;
+			arms = type;
+			frontArmAnim = ArmType.getFrontAnim(arms);
+			backArmAnim = ArmType.getBackAnim(arms);
+			
+			
+			armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
+			
+			frontArmAnim.color = tintColor;
+			backArmAnim.color = tintColor;
+		}
+
+		
+		protected function setLeg(type:int):void
+		{
+			if (type >= LegType.NUM_PARTS)
+				type = 0;
+			legs = type;
+			
+			y -= LegType.legHeight(legs) -height;
+			height = LegType.legHeight(legs);
+			
+			frontLegAnim = LegType.getFrontAnim(type);
+			backLegAnim = LegType.getBackAnim(type);
+			
+			legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
+			
+			backLegAnim.color = tintColor;
+			frontLegAnim.color = tintColor;
+		}
+		
 		//}endregion
 		
 		//{region try stuff functions
@@ -379,7 +467,7 @@ package com.lionsteel.LD24.entities
 		//}endregion
 		
 		/**
-		 * simply resets character's velocity and plays birth animation
+		 * simply resets character's velocity, plays birth animation
 		 * and makes sure the player has no control
 		 */
 		public function startBirth():void
@@ -390,97 +478,6 @@ package com.lionsteel.LD24.entities
 			eggImage.alpha = 1.0;
 			hasControl = false;
 		}
-		
-		//{region setBodyPart functions
-		protected function setBody(type:int):void
-		{
-			body = type;
-			
-			bodyAnim = BodyType.getAnim(type);
-			
-			width = 32;
-			
-			bodyAnim.color = tintColor;
-		}
-		
-		public function setHorn(type:int):void 
-		{
-			if (type >= HornType.NUM_PARTS)
-				type = HornType.NONE;
-			horn = type;
-			
-			hornAnim = HornType.getAnim(type);
-			
-			hornOffset = new Point( -hornAnim.width / 2 + C.TILE_SIZE / 2, -hornAnim.height / 2 + C.TILE_SIZE / 2)
-			
-			hornAnim.color = tintColor;
-		}
-		
-		public function setWing(type:int):void
-		{
-			if (type >= WingType.NUM_PARTS)	
-				type = 0;
-			wings = type;
-			
-			frontWingAnim = WingType.getFrontAnim(type);
-			backWingAnim = WingType.getBackAnim(type);
-			
-			maxYVel = C.START_MAX_Y_VEL * WingType.FLOAT_VAR[type];			//Find new max *floating* y velocity
-			
-			wingOffset = new Point( -frontWingAnim.width / 2 + C.TILE_SIZE / 2, -frontWingAnim.height / 2 + C.TILE_SIZE / 2);
-			
-			frontWingAnim.color = tintColor;
-			backWingAnim.color = tintColor;
-		}
-		
-		public function setTail(type:int):void
-		{
-			if (type >= TailType.NUM_PARTS)
-				type = 0;
-			tail = type;
-			
-			tailAnim = TailType.getAnim(type);
-			
-			tailOffset = new Point( -tailAnim.width / 2 + width / 2, -tailAnim.height / 2 + C.TILE_SIZE/2);
-			
-			tailAnim.color = tintColor;
-		}
-		
-		public function setArm(type:int):void
-		{
-			if (type >= ArmType.NUM_PARTS)
-				type = 0;
-			arms = type;
-			frontArmAnim = ArmType.getFrontAnim(arms);
-			backArmAnim = ArmType.getBackAnim(arms);
-			
-			
-			armOffset = new Point( -frontArmAnim.width / 2 + width / 2, -frontArmAnim.height / 2 + C.TILE_SIZE/2);
-			
-			frontArmAnim.color = tintColor;
-			backArmAnim.color = tintColor;
-		}
-
-		
-		public function setLeg(type:int):void
-		{
-			if (type >= LegType.NUM_PARTS)
-				type = 0;
-			legs = type;
-			
-			y -= LegType.legHeight(legs) -height;
-			height = LegType.legHeight(legs);
-			
-			frontLegAnim = LegType.getFrontAnim(type);
-			backLegAnim = LegType.getBackAnim(type);
-			
-			legOffset = new Point( -frontLegAnim.width / 2 + width / 2, -frontLegAnim.height / 2 + C.TILE_SIZE / 2);
-			
-			backLegAnim.color = tintColor;
-			frontLegAnim.color = tintColor;
-		}
-		
-		//}endregion
 		
 		//{region play anim functions
 		public function playBirth():void
@@ -526,9 +523,9 @@ package com.lionsteel.LD24.entities
 		{
 			
 			bodyAnim.update();
-			if (bodyAnim.currentAnim == "birth")
+			if (bodyAnim.currentAnim == "birth")	
 			{
-				if (bodyAnim.complete)
+				if (bodyAnim.complete)		//If we have finished the birthing animation
 				{
 					bodyAnim.play("idle");
 					hasControl = true;
@@ -583,13 +580,15 @@ package com.lionsteel.LD24.entities
 			
 			if (tail != TailType.NONE)
 			{
-				
+				//TODO tail ranged attack anim
 				tailAnim.play(bodyAnim.currentAnim);
 				tailAnim.update();
 				tailAnim.flipped = facingLeft;
 			}
+			
 			if (arms != ArmType.NONE)
 			{
+				//TODO melee combo anims
 				//If we are attacking with our arms then they animate on their own
 				if (frontArmAnim.currentAnim == "meleeStart")
 				{
@@ -632,6 +631,7 @@ package com.lionsteel.LD24.entities
 				frontArmAnim.flipped = facingLeft;
 				backArmAnim.flipped = facingLeft;
 			}
+		
 		}
 		
 		/**
@@ -644,6 +644,22 @@ package com.lionsteel.LD24.entities
 			pos.x = x;
 			pos.y = y;
 			
+			checkAnims();
+			
+			/** Body part order from farthest (first drawn) to closest (last drawn)
+			 * 
+			 * 		backWing
+			 * 		backArm
+			 * 		backLeg
+			 * 		tail
+			 * 		body
+			 * 		horn
+			 * 		frontLeg
+			 * 		frontArm
+			 * 		frontWing
+			 */
+			
+			//{region partRendering
 			if (wings != WingType.NONE)
 				backWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
 			if (arms != ArmType.NONE)
@@ -661,7 +677,9 @@ package com.lionsteel.LD24.entities
 				frontArmAnim.render(FP.buffer, pos.add(armOffset), FP.camera);
 			if (wings != WingType.NONE)
 				frontWingAnim.render(FP.buffer, pos.add(wingOffset), FP.camera);
-
+			//}endregion
+			
+			//If being birthed draw that huge stupid egg
 			if (bodyAnim.currentAnim == "birth")
 				eggImage.render(FP.buffer, pos.add(eggOffset), FP.camera);
 			

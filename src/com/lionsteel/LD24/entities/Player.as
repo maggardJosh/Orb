@@ -343,8 +343,6 @@ package com.lionsteel.LD24.entities
 			
 			//Draw health bar
 			drawHealth();
-			
 		}
-		
 	}
 }
