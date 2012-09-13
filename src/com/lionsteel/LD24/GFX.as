@@ -6,14 +6,17 @@ package com.lionsteel.LD24
 	 */
 	public class GFX 
 	{
-		//Particles
+		//{region Particles
 		[Embed(source = "assets/particle.png")] public static const PARTICLE_ONE:Class;
+		//}endregion
 		
-		//Player
+		//{region Egg
 		[Embed(source = "assets/egg_blue_big.png")] public static const EGG_BIG:Class;
 		[Embed(source = "assets/Player/body/base.png")] public static const BASE_BODY_ANIM:Class;
+		//}endregion
+		
+		//{region Part Animations
 		[Embed(source = "assets/Player/body/mate_base.png")] public static const MATE_BODY_ANIM:Class;
-		[Embed(source = "assets/Player/body/mate_hair.png")] public static const PONY_TAIL:Class;
 		
 		[Embed(source = "assets/Player/horns/horn_spike.png")] public static const HORN_SPIKE_ANIM:Class;
 		[Embed(source = "assets/Player/horns/head_plant.png")] public static const HORN_PLANT_ANIM:Class;
@@ -34,23 +37,23 @@ package com.lionsteel.LD24
 		
 		[Embed(source = "assets/Player/tails/tail_scorpion.png")] public static const TAIL_SCORPION_ANIM:Class;
 		[Embed(source = "assets/Player/tails/tail_monkey.png")] public static const TAIL_MONKEY_ANIM:Class;
+		//}endregion
 		
-		//Background and tileset
+		//{region Background and Tileset
 		[Embed(source = "assets/backgroundOne.png")] public static const BACKGROUND_ONE:Class;
 		[Embed(source = "assets/backgroundTwo.png")] public static const BACKGROUND_TWO:Class;
 		[Embed(source = "assets/tileSet.png")] public static const TILE_SET:Class;
 		[Embed(source = "assets/TITLE.png")] public static const MAIN_MENU_BG:Class;
+		//}endregion
 		
-		//GUI
+		//{region GUI
 		[Embed(source = "assets/heart_empty.png")] public static const HEALTH_CONTAINER:Class;
 		[Embed(source = "assets/heart_full.png")] public static const HEALTH_FILLER:Class;
-		[Embed(source = "assets/Trait_Holder.png")] public static const TRAIT_HOLDER:Class;
-		[Embed(source = "assets/Trait_Holder_Locked.png")] public static const TRAIT_LOCKED:Class;
 		[Embed(source = "assets/e_key.png")] public static const E_KEY:Class;
 		[Embed(source = "assets/egg_blue_small.png")] public static const LIVES_ICON:Class;
+		//}endregion
 		
-		[Embed(source = "assets/KillCount/trait_box.png")] public static const TRAIT_BOX:Class;
-		
+		//{region Part Images
 		[Embed(source = "assets/KillCount/arms_base_bw.png")] public static const ARM_BASE_COUNT:Class
 		[Embed(source = "assets/KillCount/arms_base_color.png")] public static const ARM_BASE_COUNT_COLOR:Class
 		[Embed(source = "assets/KillCount/horn_spike_bw.png")] public static const HORN_SPIKE_COUNT:Class
@@ -71,12 +74,15 @@ package com.lionsteel.LD24
 		[Embed(source = "assets/KillCount/tail_monkey_color.png")] public static const TAIL_MONKEY_COUNT_COLOR:Class
 		[Embed(source = "assets/KillCount/wing_tiny_bw.png")] public static const WING_TINY_COUNT:Class
 		[Embed(source = "assets/KillCount/wing_tiny_color.png")] public static const WING_TINY_COUNT_COLOR:Class
+		//}endregion
 		
-		//Screens
+		//{region Screens
 		[Embed(source = "assets/descendantScreen.png")] public static const DESCENDANT_SCREEN:Class;
+		//}endregion
 		
-		//Misc.
+		//{region Misc.
 		[Embed(source = "assets/blankImage.png")] public static const BLANK_IMAGE:Class;
+		//}endregion
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.lionsteel.LD24 
 {
-	import flash.geom.Point;
 	/**
 	 * Constants
 	 * @author Josh Maggard
