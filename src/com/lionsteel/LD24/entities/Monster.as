@@ -32,13 +32,11 @@ package com.lionsteel.LD24.entities
 		
 		/** Invulnerability counter
 		 *  If greater than 0 then this cannot take damage */ 
-		public var damageCount:int = 0;		
+		public var invulnerabiltyCounter:int = 0;		
 		
 		protected var tintColor:uint;				
 		
-		protected var armPushBox:Entity;
-		protected var tailPushBox:Entity;
-		
+		protected var armPushBox:Entity;		
 		
 		public var facingLeft:Boolean = false;			//Facing direction
 		protected var jumpsLeft:int = 0;
@@ -181,7 +179,6 @@ package com.lionsteel.LD24.entities
 			newMon.tintColor = tintColor;
 			newMon.x = x;
 			newMon.y = y;
-			newMon.tailPushBox = tailPushBox
 			newMon.armPushBox= armPushBox;
 			
 			return newMon;
@@ -244,7 +241,7 @@ package com.lionsteel.LD24.entities
 				velY = yBounce;
 			}
 			
-			damageCount = C.INVULNERABLE_COUNT;	
+			invulnerabiltyCounter = C.INVULNERABLE_COUNT;	
 
 		}
 		
@@ -586,40 +583,7 @@ package com.lionsteel.LD24.entities
 			
 			if (tail != TailType.NONE)
 			{
-				//If we are attacking with tail then it is on it's own
-				if (tailAnim.currentAnim == "meleeStart")
-				{
-					if (tailAnim.complete && !pauseAttack)
-					{
-						numTailDamagedThisAttack = 0;
-						tailAnim.play("melee", true);
-						if (facingLeft)
-							velX = -.4;
-						else
-							velX = .4;
-						hasControl = false;
-					}
-				}
-				else
-				if (tailAnim.currentAnim == "melee")
-				{
-					velX *= 1.5
-					//velY = 0;
-					this.world.add(tailPushBox);
-					tailPushBox.y = y - 32;
-					if (facingLeft)
-						tailPushBox.x = x - width;
-					else
-						tailPushBox.x = x + width;
-					if (tailAnim.complete)
-					{
-						this.world.remove(tailPushBox);
-						velX = 0;
-						hasControl = true;
-						tailAnim.play("idle");
-					}
-				}
-				else
+				
 				tailAnim.play(bodyAnim.currentAnim);
 				tailAnim.update();
 				tailAnim.flipped = facingLeft;

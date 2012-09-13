@@ -3,26 +3,15 @@ package com.lionsteel.LD24.entities
 	import com.lionsteel.LD24.BodyTypes.*;
 	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.GFX;
-	import com.lionsteel.LD24.Kongregate;
-	import com.lionsteel.LD24.Main;
 	import com.lionsteel.LD24.Utils;
-	import com.lionsteel.LD24.worlds.DescendantScreen;
-	import com.lionsteel.LD24.worlds.GameOver;
 	import com.lionsteel.LD24.worlds.GameWorld;
-	import flash.accessibility.ISearchableText;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.media.SoundCodec;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
-	import net.flashpunk.Graphic;
 	import net.flashpunk.graphics.Image;
-	import net.flashpunk.graphics.Spritemap;
-	import net.flashpunk.graphics.Text;
-	import net.flashpunk.graphics.TiledSpritemap;
 	import net.flashpunk.utils.Input;
-	import net.flashpunk.utils.Key;	
-	import org.flashdevelop.utils.TraceLevel;
+	import net.flashpunk.utils.Key;
 	
 	/**
 	 * 
@@ -36,57 +25,25 @@ package com.lionsteel.LD24.entities
 		private var healthContainer:Image;
 		private var healthFiller:Image;
 		
-		public var evolution:int = 0;
-		
-		private var armKillCount:int = 0;
-		private var legKillCount:int = 0;
-		private var hornKillCount:int = 0;
-		private var wingKillCount:int = 0;
-		private var tailKillCount:int = 0;
-		
-		//Keep track of types of kills
-		private var armKillType:int = -1;
-		private var legKillType: int = -1;
-		private var hornKillType:int = -1;
-		private var wingKillType:int = -1;
-		private var tailKillType:int = -1;
-		
-		//Graphics for the kill counts		
-		private var armKillColorImage:Image;
-		private var legKillColorImage:Image;
-		private var hornKillColorImage:Image;
-		private var wingKillColorImage:Image;
-		private var tailKillColorImage:Image;
-		
-		private var traitHolderImage:Image;
-		private var traitLockImage:Image;
-		private var livesImage:Image;
-		
-		private var emptyKillCount:Image;
-		
+		private var livesImage:Image;		
 		
 		public function Player(level:Level) 
 		{
-			lives = 3;
-			emptyKillCount = new Image(GFX.TRAIT_BOX);
-			traitLockImage = new Image(GFX.TRAIT_LOCKED);
+			lives = C.START_LIVES;
+			
 			healthContainer = new Image(GFX.HEALTH_CONTAINER);
 			healthFiller = new Image(GFX.HEALTH_FILLER);
-			traitHolderImage = new Image(GFX.TRAIT_HOLDER);
 			livesImage = new Image(GFX.LIVES_ICON);
-			traitHolderImage.alpha = .9;
 			
 			tintColor = 0xFFFFFF;
 			
 			armPushBox = new Entity();
-			tailPushBox= new Entity();
 			armPushBox.width = C.TILE_SIZE;
 			armPushBox.height = C.TILE_SIZE;
 			armPushBox.type = "playerArmPushBox";
-			tailPushBox.width = C.TILE_SIZE*2;
-			tailPushBox.height = C.TILE_SIZE*2;
-			tailPushBox.type = "playerTailPushBox";
+			
 			super(currentLevel);
+			
 			type = "Player";
 			health = 3;
 			_damage = 1;
@@ -100,11 +57,11 @@ package com.lionsteel.LD24.entities
 			handleCollision();
 			updateCamera();
 			checkLife();
-			
-			if (world == null)
-				return;
 		}
 		
+		/**
+		 * Checks for death (health <= 0) and game over (Lives <= 0)
+		 */
 		private function checkLife():void
 		{
 			if (health <= 0)
@@ -123,7 +80,7 @@ package com.lionsteel.LD24.entities
 		
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
-			
+			//TODO Enemy collision handling
 		/*	//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
@@ -188,21 +145,16 @@ package com.lionsteel.LD24.entities
 		 */
 		private function handleCollision():void 
 		{
-			
-			if (damageCount > 0)
-				damageCount -= 16;
+			//If we are invulnerable
+			if (invulnerabiltyCounter > 0)
+				invulnerabiltyCounter -= 16;
 			
 			collisionEntity = collide("Enemy", x, y);
 			if (collisionEntity != null)
 			{
 				handleEnemyCollision(Enemy(collisionEntity));
 			}
-			collisionEntity = collide("enemyPushBox", x, y);
-			if (collisionEntity != null)
-			{
-				bounce(collisionEntity);
-				takeDamage(.4);
-			}
+			
 		}
 		
 		/**
@@ -217,11 +169,18 @@ package com.lionsteel.LD24.entities
 			health -= damageAmount;
 		}
 		
+		/**
+		 * Sets our current level
+		 * @param	level	Level object to set current level to
+		 */
 		public function setLevel(level:Level):void
 		{
 			this.currentLevel = level;
 		}
 		
+		/**
+		 * Handle all player controls (movement, attack, cheats, etc...)
+		 */
 		private function handleControls():void
 		{
 			//{region Cheats
@@ -267,6 +226,7 @@ package com.lionsteel.LD24.entities
 				
 			//Do X movement and check for collision first
 			x += velX;
+			//Check right collision (Ceiling)
 			var collideXRoom:Entity = collide("level", Math.ceil(x), y);
 			if (collideXRoom!=null)
 			{
@@ -276,6 +236,7 @@ package com.lionsteel.LD24.entities
 					x = collideXRoom.x +Math.floor((x - collideXRoom.x + width) / C.TILE_SIZE) * C.TILE_SIZE - width;		//place to the left of tile we have collided with
 					
 			}
+			//Check left collision (floor)
 			collideXRoom = collide("level", Math.floor(x), y);
 			if (collideXRoom != null)
 			{
@@ -316,6 +277,8 @@ package com.lionsteel.LD24.entities
 					
 					
 			}
+			
+			//Apply friction to x vel only
 			velX *= friction;
 		}
 		
@@ -372,8 +335,8 @@ package com.lionsteel.LD24.entities
 		 */
 		override public function render():void 
 		{
-			if (damageCount <= 0 ||
-				damageCount % 20 < 10)		//Flash if damaged
+			if (invulnerabiltyCounter <= 0 ||
+				invulnerabiltyCounter % 20 < 10)		//Flash if damaged
 			{
 				super.render();
 			}
