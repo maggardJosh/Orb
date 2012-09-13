@@ -124,7 +124,7 @@ package com.lionsteel.LD24.entities
 		private function handleEnemyCollision(enemy:Enemy):void
 		{
 			
-			/*//Falling onto enemy
+		/*	//Falling onto enemy
 			if (this.velY > 0 && x + width * 2 / 3 > enemy.x && x + width * 1 / 3 < enemy.x + enemy.width)
 				{
 					if (enemy.horn == HornType.SPIKE)
@@ -179,9 +179,13 @@ package com.lionsteel.LD24.entities
 					takeDamage(enemy.getDamage());
 					bounce(enemy);
 					enemy.bounce(this);
-				}*/
+				}
+				*/
 		}
 		
+		/**
+		 * Handles all player collision (Enemy, Level, etc...)
+		 */
 		private function handleCollision():void 
 		{
 			
@@ -201,6 +205,10 @@ package com.lionsteel.LD24.entities
 			}
 		}
 		
+		/**
+		 * Takes health away and flashes screen
+		 * @param	damageAmount	Amount to subtract from health
+		 */
 		private function takeDamage(damageAmount:Number):void
 		{
 			Utils.flash.start(0xFF0000, .1,.5);
@@ -216,7 +224,7 @@ package com.lionsteel.LD24.entities
 		
 		private function handleControls():void
 		{
-			 //Cheats
+			//{region Cheats
 			if (Input.pressed(Key.DIGIT_1)) setLeg(legs+1);// if (legs == LegType.NONE) setLeg(LegType.JABA); else setLeg(LegType.NONE);
 			if (Input.pressed(Key.DIGIT_2)) setArm(arms+1);// if (arms == ArmType.NONE) setArm(ArmType.CLAW); else setArm(ArmType.NONE);
 			if (Input.pressed(Key.DIGIT_3)) setHorn(horn+1);// if (horn == HornType.NONE) setHorn(HornType.PLANT); else setHorn(HornType.NONE);
@@ -224,19 +232,19 @@ package com.lionsteel.LD24.entities
 			if (Input.pressed(Key.DIGIT_5)) setWing(wings+1);// if (wings == WingType.NONE) setWing(WingType.TINY); else setWing(WingType.NONE);
 			if (Input.pressed(Key.R)){ setLeg( -1); setArm( -1); setHorn( -1); setTail( -1); setWing( -1);}
 			if (Input.pressed(Key.K)) health = 0;
-			
+			//}endregion
 			
 			
 			if (Input.pressed("UP") )
 				tryJump();
 				
 			if (Input.pressed("ATTACK"))
-			{
 				tryMelee();
-			}
 			
 			pauseAttack = Input.check("ATTACK");
 				
+			//If we released jump and we were going up
+			// then stop going up so fast!
 			if (Input.released("UP") && velY < 0)
 				velY *= .3;
 			
@@ -247,14 +255,17 @@ package com.lionsteel.LD24.entities
 				moveLeft(C.START_PLAYER_SPEED);
 		}
 		
-		//Apply velocity and check collisions
+		/**
+		 * Apply velocity and check collisions
+		 */
 		private function updateMovement():void
 		{
 			velY += C.GRAVITY;		//Gravity
 			
 			if (Input.check("UP") && velY > maxYVel)		//If pressing up 
-				velY = maxYVel;												//Float
+				velY = maxYVel;								//Float
 				
+			//Do X movement and check for collision first
 			x += velX;
 			var collideXRoom:Entity = collide("level", Math.ceil(x), y);
 			if (collideXRoom!=null)
@@ -275,7 +286,7 @@ package com.lionsteel.LD24.entities
 			
 			//Update y movement and then check collision
 			y += velY
-			var collideYRoom:Entity = collide("level", x,Math.ceil(y));
+			var collideYRoom:Entity = collide("level", x,Math.ceil(y));	//Check bottom collision first
 			if (collideYRoom != null)
 			{
 				//If colliding with wall after y movement
@@ -291,7 +302,9 @@ package com.lionsteel.LD24.entities
 				
 			}
 			else
-			grounded = false;
+				grounded = false;
+				
+			//Check collision with top
 			collideYRoom = collide("level", x, Math.floor(y));
 			if(collideYRoom != null)
 			{
@@ -306,6 +319,10 @@ package com.lionsteel.LD24.entities
 			velX *= friction;
 		}
 		
+		/**
+		 * Simply lerp the camera to where the player is centered. 
+		 * (Actually he is closer to the bottom of the screen... but whatever)
+		 */
 		private function updateCamera():void
 		{
 			
@@ -321,28 +338,38 @@ package com.lionsteel.LD24.entities
 				FP.camera.y = currentLevel.mapHeight - FP.screen.height;
 		}
 		
+		/**
+		 * Draws the heart health bar
+		 */
 		private function drawHealth():void
 		{
 			
-			
+			//Go through all hearts
 			for (var healthInd:Number = 0; healthInd < getTotalHearts(); healthInd++)
 			{
+				//If this heart is full go ahead and draw the whole full heart
 				if (health >= healthInd + 1)
 					healthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
-				else if(health>healthInd)
+				else if(health>healthInd)		//Else if it is not full only draw a portion of the heart
 				{
 					var healthRatio:Number = healthInd + 1 - health;
 					healthRatio = 1 - healthRatio;
-					if (healthRatio > 0.1)
+					//Health ratio = the portion of the heart that should be filled
+					if (healthRatio > 0.1)		//This is here basically so that we don't divide by zero
 					{
+						//Get the partial heart image that we need for our health fraction and draw it
 						var partialHealthFiller:Image = new Image(GFX.HEALTH_FILLER, new Rectangle(0, 0, Number(healthFiller.width) * healthRatio, healthFiller.height));
 						partialHealthFiller.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
 					}
 				}
+				//Always draw all the heart outlines
 				healthContainer.render(FP.buffer, new Point(healthInd * healthContainer.width, 0), new Point());
 			}
 		}
 		
+		/**
+		 * Overridden render function so that we can draw health and flash if damaged
+		 */
 		override public function render():void 
 		{
 			if (damageCount <= 0 ||
@@ -351,6 +378,7 @@ package com.lionsteel.LD24.entities
 				super.render();
 			}
 			
+			//Draw health bar
 			drawHealth();
 			
 		}

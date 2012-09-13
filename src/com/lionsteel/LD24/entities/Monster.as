@@ -111,11 +111,13 @@ package com.lionsteel.LD24.entities
 		public var eggImage:Image;
 		private var eggOffset:Point;
 		
+		//{region body part offsets
 		private var armOffset:Point;
 		private var legOffset:Point;
 		private var tailOffset:Point;
 		private var wingOffset:Point;
 		private var hornOffset:Point;
+		//}endregion
 		
 		protected var pauseAttack:Boolean = false;
 		
@@ -137,7 +139,6 @@ package com.lionsteel.LD24.entities
 		protected var grounded:Boolean  = false;
 		
 		protected var pos:Point = new Point();
-		private var _camPos:Point = new Point();
 		
 		private var meleeCountdown:int = 0;
 		private var rangedCountdown:int = 0;
