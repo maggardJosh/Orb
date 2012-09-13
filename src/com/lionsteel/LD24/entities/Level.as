@@ -1,13 +1,7 @@
 package com.lionsteel.LD24.entities 
 {
-	import com.lionsteel.LD24.BodyTypes.ArmType;
-	import com.lionsteel.LD24.BodyTypes.HornType;
-	import com.lionsteel.LD24.BodyTypes.LegType;
-	import com.lionsteel.LD24.BodyTypes.TailType;
-	import com.lionsteel.LD24.BodyTypes.WingType;
 	import com.lionsteel.LD24.C;
 	import com.lionsteel.LD24.GFX;
-	import com.lionsteel.LD24.worlds.GameWorld;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import net.flashpunk.Entity;
@@ -18,38 +12,44 @@ package com.lionsteel.LD24.entities
 	import net.flashpunk.World;
 	
 	/**
-	 * ...
+	 * Stores a level's tileMap, collision grid, and entities
 	 * @author Josh Maggard
 	 */
 	public class Level extends Entity 
 	{
+		//{region Variables
+		private var tileMap:Tilemap;		//TileMap
+		private var grid:Grid;				//Collision Grid
 		
-		private var tileMap:Tilemap;
-		private var grid:Grid;
+		public var mapWidth:int;			//Width (in pixels) of the map
+		public var mapHeight:int;			//Height (in pixels) of the map
 		
-		public var mapWidth:int;
-		public var mapHeight:int;
+		public var playerStart:Point;			//player spawn point
+		public var particleEmitter:Emitter;		//Emitter that is in charge of all particles
+		private var levelNum:int;				//current level number 0=first level
 		
-		public var playerStart:Point;
-		public var particleEmitter:Emitter;
-		private var levelNum:int;
-		
-		public var player:Player;
-		private var enemyList:Array = new Array();
+		public var player:Player;					//Reference to our player object
+		private var enemyList:Array = new Array();	//List of all enemies in level
+		//}endregion
 		
 		public function Level(xml:Class, emitter:Emitter, world:World, player:Player) 
 		{
+			//Add ourselves to the world
 			world.add(this);
+			
 			this.player = player;
 			this.particleEmitter = emitter;
-			loadLevel(xml);
+			loadLevel(xml);		//Load the level from the xml that was passed
 			
-			type = "level";
+			type = "level";			//Collision type = "Level"
 			
-			this.graphic = tileMap;
-			this.mask = grid;
+			this.graphic = tileMap;			//We are displayed by our tileMap
+			this.mask = grid;				//And collide with our grid
 		}
 		
+		/**
+		 * removes all entities from the world
+		 */
 		public function clearLevel():void
 		{
 			for each(var entity:Entity in enemyList)
@@ -60,6 +60,10 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
+		/**
+		 * Load this level from an xml list. Works with levels exported from OGMO
+		 * @param	xml	XML list to load from
+		 */
 		private function loadLevel(xml:Class):void
 		{
 			var rawData:ByteArray = new xml;
@@ -72,14 +76,18 @@ package com.lionsteel.LD24.entities
 			mapWidth = int(xmlData.@width);
 			mapHeight = int(xmlData.@height);
 			
+			//New tileMap and collision grid based off mapWidth and mapHeight
 			tileMap = new Tilemap(GFX.TILE_SET, mapWidth, mapHeight, C.TILE_SIZE, C.TILE_SIZE);
 			grid = new Grid(mapWidth, mapHeight, C.TILE_SIZE, C.TILE_SIZE);
 			
-			dataList = xmlData.tilemap.tile;
+			dataList = xmlData.tilemap.tile;	//Get a list of all the tiles
 			for each(dataElement in dataList)
 			{
+				//Set tileMap
 				tileMap.setTile(int(dataElement.@x), int(dataElement.@y), int(dataElement.@id));				
-			}
+			}	
+			
+			//Get our collision grid
 			for each(dataElement in xmlData.Collision)
 			{
 				var bitString:String = dataElement;
@@ -87,9 +95,10 @@ package com.lionsteel.LD24.entities
 				var yValue:int = 0;
 				for (var ind:int = 0; ind < bitString.length; ind++)
 				{
-					if (bitString.charAt(ind) == "\n")
+					if (bitString.charAt(ind) == "\n")	//If we've reached the end-of-line
 					{
-						xValue = 0;
+						//Next line in grid
+						xValue = 0;	
 						yValue++;
 					}
 					else
@@ -102,13 +111,12 @@ package com.lionsteel.LD24.entities
 			
 			//Load start point
 			dataList = xmlData.entities.playerStart;
-
 			for each(dataElement in dataList)
-			{
 				playerStart = new Point( int(dataElement.@x), int(dataElement.@y));
-			}
+			
+			//TODO load new enemies from OGMO levels
 			var enemyAdd:Enemy;
-			/*
+			/* Old enemy add code
 			
 			dataList = xmlData.entities.OneTrait;
 			for each(dataElement in dataList)
@@ -161,19 +169,31 @@ package com.lionsteel.LD24.entities
 			
 		}
 		
-		
+		/**
+		 * Adds an entity to the level
+		 * Also sorts them into lists (such as enemyList)
+		 * @param	entity	Entity to put in level
+		 */
 		public function add(entity:Entity):void
 		{
 			world.add(entity);
-			enemyList.push(entity);
+			if(entity is Enemy)
+				enemyList.push(entity);
 		}
 		
+		/**
+		 * Overridden update so that we can call the particle emitter update with it
+		 */
 		override public function update():void 
 		{
 			particleEmitter.update();
 			
 			super.update();
 		}
+		
+		/**
+		 * Overridden render to call particleEmitter.render as well
+		 */
 		override public function render():void 
 		{
 			super.render();
